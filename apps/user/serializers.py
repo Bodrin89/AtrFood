@@ -1,7 +1,7 @@
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
-from apps.user.models import BaseUserModel, RegionModel
+from apps.user.models import BaseUserModel, RegionModel, AddressModel
 
 
 class LoginSerializer(serializers.ModelSerializer):
@@ -22,3 +22,11 @@ class RegionSerializer(serializers.ModelSerializer):
         model = RegionModel
         fields = '__all__'
         read_only_fields = ('id',)
+
+
+class AddressSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AddressModel
+        fields = '__all__'
+        read_only_fields = ('id', 'user')

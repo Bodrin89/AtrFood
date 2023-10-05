@@ -1,7 +1,7 @@
 from django.contrib.auth.hashers import make_password
 
 from apps.individual_user.models import IndividualUserModel
-from apps.user.models import RegionModel
+from apps.user.models import RegionModel, AddressModel
 from config.settings import LOGGER
 
 
@@ -13,6 +13,8 @@ class IndividualUserService:
         del validated_data['password_repeat']
         validated_data['password'] = make_password(validated_data['password'])
         region_data = validated_data.pop('region', None)
+        address_data = validated_data.pop('address', None)
         region = RegionModel.objects.create(**region_data)
         user = IndividualUserModel.objects.create(region=region, **validated_data)
+        AddressModel.objects.create(user=user, **address_data)
         return user

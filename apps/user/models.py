@@ -9,14 +9,6 @@ class RegionModel(models.Model):
     city = models.CharField(max_length=255, null=True, blank=True)
 
 
-class AddressModel(models.Model):
-    district = models.CharField(max_length=255)
-    street = models.CharField(max_length=255)
-    house_number = models.CharField(max_length=255)
-    apartment_number = models.PositiveSmallIntegerField(null=True, blank=True)
-    floor = models.PositiveSmallIntegerField(null=True, blank=True)
-
-
 class BaseUserModel(AbstractUser):
     class Meta:
         verbose_name = 'Базовый Пользователь'
@@ -29,6 +21,15 @@ class BaseUserModel(AbstractUser):
     first_name = None
     phone_number = models.CharField(max_length=20, null=True, blank=True, validators=[validate_phone_number])
     email = models.EmailField(unique=True)
-    address = models.ForeignKey(AddressModel, on_delete=models.CASCADE, null=True)
+    # address = models.ForeignKey(AddressModel, on_delete=models.CASCADE, null=True)
     region = models.ForeignKey(RegionModel, on_delete=models.CASCADE, null=True)
+
+
+class AddressModel(models.Model):
+    district = models.CharField(max_length=255)
+    street = models.CharField(max_length=255)
+    house_number = models.CharField(max_length=255)
+    apartment_number = models.PositiveSmallIntegerField(null=True, blank=True)
+    floor = models.PositiveSmallIntegerField(null=True, blank=True)
+    user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE, null=True)
 

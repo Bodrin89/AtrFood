@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 from apps.company_user.models import ContactPersonModel, CompanyUserModel
 from apps.company_user.services import CompanyUserServices
-from apps.user.serializers import RegionSerializer
+from apps.user.serializers import RegionSerializer, AddressSerializer
 from apps.user.services import UserServices
 
 
@@ -20,12 +20,13 @@ class CreateCompanySerializer(serializers.ModelSerializer):
     password_repeat = serializers.CharField(write_only=True,
                                             style={'input_type': 'password'}, required=False)
     contact_person = ContactPersonSerializer()
+    address = AddressSerializer(write_only=True)
     region = RegionSerializer()
 
     class Meta:
         model = CompanyUserModel
         fields = ('id', 'username', 'email', 'phone_number', 'company_name', 'company_address', 'bin_iin', 'iik',
-                  'bank', 'bik', 'payment_method', 'contact_person', 'region', 'password', 'password_repeat')
+                  'bank', 'bik', 'payment_method', 'contact_person', 'address', 'region', 'password', 'password_repeat')
 
     def validate(self, attrs: dict) -> dict:
         return UserServices.validate(attrs)

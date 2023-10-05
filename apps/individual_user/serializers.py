@@ -3,8 +3,9 @@ from rest_framework import serializers
 
 from apps.individual_user.models import IndividualUserModel
 from apps.individual_user.services import IndividualUserService
-from apps.user.serializers import RegionSerializer
+from apps.user.serializers import RegionSerializer, AddressSerializer
 from apps.user.services import UserServices
+from config.settings import LOGGER
 
 
 class CreateIndividualSerializer(serializers.ModelSerializer):
@@ -15,10 +16,11 @@ class CreateIndividualSerializer(serializers.ModelSerializer):
                                             style={'input_type': 'password'}, required=False)
     second_phone_number = serializers.CharField(max_length=50, required=False)
     region = RegionSerializer()
+    address = AddressSerializer(write_only=True)
 
     class Meta:
         model = IndividualUserModel
-        fields = ('id', 'username', 'email', 'phone_number', 'second_phone_number', 'region', 'password',
+        fields = ('id', 'username', 'email', 'phone_number', 'second_phone_number', 'address', 'region', 'password',
                   'password_repeat')
 
     def validate(self, attrs: dict) -> dict:
@@ -26,3 +28,6 @@ class CreateIndividualSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data: dict) -> IndividualUserModel:
         return IndividualUserService.create_individual(validated_data)
+
+    # def update(self, instance, validated_data):
+    #     LOGGER.debug(instance)
