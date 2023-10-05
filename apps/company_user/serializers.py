@@ -1,9 +1,9 @@
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
-from apps.company_user.models import ContactPersonModel, CompanyUserModel
+from apps.company_user.models import CompanyUserModel, ContactPersonModel
 from apps.company_user.services import CompanyUserServices
-from apps.user.serializers import RegionSerializer, AddressSerializer
+from apps.user.serializers import AddressSerializer, RegionSerializer
 from apps.user.services import UserServices
 
 

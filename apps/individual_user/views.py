@@ -12,4 +12,3 @@ class SingUpIndividualView(CreateAPIView):
 
     def get_queryset(self):
         return BaseUserModel.objects.all()
-

@@ -1,7 +1,7 @@
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
-from apps.user.models import BaseUserModel, RegionModel, AddressModel
+from apps.user.models import AddressModel, BaseUserModel, RegionModel
 
 
 class LoginSerializer(serializers.ModelSerializer):

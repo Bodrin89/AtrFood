@@ -14,14 +14,13 @@ class BaseUserModel(AbstractUser):
         verbose_name = 'Базовый Пользователь'
         verbose_name_plural = 'Базовые Пользователи'
 
-    USERNAME_FIELD = "email"
+    USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
     last_name = None
     first_name = None
     phone_number = models.CharField(max_length=20, null=True, blank=True, validators=[validate_phone_number])
     email = models.EmailField(unique=True)
-    # address = models.ForeignKey(AddressModel, on_delete=models.CASCADE, null=True)
     region = models.ForeignKey(RegionModel, on_delete=models.CASCADE, null=True)
 
 
@@ -32,4 +31,3 @@ class AddressModel(models.Model):
     apartment_number = models.PositiveSmallIntegerField(null=True, blank=True)
     floor = models.PositiveSmallIntegerField(null=True, blank=True)
     user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE, null=True)
-

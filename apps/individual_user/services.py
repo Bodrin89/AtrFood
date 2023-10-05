@@ -1,7 +1,7 @@
 from django.contrib.auth.hashers import make_password
 
 from apps.individual_user.models import IndividualUserModel
-from apps.user.models import RegionModel, AddressModel
+from apps.user.models import AddressModel, RegionModel
 from config.settings import LOGGER
 
 

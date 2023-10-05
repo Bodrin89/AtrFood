@@ -2,7 +2,6 @@ from django.contrib.auth import login
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 
-
 from apps.user.serializers import LoginSerializer
 from apps.user.services import UserServices
 
@@ -16,4 +15,3 @@ class LoginView(CreateAPIView):
         user = UserServices.login_user(request, serializer)
         login(request=request, user=user)
         return Response(data={'id': user.pk, 'username': user.username})
-

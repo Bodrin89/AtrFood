@@ -1,7 +1,7 @@
 from django.contrib.auth.hashers import make_password
 
 from apps.company_user.models import CompanyUserModel, ContactPersonModel
-from apps.user.models import RegionModel, AddressModel
+from apps.user.models import AddressModel, RegionModel
 
 
 class CompanyUserServices:

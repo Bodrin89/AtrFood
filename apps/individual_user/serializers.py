@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 from apps.individual_user.models import IndividualUserModel
 from apps.individual_user.services import IndividualUserService
-from apps.user.serializers import RegionSerializer, AddressSerializer
+from apps.user.serializers import AddressSerializer, RegionSerializer
 from apps.user.services import UserServices
 from config.settings import LOGGER
 

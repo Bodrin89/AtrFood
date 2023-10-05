@@ -17,6 +17,7 @@ phonenumbers = "^8.13.22"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.5.1"
+pre-commit = "^3.4.0"
 
 [build-system]
 requires = ["poetry-core"]
@@ -34,4 +35,3 @@ skip_glob = ['**/migrations/**','.git','.venv']
 [tool.autoflake]
 #check = true
 in-place = true
-

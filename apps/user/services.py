@@ -5,9 +5,9 @@ from django.contrib.auth.hashers import make_password
 from rest_framework.exceptions import AuthenticationFailed, ValidationError
 from rest_framework.request import Request
 
-from apps.user.models import BaseUserModel
-from apps.company_user.models import ContactPersonModel, CompanyUserModel
+from apps.company_user.models import CompanyUserModel, ContactPersonModel
 from apps.individual_user.models import IndividualUserModel
+from apps.user.models import BaseUserModel
 from config.settings import LOGGER
 
 

@@ -1,6 +1,6 @@
 from django.db import models
 
-from apps.user.models import BaseUserModel, AddressModel
+from apps.user.models import AddressModel, BaseUserModel
 
 
 class ContactPersonModel(models.Model):
