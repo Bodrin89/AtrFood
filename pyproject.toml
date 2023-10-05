@@ -1,0 +1,36 @@
+[tool.poetry]
+name = "artfoot"
+version = "0.1.0"
+description = ""
+authors = ["vladimirmac <vladimirbodrin89@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+django = "^4.2.5"
+djangorestframework = "^3.14.0"
+python-dotenv = "^1.0.0"
+psycopg2-binary = "^2.9.9"
+gunicorn = "^21.2.0"
+
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.5.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.isort]
+multi_line_output = 1
+include_trailing_comma = true
+line_length = 120
+combine_as_imports = true
+combine_star = true
+skip_glob = ['**/migrations/**','.git','.venv']
+
+[tool.autoflake]
+#check = true
+in-place = true
+

@@ -1,0 +1,45 @@
+---
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: check-toml # проверяет файлы toml на предмет разборного синтаксиса.
+      - id: double-quote-string-fixer # заменяет строки с двойными кавычками на строки с одной кавычками.
+      - id: end-of-file-fixer # гарантирует, что файл либо пуст, либо заканчивается одной новой линией.
+      - id: name-tests-test # проверяет правильно ли названы тестовые файлы.
+      - id: debug-statements
+      - id: trailing-whitespace # удаляет пробелы в конце строк
+        exclude: ^(tests/fixtures/|README\.md)
+
+  - repo: https://github.com/PyCQA/autoflake
+    rev: v2.2.1
+    hooks:
+      - id: autoflake
+        args: [--remove-all-unused-imports, --]
+        files: ^src/  # проверять только файлы из этой папки
+
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+
+  - repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
+    rev: 0.2.1
+    hooks:
+      - id: yamlfmt
+        args: [--mapping, '2', --sequence, '4', --offset, '2', --colons, --width, '150']
+        files: ^src/, ^/docker
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 6.0.0
+    hooks:
+      - id: flake8
+        additional_dependencies: [flake8-print,   # проверка кода на содержание print(), pprint()
+                                  flake8-bugbear, # проверяет логические ошибки, на пример блок "try/except"
+                                  flake8-comprehensions, # проверяет на не правильное использование comprehensions
+                                  flake8-debugger,
+        ]
+        args: [--config=setup.cfg]
+        exclude: migrations
+        files: ^src/
