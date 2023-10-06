@@ -15,7 +15,7 @@ class CreateIndividualSerializer(serializers.ModelSerializer):
     password_repeat = serializers.CharField(write_only=True,
                                             style={'input_type': 'password'}, required=False)
     second_phone_number = serializers.CharField(max_length=50, required=False)
-    region = RegionSerializer()
+    region = RegionSerializer(required=True)
     address = AddressSerializer(write_only=True)
 
     class Meta:

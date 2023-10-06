@@ -10,7 +10,7 @@ from apps.user.services import UserServices
 class ContactPersonSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactPersonModel
-        fields = '__all__'
+        fields = ('surname', 'first_name', 'second_name')
 
 
 class CreateCompanySerializer(serializers.ModelSerializer):

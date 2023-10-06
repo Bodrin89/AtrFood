@@ -15,7 +15,7 @@ class CompanyUserServices:
         address_data = validated_data.pop('address', None)
         contact_person = ContactPersonModel.objects.create(**contact_person_data)
         region_data = validated_data.pop('region', None)
-        region = RegionModel.objects.create(**region_data)
+        region, created = RegionModel.objects.get_or_create(**region_data)
         company_user = CompanyUserModel.objects.create(region=region, contact_person=contact_person, **validated_data)
         AddressModel.objects.create(user=company_user, **address_data)
         return company_user

@@ -20,7 +20,7 @@ class RegionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RegionModel
-        fields = '__all__'
+        fields = ('region', 'city')
         read_only_fields = ('id',)
 
 
@@ -28,5 +28,5 @@ class AddressSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AddressModel
-        fields = '__all__'
-        read_only_fields = ('id', 'user')
+        fields = ('district', 'street', 'house_number', 'apartment_number', 'floor')
+        read_only_fields = ('id',)

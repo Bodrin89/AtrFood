@@ -14,7 +14,8 @@ class IndividualUserService:
         validated_data['password'] = make_password(validated_data['password'])
         region_data = validated_data.pop('region', None)
         address_data = validated_data.pop('address', None)
-        region = RegionModel.objects.create(**region_data)
+        LOGGER.debug(region_data)
+        region, created = RegionModel.objects.get_or_create(**region_data)
         user = IndividualUserModel.objects.create(region=region, **validated_data)
         AddressModel.objects.create(user=user, **address_data)
         return user
