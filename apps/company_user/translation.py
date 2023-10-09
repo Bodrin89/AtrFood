@@ -12,5 +12,5 @@ class ContactPersonTranslationOptions(TranslationOptions):
 
 @register(CompanyUserModel)
 class CompanyUserTranslationOptions(TranslationOptions):
-    fields = ('company_name', 'company_address', 'bin_iin', 'iik', 'bank', 'bik', 'payment_method', 'contact_person')
+    fields = ('company_address', 'contact_person')
 

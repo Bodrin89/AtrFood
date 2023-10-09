@@ -1,6 +1,7 @@
 from django.db import models
 
 from apps.user.models import AddressModel, BaseUserModel
+from django.utils.translation import gettext_lazy as _
 
 
 class ContactPersonModel(models.Model):
@@ -27,12 +28,12 @@ class CompanyUserModel(BaseUserModel):
         verbose_name_plural = 'Юридические лица'
 
     class PaymentMethod(models.TextChoices):
-        CASH = 'cash', 'Наличные'
-        NON_CASH = 'non_cash', 'Безналичный расчет'
+        CASH = ('cash', _('Cache'))
+        NON_CASH = ('non_cash', _('Non_cash'))
 
     company_name = models.CharField(max_length=255)
     company_address = models.CharField(max_length=255)
-    bin_iin = models.CharField(max_length=255)
+    bin_iin = models.PositiveBigIntegerField()
     iik = models.CharField(max_length=255)
     bank = models.CharField(max_length=255)
     bik = models.CharField(max_length=255)

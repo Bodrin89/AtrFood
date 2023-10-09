@@ -12,9 +12,9 @@ class RegionTranslationOptions(TranslationOptions):
 
 @register(BaseUserModel)
 class BaseUserTranslationOptions(TranslationOptions):
-    fields = ('phone_number', 'email', 'region', 'username')
+    fields = ('region',)
 
 
 @register(AddressModel)
 class AddressTranslationOptions(TranslationOptions):
-    fields = ('district', 'street', 'house_number', 'apartment_number', 'floor', 'user')
+    fields = ('district', 'street')

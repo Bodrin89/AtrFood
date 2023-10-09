@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from apps.company_user.models import CompanyUserModel, ContactPersonModel
 from apps.company_user.services import CompanyUserServices
+from apps.company_user.validators import bin_iin_validator, bik_validator, iban_validator
 from apps.user.serializers import AddressSerializer, RegionSerializer
 from apps.user.services import UserServices
 
@@ -19,6 +20,9 @@ class CreateCompanySerializer(serializers.ModelSerializer):
                                      write_only=True, style={'input_type': 'password'})
     password_repeat = serializers.CharField(write_only=True,
                                             style={'input_type': 'password'}, required=False)
+    bin_iin = serializers.IntegerField(validators=[bin_iin_validator])
+    bik = serializers.IntegerField(validators=[bik_validator])
+    bank = serializers.CharField(validators=[iban_validator])
     contact_person = ContactPersonSerializer()
     address = AddressSerializer(write_only=True)
     region = RegionSerializer()

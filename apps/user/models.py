@@ -2,7 +2,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
 
-from apps.user.user_manager import CustomUserManager
 from apps.user.validators import validate_phone_number
 
 
@@ -24,8 +23,6 @@ class BaseUserModel(AbstractUser):
     phone_number = models.CharField(max_length=20, null=True, blank=True, validators=[validate_phone_number])
     email = models.EmailField(unique=True)
     region = models.ForeignKey(RegionModel, on_delete=models.CASCADE, null=True, blank=True)
-
-    objects = CustomUserManager()
 
     # def get_absolute_url(self):
     #     return reverse('')

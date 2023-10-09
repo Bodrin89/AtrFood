@@ -9,4 +9,4 @@ from config.settings import LOGGER
 class SingUpIndividualView(CreateAPIView):
     """Регистрация нового физического пользователя"""
     serializer_class = CreateIndividualSerializer
-    #
+

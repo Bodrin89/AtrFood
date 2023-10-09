@@ -31,9 +31,6 @@ class UserServices:
         return attrs
 
 
-
-
-
     @staticmethod
     def login_user(user_data: Request, serializer_data: Callable) -> BaseUserModel:
         """Аутентификация пользователя"""
