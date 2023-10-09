@@ -7,3 +7,6 @@ makemigrations:
 
 migrate:
 	python3 manage.py migrate
+
+translations:
+	python3 manage.py update_translation_fields

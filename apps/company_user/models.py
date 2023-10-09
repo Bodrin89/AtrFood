@@ -19,7 +19,12 @@ class CompanyAddress(AddressModel):
         verbose_name = 'Адрес Компании'
         verbose_name_plural = 'Адреса компаний'
 
-    pass
+    country = models.CharField(max_length=255)
+    office_number = models.PositiveSmallIntegerField()
+    apartment_number = None
+    floor = None
+
+
 
 
 class CompanyUserModel(BaseUserModel):
@@ -32,10 +37,10 @@ class CompanyUserModel(BaseUserModel):
         NON_CASH = ('non_cash', _('Non_cash'))
 
     company_name = models.CharField(max_length=255)
-    company_address = models.CharField(max_length=255)
     bin_iin = models.PositiveBigIntegerField()
     iik = models.CharField(max_length=255)
     bank = models.CharField(max_length=255)
     bik = models.CharField(max_length=255)
+    company_address = models.ForeignKey(CompanyAddress, on_delete=models.CASCADE)
     payment_method = models.CharField(max_length=10, choices=PaymentMethod.choices, default=PaymentMethod.NON_CASH)
     contact_person = models.ForeignKey(ContactPersonModel, on_delete=models.CASCADE)

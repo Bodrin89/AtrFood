@@ -1,7 +1,7 @@
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
-from apps.company_user.models import CompanyUserModel, ContactPersonModel
+from apps.company_user.models import CompanyUserModel, ContactPersonModel, CompanyAddress
 from apps.company_user.services import CompanyUserServices
 from apps.company_user.validators import bin_iin_validator, bik_validator, iban_validator
 from apps.user.serializers import AddressSerializer, RegionSerializer
@@ -14,6 +14,12 @@ class ContactPersonSerializer(serializers.ModelSerializer):
         fields = ('surname', 'first_name', 'second_name')
 
 
+class CompanyAddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CompanyAddress
+        fields = ('country', 'district', 'street', 'house_number', 'office_number')
+
+
 class CreateCompanySerializer(serializers.ModelSerializer):
     """Сериализатор для регистрации нового юридического пользователя"""
     password = serializers.CharField(validators=[validate_password],
@@ -23,6 +29,7 @@ class CreateCompanySerializer(serializers.ModelSerializer):
     bin_iin = serializers.IntegerField(validators=[bin_iin_validator])
     bik = serializers.IntegerField(validators=[bik_validator])
     bank = serializers.CharField(validators=[iban_validator])
+    company_address = CompanyAddressSerializer()
     contact_person = ContactPersonSerializer()
     address = AddressSerializer(write_only=True)
     region = RegionSerializer()
