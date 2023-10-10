@@ -4,7 +4,7 @@ from apps.product.models import ProductModel
 from apps.user.models import BaseUserModel
 
 
-class ReviewProductView(models.Model):
+class ReviewProductModel(models.Model):
     class Meta:
         verbose_name = 'Отзыв на товар'
         verbose_name_plural = 'Отзывы на товары'

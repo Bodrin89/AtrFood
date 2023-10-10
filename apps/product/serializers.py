@@ -1,7 +1,8 @@
 
 from rest_framework import serializers
 
-from apps.product.models import ProductModel, CategoryProductModel, SubCategoryProductModel, DescriptionProductModel
+from apps.product.models import ProductModel, CategoryProductModel, SubCategoryProductModel, DescriptionProductModel, \
+    FavoriteProductModel
 from apps.product.services import ServiceProduct
 from config.settings import LOGGER
 
@@ -51,6 +52,16 @@ class ListProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductModel
         fields = '__all__'
+
+
+class AddProductFavoriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FavoriteProductModel
+        fields = '__all__'
+
+    def create(self, validated_data):
+        pass # TODO не реализовано
+
 
 
 
