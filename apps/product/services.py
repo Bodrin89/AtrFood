@@ -1,5 +1,5 @@
 
-from apps.product.models import CategoryProductModel, SubCategoryProductModel, ProductModel
+from apps.product.models import CategoryProductModel, SubCategoryProductModel, ProductModel, DescriptionProductModel
 from config.settings import LOGGER
 from django.db import transaction
 
@@ -21,13 +21,17 @@ class ServiceProduct:
             category, _ = CategoryProductModel.objects.get_or_create(**category_product_data)
             subcategory, _ = SubCategoryProductModel.objects.get_or_create(category=category, **subcategory_product_data)
             existence = True
+            product_data = validated_data.pop('product_data', None)
+            product_data, _ = DescriptionProductModel.objects.get_or_create(**product_data)
             discount = validated_data.pop('discount', None)
             price = validated_data.get('price', None)
             if discount:
                 discount_price = ServiceProduct._calculation_discount(price, discount)
-                product = ProductModel.objects.create(category=category, discount_price=discount_price, existence=existence,
-                                                      subcategory=subcategory, **validated_data)
+                product = ProductModel.objects.create(category=category, product_data=product_data,
+                                                      discount_price=discount_price, discount=discount,
+                                                      existence=existence, subcategory=subcategory, **validated_data)
             else:
-                product = ProductModel.objects.create(category=category, discount_price=price, existence=existence,
+                product = ProductModel.objects.create(category=category, product_data=product_data,
+                                                      discount_price=price, existence=existence,
                                                       subcategory=subcategory, **validated_data)
         return product

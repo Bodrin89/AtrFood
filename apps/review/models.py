@@ -1,6 +1,7 @@
 from django.db import models
 
 from apps.product.models import ProductModel
+from apps.user.models import BaseUserModel
 
 
 class ReviewProductView(models.Model):
@@ -19,3 +20,4 @@ class ReviewProductView(models.Model):
     review_text = models.TextField(blank=True, null=True, verbose_name="отзыв")
     foto = models.ImageField(blank=True, null=True, upload_to='media', verbose_name="фото")
     product = models.ForeignKey(ProductModel, on_delete=models.CASCADE)
+    user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE)

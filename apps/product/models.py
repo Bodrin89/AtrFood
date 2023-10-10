@@ -42,7 +42,7 @@ class ProductModel(models.Model):
     article = models.CharField(max_length=255, null=True, blank=True, verbose_name="артикул товара")
     discount = models.PositiveSmallIntegerField(blank=True, null=True, verbose_name="скидка/старая цена товара")
     discount_price = models.FloatField(blank=True, null=True, verbose_name="цена с учетом скидки")
-    quantity_stock = models.ImageField(verbose_name="количество на складе")
+    quantity_stock = models.IntegerField(verbose_name="количество на складе")
     quantity_select = models.IntegerField(blank=True, null=True, verbose_name="выбор количества")
     existence = models.BooleanField(null=True, blank=True, default=True, verbose_name="наличие товара на складе")
     product_data = models.ForeignKey(DescriptionProductModel, on_delete=models.CASCADE, verbose_name="данные товара")
