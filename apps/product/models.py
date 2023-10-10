@@ -20,6 +20,17 @@ class SubCategoryProductModel(models.Model):
     category = models.ForeignKey(CategoryProductModel, on_delete=models.CASCADE)
 
 
+class DescriptionProductModel(models.Model):
+    class Meta:
+        verbose_name = 'Описание товара'
+        verbose_name_plural = 'Описания товаров'
+
+    manufacturer = models.CharField(max_length=255, verbose_name="Компания производитель")
+    made_in = models.CharField(max_length=255, verbose_name="Страна изготовитель")
+    description = models.TextField(verbose_name="Описание товара")
+    package = models.CharField(max_length=255, verbose_name="Формат упаковки")
+
+
 class ProductModel(models.Model):
     class Meta:
         verbose_name = 'Товар'
@@ -29,10 +40,12 @@ class ProductModel(models.Model):
     foto = models.ImageField(null=True, blank=True, upload_to='media', verbose_name="фото товара")
     price = models.FloatField(null=True, blank=True, verbose_name="стоимость за единицу")
     article = models.CharField(max_length=255, null=True, blank=True, verbose_name="артикул товара")
-    discount = models.CharField(max_length=255, blank=True, null=True, verbose_name="скидка/старая цена товара")
+    discount = models.PositiveSmallIntegerField(blank=True, null=True, verbose_name="скидка/старая цена товара")
+    discount_price = models.FloatField(blank=True, null=True, verbose_name="цена с учетом скидки")
+    quantity_stock = models.ImageField(verbose_name="количество на складе")
     quantity_select = models.IntegerField(blank=True, null=True, verbose_name="выбор количества")
-    existence = models.BooleanField(null=True, blank=True, default=True, verbose_name="наличие товара товара")
-    description = models.TextField(null=True, blank=True, verbose_name="описание товара")
+    existence = models.BooleanField(null=True, blank=True, default=True, verbose_name="наличие товара на складе")
+    product_data = models.ForeignKey(DescriptionProductModel, on_delete=models.CASCADE, verbose_name="данные товара")
     category = models.ForeignKey(CategoryProductModel, on_delete=models.CASCADE, verbose_name="категория товара",
                                  null=True, blank=True)
     subcategory = models.ForeignKey(SubCategoryProductModel, on_delete=models.CASCADE, null=True, blank=True,
