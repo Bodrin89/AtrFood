@@ -28,13 +28,15 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-    'rest_framework', 'corsheaders',
+    'rest_framework',
+    'corsheaders',
 ]
 
 LOCAL_APPS = [
     'apps.user',
     'apps.individual_user',
     'apps.company_user',
+    'apps.product',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -135,9 +137,9 @@ LANGUAGES = [
     ('ru', _('Russian')),
 ]
 
-LOCALE_PATHS = [
-    os.path.join(BASE_DIR, 'apps/locale'),
-]
+# LOCALE_PATHS = [
+#     os.path.join(BASE_DIR, 'apps/locale'),
+# ]
 
 
 TIME_ZONE = 'UTC'

@@ -20,19 +20,21 @@ class BaseUserModel(AbstractUser):
 
     last_name = None
     first_name = None
-    phone_number = models.CharField(max_length=20, null=True, blank=True, validators=[validate_phone_number])
-    email = models.EmailField(unique=True)
-    region = models.ForeignKey(RegionModel, on_delete=models.CASCADE, null=True, blank=True)
+    phone_number = models.CharField(max_length=20, null=True, blank=True, validators=[validate_phone_number],
+                                    verbose_name="номер телефона")
+    email = models.EmailField(unique=True, verbose_name="электронная почта")
+    region = models.ForeignKey(RegionModel, on_delete=models.CASCADE, null=True, blank=True,
+                               verbose_name="место положения область/город")
 
     # def get_absolute_url(self):
     #     return reverse('')
 
 
 class AddressModel(models.Model):
-    district = models.CharField(max_length=255, blank=True, null=True)
-    street = models.CharField(max_length=255, blank=True, null=True)
-    house_number = models.CharField(max_length=255, blank=True, null=True)
-    apartment_number = models.PositiveSmallIntegerField(null=True, blank=True)
-    floor = models.PositiveSmallIntegerField(null=True, blank=True)
-    user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE, null=True)
+    district = models.CharField(max_length=255, blank=True, null=True, verbose_name="район")
+    street = models.CharField(max_length=255, blank=True, null=True, verbose_name="улица")
+    house_number = models.CharField(max_length=255, blank=True, null=True, verbose_name="номер дома")
+    apartment_number = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name="номер квартиры")
+    floor = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name="этаж")
+    user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE, null=True, verbose_name="пользователь")
 

@@ -15,6 +15,7 @@ gunicorn = "^21.2.0"
 phonenumbers = "^8.13.22"
 django-modeltranslation = "^0.18.11"
 django-cors-headers = "^4.2.0"
+pillow = "^10.0.1"
 
 
 [tool.poetry.group.dev.dependencies]
