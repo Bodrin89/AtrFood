@@ -2,7 +2,7 @@
 from rest_framework import serializers
 
 from apps.product.models import ProductModel, CategoryProductModel, SubCategoryProductModel, DescriptionProductModel, \
-    FavoriteProductModel
+    FavoriteProductModel, CompareProductModel
 from apps.product.services import ServiceProduct
 from config.settings import LOGGER
 
@@ -41,13 +41,14 @@ class CreateProductSerializer(serializers.ModelSerializer):
 
 
 class RetrieveProductSerializer(serializers.ModelSerializer):
+    """Получение товара по id"""
     class Meta:
         model = ProductModel
         fields = '__all__'
 
 
 class ListProductSerializer(serializers.ModelSerializer):
-    subcategory = SubCategoryProductSerializer()
+    """Получение всех товаров"""
 
     class Meta:
         model = ProductModel
@@ -55,12 +56,28 @@ class ListProductSerializer(serializers.ModelSerializer):
 
 
 class AddProductFavoriteSerializer(serializers.ModelSerializer):
+    """Добавление/удаление товара в избранное"""
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
     class Meta:
         model = FavoriteProductModel
-        fields = '__all__'
+        fields = ('id', 'user')
 
     def create(self, validated_data):
-        pass # TODO не реализовано
+        return ServiceProduct.add_delete_product_favorite(validated_data)
+
+
+class AddProductCompareSerializer(serializers.ModelSerializer):
+    """Добавление/удаление товара для сравнения"""
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = CompareProductModel
+        fields = ('id', 'user')
+
+    def create(self, validated_data):
+        return ServiceProduct.add_delete_product_compare(validated_data)
+
 
 
 

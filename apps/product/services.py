@@ -1,5 +1,6 @@
 
-from apps.product.models import CategoryProductModel, SubCategoryProductModel, ProductModel, DescriptionProductModel
+from apps.product.models import CategoryProductModel, SubCategoryProductModel, ProductModel, DescriptionProductModel, \
+    FavoriteProductModel, CompareProductModel
 from config.settings import LOGGER
 from django.db import transaction
 
@@ -35,3 +36,18 @@ class ServiceProduct:
                                                       discount_price=price, existence=existence,
                                                       subcategory=subcategory, **validated_data)
         return product
+
+    @staticmethod
+    def add_delete_product_favorite(validated_data: dict) -> FavoriteProductModel:
+        """Добавление/удаление товара в избранное"""
+        favorite_product, create = FavoriteProductModel.objects.get_or_create(**validated_data)
+        if create:
+            return favorite_product
+        return favorite_product.delete()
+
+    @staticmethod
+    def add_delete_product_compare(validated_data: dict) -> CompareProductModel:
+        compare_product, create = CompareProductModel.objects.get_or_create(**validated_data)
+        if create:
+            return compare_product
+        return compare_product.delete()

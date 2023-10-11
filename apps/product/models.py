@@ -4,6 +4,7 @@ from apps.user.models import BaseUserModel
 
 
 class CategoryProductModel(models.Model):
+    """Модель категорий товара"""
     class Meta:
         verbose_name = 'Категория товара'
         verbose_name_plural = 'Категории товаров'
@@ -12,6 +13,7 @@ class CategoryProductModel(models.Model):
 
 
 class SubCategoryProductModel(models.Model):
+    """Модель подкатегории товара"""
     class Meta:
         verbose_name = 'Подкатегория товара'
         verbose_name_plural = 'Подкатегории товаров'
@@ -21,6 +23,7 @@ class SubCategoryProductModel(models.Model):
 
 
 class DescriptionProductModel(models.Model):
+    """Модель описания товара"""
     class Meta:
         verbose_name = 'Описание товара'
         verbose_name_plural = 'Описания товаров'
@@ -32,6 +35,7 @@ class DescriptionProductModel(models.Model):
 
 
 class ProductModel(models.Model):
+    """Модель товара"""
     class Meta:
         verbose_name = 'Товар'
         verbose_name_plural = 'Товары'
@@ -53,6 +57,7 @@ class ProductModel(models.Model):
 
 
 class FavoriteProductModel(models.Model):
+    """Модель избранных товаров"""
     class Meta:
         verbose_name = 'Избранный товар'
         verbose_name_plural = 'Избранные товары'
@@ -62,10 +67,12 @@ class FavoriteProductModel(models.Model):
     user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE)
 
 
-class ChosenProductModel(models.Model):
+class CompareProductModel(models.Model):
+    """Модель товаров для сравнения"""
     class Meta:
         verbose_name = 'Товар для сравнения'
         verbose_name_plural = 'Товары для сравнения'
+        unique_together = ['user', 'product']
 
     product = models.ForeignKey(ProductModel, on_delete=models.CASCADE)
     user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE)

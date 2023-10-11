@@ -1,12 +1,13 @@
 from django.shortcuts import render
-from rest_framework.generics import CreateAPIView, RetrieveAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import CreateAPIView, RetrieveAPIView, ListAPIView, RetrieveUpdateDestroyAPIView, \
+    get_object_or_404
 from rest_framework.filters import OrderingFilter, SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAdminUser
 
 from apps.product.models import ProductModel
 from apps.product.serializers import CreateProductSerializer, RetrieveProductSerializer, ListProductSerializer, \
-    AddProductFavoriteSerializer
+    AddProductFavoriteSerializer, AddProductCompareSerializer
 from config.settings import LOGGER
 
 
@@ -44,8 +45,32 @@ class ListProductSubcategoryView(ListAPIView):
 
 
 class AddProductFavoriteView(CreateAPIView):
-    # TODO не реализовано
+    """Добавление/удаление товара в избранное"""
     serializer_class = AddProductFavoriteSerializer
+
+    def perform_create(self, serializer):
+        product_id = self.kwargs.get('product_id')
+        product = get_object_or_404(ProductModel, id=product_id)
+        serializer.save(product=product)
+
+
+class AddProductCompareView(CreateAPIView):
+    """Добавление/удаление товара для сравнения"""
+    serializer_class = AddProductCompareSerializer
+
+    def perform_create(self, serializer):
+        product_id = self.kwargs.get('product_id')
+        product = get_object_or_404(ProductModel, id=product_id)
+        serializer.save(product=product)
+
+#
+# class ListFavoriteProductView(ListAPIView):
+#
+#     serializer_class = ListProductSerializer
+#
+#     def get_queryset(self):
+#         return
+
 
 
 
