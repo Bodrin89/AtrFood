@@ -8,24 +8,28 @@ from config.settings import LOGGER
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    """Категория"""
     class Meta:
         model = CategoryProductModel
         fields = ('name',)
 
 
 class SubCategoryProductSerializer(serializers.ModelSerializer):
+    """Подкатегория"""
     class Meta:
         model = SubCategoryProductModel
         fields = ('name',)
 
 
 class DescriptionProductSerializer(serializers.ModelSerializer):
+    """Описание товара"""
     class Meta:
         model = DescriptionProductModel
         fields = ('manufacturer', 'made_in', 'description', 'package')
 
 
 class CreateProductSerializer(serializers.ModelSerializer):
+    """Создание товара"""
     category = CategorySerializer()
     subcategory = SubCategoryProductSerializer()
     product_data = DescriptionProductSerializer()
@@ -66,6 +70,7 @@ class AddProductFavoriteSerializer(serializers.ModelSerializer):
 
 
 class AddProductCompareSerializer(serializers.ModelSerializer):
+    """Добавление/удаление товара для сравнения"""
     class Meta:
         model = CompareProductModel
         fields = ('id',)

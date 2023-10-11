@@ -1,14 +1,13 @@
-
 from rest_framework.generics import CreateAPIView, RetrieveAPIView, ListAPIView, RetrieveUpdateDestroyAPIView, \
     get_object_or_404
 from rest_framework.filters import OrderingFilter, SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
 from rest_framework.permissions import IsAdminUser
 
-from apps.product.models import ProductModel, FavoriteProductModel
+from apps.product.models import ProductModel
 from apps.product.serializers import CreateProductSerializer, RetrieveProductSerializer, ListProductSerializer, \
     AddProductFavoriteSerializer, AddProductCompareSerializer
-from apps.product.services import ServiceProduct
 from config.settings import LOGGER
 
 
@@ -31,8 +30,15 @@ class ListProductView(ListAPIView):
     """Получение всех товаров с возможностью фильтрации"""
     serializer_class = ListProductSerializer
     queryset = ProductModel.objects.all()
+    pagination_class = PageNumberPagination
     filter_backends = [SearchFilter, DjangoFilterBackend]
     filterset_fields = ['category__name', 'existence', 'article', 'name', 'product_data__manufacturer']
+
+    def get(self, request, *args, **kwargs):
+        """Получение параметров пагинации из query_params)"""
+        if page_size := self.request.query_params.get('page_size', None):
+            self.pagination_class.page_size = int(page_size)
+        return super().get(request, *args, **kwargs)
 
 
 class ListProductSubcategoryView(ListAPIView):
@@ -80,7 +86,6 @@ class ListFavoriteProductView(ListAPIView):
 
     def get_queryset(self):
         favorite_product_ids = self.request.session.get('favorite', [])
-
         return ProductModel.objects.filter(id__in=favorite_product_ids)
 
 
@@ -90,6 +95,7 @@ class ListCompareProductView(ListAPIView):
 
     def get_queryset(self):
         compare_product_ids = self.request.session.get('compare', [])
-
+        if len(compare_product_ids) <= 1:
+            raise ValueError("Необходимо два товара для сравнения")
         return ProductModel.objects.filter(id__in=compare_product_ids)
 

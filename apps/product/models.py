@@ -47,7 +47,7 @@ class ProductModel(models.Model):
     discount = models.PositiveSmallIntegerField(blank=True, null=True, verbose_name="скидка/старая цена товара")
     discount_price = models.FloatField(blank=True, null=True, verbose_name="цена с учетом скидки")
     quantity_stock = models.IntegerField(verbose_name="количество на складе")
-    quantity_select = models.IntegerField(blank=True, null=True, verbose_name="выбор количества")
+    quantity_select = models.IntegerField(blank=True, null=True, verbose_name="выбор количества") #TODO убрать
     existence = models.BooleanField(null=True, blank=True, default=True, verbose_name="наличие товара на складе")
     product_data = models.ForeignKey(DescriptionProductModel, on_delete=models.CASCADE, verbose_name="данные товара")
     category = models.ForeignKey(CategoryProductModel, on_delete=models.CASCADE, verbose_name="категория товара",
@@ -61,10 +61,8 @@ class FavoriteProductModel(models.Model):
     class Meta:
         verbose_name = 'Избранный товар'
         verbose_name_plural = 'Избранные товары'
-        unique_together = ['user', 'product']
 
     product = models.ForeignKey(ProductModel, on_delete=models.CASCADE)
-    user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE)
 
 
 class CompareProductModel(models.Model):
@@ -72,7 +70,5 @@ class CompareProductModel(models.Model):
     class Meta:
         verbose_name = 'Товар для сравнения'
         verbose_name_plural = 'Товары для сравнения'
-        # unique_together = ['user', 'product']
 
     product = models.ForeignKey(ProductModel, on_delete=models.CASCADE)
-    # user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE)

@@ -1,6 +1,5 @@
 from apps.product.models import CategoryProductModel, SubCategoryProductModel, ProductModel, DescriptionProductModel, \
     FavoriteProductModel, CompareProductModel
-from django.http import JsonResponse
 from config.settings import LOGGER
 from django.db import transaction
 
@@ -14,6 +13,13 @@ class ServiceProduct:
         return result_price
 
     @staticmethod
+    def _calculation_existence(quantity_stock: int, quantity_select: int = 0) -> bool:
+        """Расчет наличия товара на складе (есть/нет)"""
+        if quantity_stock - quantity_select > 0:
+            return True
+        return False
+
+    @staticmethod
     def create_product(validated_data: dict) -> ProductModel:
         """Создание товара"""
         with transaction.atomic():
@@ -22,7 +28,7 @@ class ServiceProduct:
             category, _ = CategoryProductModel.objects.get_or_create(**category_product_data)
             subcategory, _ = SubCategoryProductModel.objects.get_or_create(category=category,
                                                                            **subcategory_product_data)
-            existence = True
+            existence = ServiceProduct._calculation_existence(validated_data['quantity_stock'])
             product_data = validated_data.pop('product_data', None)
             product_data, _ = DescriptionProductModel.objects.get_or_create(**product_data)
             discount = validated_data.pop('discount', None)
