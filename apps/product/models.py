@@ -72,7 +72,7 @@ class CompareProductModel(models.Model):
     class Meta:
         verbose_name = 'Товар для сравнения'
         verbose_name_plural = 'Товары для сравнения'
-        unique_together = ['user', 'product']
+        # unique_together = ['user', 'product']
 
     product = models.ForeignKey(ProductModel, on_delete=models.CASCADE)
-    user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE)
+    # user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE)

@@ -57,26 +57,34 @@ class ListProductSerializer(serializers.ModelSerializer):
 
 class AddProductFavoriteSerializer(serializers.ModelSerializer):
     """Добавление/удаление товара в избранное"""
-    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-
     class Meta:
         model = FavoriteProductModel
-        fields = ('id', 'user')
+        fields = ('id',)
 
     def create(self, validated_data):
         return ServiceProduct.add_delete_product_favorite(validated_data)
 
 
 class AddProductCompareSerializer(serializers.ModelSerializer):
-    """Добавление/удаление товара для сравнения"""
-    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-
     class Meta:
         model = CompareProductModel
-        fields = ('id', 'user')
+        fields = ('id',)
 
     def create(self, validated_data):
         return ServiceProduct.add_delete_product_compare(validated_data)
+
+
+
+# class AddProductCompareSerializer(serializers.ModelSerializer):
+#     """Добавление/удаление товара для сравнения"""
+#     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+#
+#     class Meta:
+#         model = CompareProductModel
+#         fields = ('id', 'user')
+#
+#     def create(self, validated_data):
+#         return ServiceProduct.add_delete_product_compare(validated_data)
 
 
 

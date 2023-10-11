@@ -1,13 +1,14 @@
-from django.shortcuts import render
+
 from rest_framework.generics import CreateAPIView, RetrieveAPIView, ListAPIView, RetrieveUpdateDestroyAPIView, \
     get_object_or_404
 from rest_framework.filters import OrderingFilter, SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAdminUser
 
-from apps.product.models import ProductModel
+from apps.product.models import ProductModel, FavoriteProductModel
 from apps.product.serializers import CreateProductSerializer, RetrieveProductSerializer, ListProductSerializer, \
     AddProductFavoriteSerializer, AddProductCompareSerializer
+from apps.product.services import ServiceProduct
 from config.settings import LOGGER
 
 
@@ -44,6 +45,15 @@ class ListProductSubcategoryView(ListAPIView):
         return ProductModel.objects.filter(category_id=category_id, subcategory_id=subcategory_id).all()
 
 
+# class AddProductFavoriteView(CreateAPIView):
+#     """Добавление/удаление товара в избранное"""
+#     serializer_class = AddProductFavoriteSerializer
+#
+#     def perform_create(self, serializer):
+#         product_id = self.kwargs.get('product_id')
+#         product = get_object_or_404(ProductModel, id=product_id)
+#         serializer.save(product=product)
+
 class AddProductFavoriteView(CreateAPIView):
     """Добавление/удаление товара в избранное"""
     serializer_class = AddProductFavoriteSerializer
@@ -51,7 +61,7 @@ class AddProductFavoriteView(CreateAPIView):
     def perform_create(self, serializer):
         product_id = self.kwargs.get('product_id')
         product = get_object_or_404(ProductModel, id=product_id)
-        serializer.save(product=product)
+        serializer.save(session=self.request.session, product_id=product_id, product=product)
 
 
 class AddProductCompareView(CreateAPIView):
@@ -61,18 +71,25 @@ class AddProductCompareView(CreateAPIView):
     def perform_create(self, serializer):
         product_id = self.kwargs.get('product_id')
         product = get_object_or_404(ProductModel, id=product_id)
-        serializer.save(product=product)
-
-#
-# class ListFavoriteProductView(ListAPIView):
-#
-#     serializer_class = ListProductSerializer
-#
-#     def get_queryset(self):
-#         return
+        serializer.save(session=self.request.session, product_id=product_id, product=product)
 
 
+class ListFavoriteProductView(ListAPIView):
+    """Список избранных товаров пользователя"""
+    serializer_class = ListProductSerializer
+
+    def get_queryset(self):
+        favorite_product_ids = self.request.session.get('favorite', [])
+
+        return ProductModel.objects.filter(id__in=favorite_product_ids)
 
 
+class ListCompareProductView(ListAPIView):
+    """Список товаров для сравнения пользователя"""
+    serializer_class = ListProductSerializer
 
+    def get_queryset(self):
+        compare_product_ids = self.request.session.get('compare', [])
+
+        return ProductModel.objects.filter(id__in=compare_product_ids)
 
