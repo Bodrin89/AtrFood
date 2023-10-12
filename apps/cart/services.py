@@ -46,9 +46,7 @@ class ServiceCart:
         """Получение всех товаров из корзины и их количества в заказе"""
         product_id = instance['product_id']
         quantity_product = instance['quantity_product']
-        LOGGER.debug(instance)
         sum_products = instance['sum_products']
-
 
         try:
             product = ProductModel.objects.get(id=product_id)
@@ -84,6 +82,22 @@ class ServiceCart:
         request.session['product_cart'] = updated_cart
         request.session.modified = True
         return Response({"message": 'Товар удален из корзины'}, status=status.HTTP_204_NO_CONTENT)
+
+
+    @staticmethod
+    def get_total_sum(request):
+        """Получение общей суммы в корзине и проверка товара на наличие"""
+
+        product_cart = request.session.get('product_cart', [])
+        total_sum = []
+        not_existence = []
+        for item in product_cart:
+            product = ProductModel.objects.get(id=item.get('product_id'))
+            if product.existence is True:
+                total_sum.append(item.get('sum_products'))
+            else:
+                not_existence.append(product.id)
+        return Response({'total_sum': sum(total_sum), "Товары не в наличии": not_existence})
 
 
         # if validated_data['user'].id:

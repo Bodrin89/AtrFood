@@ -36,3 +36,9 @@ class DeleteProductCartView(DestroyAPIView):
         return ServiceCart.delete_product_cart(request, *args, **kwargs)
 
 
+class TotalSumProduct(APIView):
+    """Получение общей суммы в корзине и проверка товара на наличие"""
+    def get(self, request, *args, **kwargs):
+        return ServiceCart.get_total_sum(request)
+
+
