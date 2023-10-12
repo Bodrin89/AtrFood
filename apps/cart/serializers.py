@@ -24,10 +24,7 @@ class ListCartSerializer(serializers.Serializer):
     product_id = serializers.IntegerField()
     quantity_product = serializers.IntegerField(min_value=0)
     sum_products = serializers.FloatField(min_value=0.0)
-<<<<<<< HEAD
     total_price = serializers.FloatField(min_value=0.0)
-=======
->>>>>>> master
 
     def to_representation(self, instance):
         return ServiceCart.get_list_product_cart(instance)
