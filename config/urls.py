@@ -12,5 +12,6 @@ urlpatterns = [
     path('', include(('apps.company_user.urls', 'apps.company_user'))),
     path('', include(('apps.product.urls', 'apps.product'))),
     path('', include(('apps.review.urls', 'apps.review'))),
+    path('', include(('apps.cart.urls', 'apps.cart'))),
     prefix_default_language=True,
 )
