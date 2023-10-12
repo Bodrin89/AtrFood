@@ -49,6 +49,7 @@ class ServiceCart:
         LOGGER.debug(instance)
         sum_products = instance['sum_products']
 
+
         try:
             product = ProductModel.objects.get(id=product_id)
             product_data = {
