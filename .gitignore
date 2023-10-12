@@ -243,3 +243,8 @@ cython_debug/
 /src/models/xx.py
 .mypy_cache
 .pytest_cache
+<<<<<<< HEAD
+=======
+/media/
+/identifier.sqlite
+>>>>>>> master
