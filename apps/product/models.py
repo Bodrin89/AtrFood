@@ -44,7 +44,7 @@ class ProductModel(models.Model):
     foto = models.ImageField(null=True, blank=True, upload_to='media', verbose_name="фото товара")
     price = models.FloatField(null=True, blank=True, verbose_name="стоимость за единицу")
     article = models.CharField(max_length=255, null=True, blank=True, verbose_name="артикул товара")
-    discount = models.PositiveSmallIntegerField(blank=True, null=True, verbose_name="скидка/старая цена товара")
+    # discount = models.PositiveSmallIntegerField(blank=True, null=True, verbose_name="скидка/старая цена товара")
     discount_price = models.FloatField(blank=True, null=True, verbose_name="цена с учетом скидки")
     quantity_stock = models.IntegerField(verbose_name="количество на складе")
     quantity_select = models.IntegerField(blank=True, null=True, verbose_name="выбор количества") #TODO убрать
@@ -72,3 +72,38 @@ class CompareProductModel(models.Model):
         verbose_name_plural = 'Товары для сравнения'
 
     product = models.ForeignKey(ProductModel, on_delete=models.CASCADE)
+
+
+class Gift(models.Model):
+    name = models.CharField(max_length=255, verbose_name='Название подарка')
+    description = models.TextField(blank=True, null=True, verbose_name='Описание подарка')
+
+
+class DiscountModel(models.Model):
+    class Meta:
+        verbose_name = 'Акция'
+        verbose_name_plural = 'Акции'
+
+    DISCOUNT_TYPE = 'discount'
+    GIFT_TYPE = 'gift'
+
+    ACTION_TYPE_CHOICES = [
+        (DISCOUNT_TYPE, 'Скидка'),
+        (GIFT_TYPE, 'Подарок'),
+    ]
+
+    name = models.CharField(max_length=255, verbose_name="Наименование акции")
+    category_product = models.ForeignKey(CategoryProductModel, on_delete=models.CASCADE,
+                                         verbose_name="Категория товара")
+    product = models.ManyToManyField(ProductModel, verbose_name="товары по акции")
+    sum_product = models.FloatField(verbose_name="Сумма товара в корзине")
+    count_person = models.PositiveIntegerField(verbose_name="количество человек воспользовавшихся акцией")
+    limit_person = models.PositiveIntegerField(verbose_name="Ограничение по количеству человек")
+    limit_discount = models.PositiveIntegerField(verbose_name="Ограничение по количеству товара")
+    date_end_discount = models.DateField(verbose_name="Дата окончания акции")
+    is_active = models.BooleanField(default=False, verbose_name="Действующая/архивная акция")
+    action_type = models.CharField(max_length=20, choices=ACTION_TYPE_CHOICES, verbose_name='Тип акции')
+    discount_amount = models.PositiveIntegerField(blank=True, null=True, verbose_name='Размер скидки')
+    gift = models.ForeignKey('Gift', on_delete=models.CASCADE, blank=True, null=True, verbose_name='Подарок')
+
+
