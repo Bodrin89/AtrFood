@@ -1,5 +1,7 @@
+from django.db.models import F
 from rest_framework import status
 from rest_framework.response import Response
+from django.core.cache import cache
 
 from apps.product.models import ProductModel
 from config.settings import LOGGER
@@ -22,14 +24,18 @@ class ServiceCart:
         product: ProductModel = validated_data['product']
         price = ProductModel.objects.get(id=product_id).price
 
-
-        discounts = product.discountmodel_set.all().filter(is_active=True)
-        discount_amounts = [discount.discount_amount for discount in discounts]
-
         try:
             ProductModel.objects.get(id=product_id, existence=True)
         except ProductModel.DoesNotExist:
             raise Exception("Товара нет в наличии")
+
+        # discounts_id = [item.id for item in product.products.all()]
+
+        discounts = product.products.all().filter(is_active=True,
+                                                  count_person__lt=F('limit_person'),
+                                                  limit_product__gt=F('count_product') +
+                                                                    validated_data['quantity_product'])
+        discount_amounts = [discount.discount_amount for discount in discounts]
 
         found = False
 
@@ -51,6 +57,10 @@ class ServiceCart:
 
         session['product_cart'] = product_cart
         session.modified = True
+        for item in discounts:
+            item.count_person += 1
+            item.count_product += validated_data['quantity_product']
+            item.save()
         return validated_data
 
     @staticmethod
