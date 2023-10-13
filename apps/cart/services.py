@@ -10,56 +10,59 @@ from config.settings import LOGGER
 class ServiceCart:
 
     @staticmethod
-    def get_sum_price_product(price, quantity_product, discount_amounts):
+    def _get_sum_price_product(price, quantity_product, discount_amounts):
         """Расчет суммы товаров в корзине с учетом всех скидок"""
         return (price - (price * sum(discount_amounts)) / 100) * quantity_product
 
     @staticmethod
-    def add_cart(validated_data: dict) -> dict:
-        """Сохранение товаров в корзину в сессии"""
-
-        product_id = validated_data['product_id']
-        session = validated_data['session']
-        product_cart = session.get('product_cart', [])
-        product: ProductModel = validated_data['product']
-        price = ProductModel.objects.get(id=product_id).price
-
+    def _check_existence(product_id, quantity_product):
+        """Проверка на наличие товара на складе и на наличие запрашиваемого количества"""
         try:
             ProductModel.objects.get(id=product_id, existence=True)
         except ProductModel.DoesNotExist:
             raise Exception("Товара нет в наличии")
+        try:
+            ProductModel.objects.get(id=product_id, quantity_stock__gte=quantity_product)
+        except ProductModel.DoesNotExist:
+            raise Exception("Нужного количества нет на складе")
 
-        # discounts_id = [item.id for item in product.products.all()]
+    @staticmethod
+    def add_cart(validated_data: dict) -> dict:
+        """Сохранение товаров в корзину в сессии"""
+        product_id = validated_data['product_id']
+        session = validated_data['session']
+        product_cart = session.get('product_cart', [])
+        quantity_product = validated_data['quantity_product']
+        product: ProductModel = validated_data['product']
+        price = ProductModel.objects.get(id=product_id).price
+
+        ServiceCart._check_existence(product_id, quantity_product)
 
         discounts = product.products.all().filter(is_active=True,
                                                   count_person__lt=F('limit_person'),
-                                                  limit_product__gt=F('count_product') +
-                                                                    validated_data['quantity_product'])
+                                                  limit_product__gt=F('count_product') + quantity_product)
         discount_amounts = [discount.discount_amount for discount in discounts]
 
         found = False
 
         for item in product_cart:
             if item.get('product_id') == product_id:
-                item['quantity_product'] = validated_data['quantity_product']
-                item['sum_products'] = ServiceCart.get_sum_price_product(price, validated_data['quantity_product'],
-                                                                         discount_amounts)
+                item['quantity_product'] = quantity_product
+                item['sum_products'] = ServiceCart._get_sum_price_product(price, quantity_product, discount_amounts)
                 found = True
                 break
 
         if not found:
             product_cart.append({
                 'product_id': product_id,
-                'quantity_product': validated_data['quantity_product'],
-                'sum_products': ServiceCart.get_sum_price_product(price, validated_data['quantity_product'],
-                                                                  discount_amounts)
+                'quantity_product': quantity_product,
+                'sum_products': ServiceCart._get_sum_price_product(price, quantity_product, discount_amounts)
             })
-
         session['product_cart'] = product_cart
         session.modified = True
         for item in discounts:
             item.count_person += 1
-            item.count_product += validated_data['quantity_product']
+            item.count_product += quantity_product
             item.save()
         return validated_data
 

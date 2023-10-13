@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
 
-from apps.product.models import DiscountModel
+from apps.promotion.models import DiscountModel
 
 
 @admin.register(DiscountModel)
