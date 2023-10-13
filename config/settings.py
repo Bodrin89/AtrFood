@@ -4,7 +4,7 @@ from pathlib import Path
 from django.utils.translation import gettext_lazy as _
 
 from dotenv import load_dotenv
-
+''
 # from django.conf.locale import LANG_INFO
 
 load_dotenv()
