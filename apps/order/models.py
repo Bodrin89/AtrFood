@@ -47,7 +47,7 @@ class Order(models.Model):
         blank=True,
         verbose_name='Менеджер, ответственный за оплату',
         related_name='managed_orders',
-        limit_choices_to={'user_permissions__codename': 'can_manage_payments'}
+        limit_choices_to={'user_permissions': 'manager_permission'}
     )
 
     def __str__(self):
