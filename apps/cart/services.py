@@ -1,9 +1,9 @@
-from django.db.models import F
+from django.db.models import F, Q
 from rest_framework import status
 from rest_framework.response import Response
-from django.core.cache import cache
 
 from apps.product.models import ProductModel
+from apps.promotion.models import DiscountModel, LoyaltyModel
 from config.settings import LOGGER
 
 
@@ -27,6 +27,18 @@ class ServiceCart:
             raise Exception("Нужного количества нет на складе")
 
     @staticmethod
+    def _get_discount(product: ProductModel, quantity_product: int, limit_sum_product: float) -> list[DiscountModel]:
+        """Фильтр акций по условиям"""
+        discounts = product.products.all().filter(
+            Q(is_active=True) &
+            (Q(use_limit_person=True, count_person__lt=F('limit_person')) | ~Q(use_limit_person=True)) &
+            (Q(use_limit_product=True, limit_product__gt=F('count_product') + quantity_product) | ~Q(
+                use_limit_product=True)) &
+            (Q(use_limit_sum_product=True, limit_sum_product__lt=limit_sum_product) | ~Q(use_limit_sum_product=True))
+        )
+        return discounts
+
+    @staticmethod
     def add_cart(validated_data: dict) -> dict:
         """Сохранение товаров в корзину в сессии"""
         product_id = validated_data['product_id']
@@ -35,13 +47,20 @@ class ServiceCart:
         quantity_product = validated_data['quantity_product']
         product: ProductModel = validated_data['product']
         price = ProductModel.objects.get(id=product_id).price
+        limit_sum_product = price * quantity_product
 
         ServiceCart._check_existence(product_id, quantity_product)
 
-        discounts = product.products.all().filter(is_active=True,
-                                                  count_person__lt=F('limit_person'),
-                                                  limit_product__gt=F('count_product') + quantity_product)
+        discounts = ServiceCart._get_discount(product, quantity_product, limit_sum_product)
         discount_amounts = [discount.discount_amount for discount in discounts]
+
+        if validated_data['user'].id and product.products.all().filter(use_limit_loyalty=True):
+            try:
+                get_loyalty = LoyaltyModel.objects.get(id=1)  # TODO Заменить на действующий id
+                loyalty_discount = get_loyalty.discount_percentage
+                discount_amounts.append(loyalty_discount)
+            except LoyaltyModel.DoesNotExist:
+                pass
 
         found = False
 
@@ -123,7 +142,3 @@ class ServiceCart:
                 not_existence.append(product.id)
         return Response({'total_sum': sum(total_sum), "Товары не в наличии": not_existence})
 
-        # if validated_data['user'].id:
-        #     LOGGER.debug(validated_data)
-        #
-        # return CartModel.objects.create()
