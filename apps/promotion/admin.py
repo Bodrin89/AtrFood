@@ -8,6 +8,7 @@ from apps.promotion.models import DiscountModel, LoyaltyModel
 class DiscountAdmin(admin.ModelAdmin):
     pass
 
+
 @admin.register(LoyaltyModel)
 class LoyaltyAdmin(admin.ModelAdmin):
     pass

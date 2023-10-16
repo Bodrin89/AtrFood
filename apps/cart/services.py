@@ -26,6 +26,7 @@ class ServiceCart:
         except ProductModel.DoesNotExist:
             raise Exception("Нужного количества нет на складе")
 
+
     @staticmethod
     def _get_discount(product: ProductModel, quantity_product: int, limit_sum_product: float) -> list[DiscountModel]:
         """Фильтр акций по условиям"""
