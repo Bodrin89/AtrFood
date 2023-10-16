@@ -47,10 +47,17 @@ class ReviewProductViewSet(ModelViewSet):
     @action(detail=True, methods=['get'], permission_classes=[AllowAny])
     def reviews_for_product(self, request, pk=None):
         if pk is None:
-            return Response({"error": "Необходимо указать ID продукта."},
-                            status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Необходимо указать ID продукта."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         queryset = self.get_queryset().filter(product=pk)
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        if queryset:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+        return Response(
+            {'detail': 'Комментарии по данному продукту отсутствуют'},
+            status=status.HTTP_204_NO_CONTENT
+        )
 
