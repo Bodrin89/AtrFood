@@ -54,6 +54,7 @@ class ProfileViewSet(ReadOnlyModelViewSet):
 
 
 class AddressViewSet(ModelViewSet):
+    """Просмотр и создание нового адреса пользователя отдельно"""
     serializer_class = AddressSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -65,6 +66,7 @@ class ClientViewSet(mixins.RetrieveModelMixin,
                     mixins.UpdateModelMixin,
                     GenericViewSet):
     """Просмотр профиля и изменение данных пользователя"""
+    permission_classes = [permissions.IsAuthenticated, ]
 
     def get_queryset(self):
         user = self.request.user

@@ -11,6 +11,9 @@ class CategoryProductModel(models.Model):
 
     name = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.name
+
 
 class SubCategoryProductModel(models.Model):
     """Модель подкатегории товара"""
@@ -20,6 +23,9 @@ class SubCategoryProductModel(models.Model):
 
     name = models.CharField(max_length=255)
     category = models.ForeignKey(CategoryProductModel, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
 
 
 class DescriptionProductModel(models.Model):
@@ -55,6 +61,9 @@ class ProductModel(models.Model):
     subcategory = models.ForeignKey(SubCategoryProductModel, on_delete=models.CASCADE, null=True, blank=True,
                                     verbose_name="подкатегория товара")
 
+    def __str__(self):
+        return self.name
+
 
 class FavoriteProductModel(models.Model):
     """Модель избранных товаров"""
@@ -64,6 +73,9 @@ class FavoriteProductModel(models.Model):
 
     product = models.ForeignKey(ProductModel, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.product
+
 
 class CompareProductModel(models.Model):
     """Модель товаров для сравнения"""
@@ -72,5 +84,8 @@ class CompareProductModel(models.Model):
         verbose_name_plural = 'Товары для сравнения'
 
     product = models.ForeignKey(ProductModel, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.product
 
 
