@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.generics import CreateAPIView, get_object_or_404
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
@@ -22,9 +23,11 @@ from rest_framework.viewsets import ModelViewSet
 
 class ReviewProductViewSet(ModelViewSet):
     """Просмотр всех отзывов и создание отзывов с проверкой на покупку товара"""
-    queryset = ReviewProductModel.objects.all()
     serializer_class = ReviewCreateSerializer
     permission_classes = [AllowAny, ]
+
+    def get_queryset(self):
+        return ReviewProductModel.objects.all()
 
     def get_permissions(self):
         if self.action == 'create':
@@ -40,4 +43,21 @@ class ReviewProductViewSet(ModelViewSet):
                             status=status.HTTP_400_BAD_REQUEST)
 
         return super().create(request, *args, **kwargs)
+
+    @action(detail=True, methods=['get'], permission_classes=[AllowAny])
+    def reviews_for_product(self, request, pk=None):
+        if pk is None:
+            return Response(
+                {"error": "Необходимо указать ID продукта."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        queryset = self.get_queryset().filter(product=pk)
+        if queryset:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+        return Response(
+            {'detail': 'Комментарии по данному продукту отсутствуют'},
+            status=status.HTTP_204_NO_CONTENT
+        )
 
