@@ -34,12 +34,13 @@ class UserServices:
     @staticmethod
     def login_user(user_data: Request, serializer_data: Callable) -> BaseUserModel:
         """Аутентификация пользователя"""
+
         if not (user := authenticate(
                 password=user_data.data.get('password', None),
                 email=user_data.data.get('email', None)
         )):
             raise AuthenticationFailed
         else:
-            serializer = serializer_data(data={'password': user.password, 'email': user.email})
-            serializer.is_valid(raise_exception=True)
+            # serializer = serializer_data(data={'password': user.password, 'email': user.email})
+            # # serializer.is_valid(raise_exception=True)
             return user
