@@ -13,5 +13,6 @@ urlpatterns = [
     path('', include(('apps.product.urls', 'apps.product'))),
     path('', include(('apps.review.urls', 'apps.review'))),
     path('', include(('apps.cart.urls', 'apps.cart'))),
+    path('api/order', include(('apps.order.urls', 'apps.order'))),
     prefix_default_language=True,
 )
