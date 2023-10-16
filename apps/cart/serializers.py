@@ -14,6 +14,14 @@ class CreateCartSerializer(serializers.ModelSerializer):
         model = CartModel
         fields = ('quantity_product', 'user')
 
+    def validate_quantity_product(self, value):
+        """
+        Проверка, что quantity_product больше 0
+        """
+        if value <= 0:
+            raise serializers.ValidationError("Количество товара должно быть больше 0")
+        return value
+
     def create(self, validated_data):
         return ServiceCart.add_cart(validated_data)
 

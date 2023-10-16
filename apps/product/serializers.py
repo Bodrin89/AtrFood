@@ -36,7 +36,7 @@ class CreateProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProductModel
-        fields = ('id', 'name', 'foto', 'price', 'discount', 'discount_price', 'product_data', 'quantity_stock',
+        fields = ('id', 'name', 'foto', 'price', 'discount_price', 'product_data', 'quantity_stock',
                   'category', 'subcategory')
         read_only_fields = ('id', 'discount_price',)
 
@@ -79,6 +79,18 @@ class AddProductCompareSerializer(serializers.ModelSerializer):
         return ServiceProduct.add_delete_product_compare(validated_data)
 
 
+class ProductInfoSerializer(serializers.ModelSerializer):
+    """Получение всех товаров"""
+
+    class Meta:
+        model = ProductModel
+        fields = [
+            'name',
+            'foto',
+            'price',
+            'article',
+            'discount_price',
+        ]
 
 # class AddProductCompareSerializer(serializers.ModelSerializer):
 #     """Добавление/удаление товара для сравнения"""
