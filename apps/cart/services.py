@@ -1,4 +1,5 @@
 from django.db.models import F, Q
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -26,6 +27,14 @@ class ServiceCart:
         except ProductModel.DoesNotExist:
             raise Exception("Нужного количества нет на складе")
 
+    # @staticmethod
+    # def check_date_promotions():
+    #     promotions = DiscountModel.objects.all()
+    #     for item in promotions:
+    #         if item.date_end_discount > timezone.now().date():
+    #             item.is_active = False
+    #             LOGGER.debug(item.is_active)
+    #             item.save()
 
     @staticmethod
     def _get_discount(product: ProductModel, quantity_product: int, limit_sum_product: float) -> list[DiscountModel]:
@@ -51,6 +60,8 @@ class ServiceCart:
         limit_sum_product = price * quantity_product
 
         ServiceCart._check_existence(product_id, quantity_product)
+
+        # ServiceCart.check_date_promotions()
 
         discounts = ServiceCart._get_discount(product, quantity_product, limit_sum_product)
         discount_amounts = [discount.discount_amount for discount in discounts]
