@@ -1,5 +1,6 @@
 from django.db import models
 
+from apps.promotion.models import LoyaltyModel
 from apps.user.models import AddressModel, BaseUserModel
 from django.utils.translation import gettext_lazy as _
 
@@ -43,3 +44,6 @@ class CompanyUserModel(BaseUserModel):
     payment_method = models.CharField(max_length=10, choices=PaymentMethod.choices, default=PaymentMethod.NON_CASH,
                                       verbose_name="способ оплаты")
     contact_person = models.ForeignKey(ContactPersonModel, on_delete=models.CASCADE, verbose_name="контактное лицо")
+    loyalty = models.ForeignKey(LoyaltyModel, null=True, blank=True, on_delete=models.CASCADE, verbose_name="Уровень " \
+                                                                                                        "системы " \
+                                                                                            "лояльности")

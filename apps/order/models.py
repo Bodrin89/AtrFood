@@ -1,7 +1,11 @@
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from django.db import models
+
+from apps.individual_user.models import IndividualUserModel
 from apps.product.models import ProductModel
+from apps.promotion.models import LoyaltyModel
+from apps.user.models import BaseUserModel
 from apps.user.validators import validate_phone_number
 from django.db.models import Sum, F, ExpressionWrapper, IntegerField
 from django.db.models.signals import post_save, post_delete
