@@ -1,7 +1,11 @@
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from django.db import models
+
+from apps.individual_user.models import IndividualUserModel
 from apps.product.models import ProductModel
+from apps.promotion.models import LoyaltyModel
+from apps.user.models import BaseUserModel
 from apps.user.validators import validate_phone_number
 from django.db.models import Sum, F, ExpressionWrapper, IntegerField
 from django.db.models.signals import post_save, post_delete
@@ -47,7 +51,7 @@ class Order(models.Model):
         blank=True,
         verbose_name='Менеджер, ответственный за оплату',
         related_name='managed_orders',
-        limit_choices_to={'user_permissions': 'manager_permission'}
+        limit_choices_to={'is_staff': True}
     )
 
     def __str__(self):

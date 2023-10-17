@@ -1,11 +1,13 @@
 from django.db.models import F, Q
-from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
 
+from apps.company_user.models import CompanyUserModel
+from apps.individual_user.models import IndividualUserModel
 from apps.product.models import ProductModel
 from apps.promotion.models import DiscountModel, LoyaltyModel
 from apps.promotion.services import ServicePromotion
+from apps.user.models import BaseUserModel
 from config.settings import LOGGER
 
 
@@ -41,6 +43,35 @@ class ServiceCart:
         return discounts
 
     @staticmethod
+    def get_level_loyalty(user_id, discount_amounts):
+        """Получение уровня лояльности"""
+        try:
+            user_type = BaseUserModel.objects.get(id=user_id).user_type
+            loyalty = None
+
+            if user_type == 'individual':
+                try:
+                    loyalty = IndividualUserModel.objects.get(baseusermodel_ptr_id=user_id).loyalty
+                except IndividualUserModel.DoesNotExist:
+                    pass
+            elif user_type == 'company':
+                try:
+                    loyalty = CompanyUserModel.objects.get(baseusermodel_ptr_id=user_id).loyalty
+                except CompanyUserModel.DoesNotExist:
+                    pass
+
+            if loyalty:
+                try:
+                    get_loyalty = LoyaltyModel.objects.get(id=loyalty.id)
+                    loyalty_discount = get_loyalty.discount_percentage
+                    discount_amounts.append(loyalty_discount)
+                except LoyaltyModel.DoesNotExist:
+                    pass
+
+        except BaseUserModel.DoesNotExist:
+            pass
+
+    @staticmethod
     def add_cart(validated_data: dict) -> dict:
         """Сохранение товаров в корзину в сессии"""
         product_id = validated_data['product_id']
@@ -58,13 +89,9 @@ class ServiceCart:
         discounts = ServiceCart._get_discount(product, quantity_product, limit_sum_product)
         discount_amounts = [discount.discount_amount for discount in discounts]
 
-        if validated_data['user'].id and product.products.all().filter(use_limit_loyalty=True):
-            try:
-                get_loyalty = LoyaltyModel.objects.get(id=1)  # TODO Заменить на действующий id
-                loyalty_discount = get_loyalty.discount_percentage
-                discount_amounts.append(loyalty_discount)
-            except LoyaltyModel.DoesNotExist:
-                pass
+        if validated_data['user'].id and product.products.filter(use_limit_loyalty=True).exists():
+            user_id = validated_data['user'].id
+            ServiceCart.get_level_loyalty(user_id, discount_amounts)
 
         found = False
 
