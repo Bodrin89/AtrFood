@@ -2,14 +2,16 @@ from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from django.db import models
 
+from apps.company_user.models import CompanyUserModel
 from apps.individual_user.models import IndividualUserModel
 from apps.product.models import ProductModel
 from apps.promotion.models import LoyaltyModel
 from apps.user.models import BaseUserModel
 from apps.user.validators import validate_phone_number
 from django.db.models import Sum, F, ExpressionWrapper, IntegerField
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_save, post_delete, pre_save
 
+from config.settings import LOGGER
 
 User = get_user_model()
 
@@ -90,3 +92,29 @@ class OrderItem(models.Model):
 @receiver(post_delete, sender=OrderItem)
 def update_order_totals(sender, instance, **kwargs):
     instance.order.update_totals()
+
+
+@receiver(post_save, sender=Order)
+def update_level_loyalty(sender, instance, **kwargs):
+    user: BaseUserModel = User.objects.get(id=instance.user.id)
+    loyalty = None
+
+    if user.user_type == 'individual':
+        user_model = IndividualUserModel
+    elif user.user_type == 'company':
+        user_model = CompanyUserModel
+    else:
+        return
+
+    user_instance = user_model.objects.get(baseusermodel_ptr_id=user.id)
+    sum_total_price = Order.objects.filter(user_id=user_instance.id,
+                                           status='completed').aggregate(Sum('total_price'))['total_price__sum'] or 0
+
+    loyalty_levels = LoyaltyModel.objects.all().order_by('sum_step')
+    for level in loyalty_levels:
+        if level.sum_step > sum_total_price:
+            break
+        loyalty = level
+
+    user_instance.loyalty = loyalty
+    user_instance.save()
