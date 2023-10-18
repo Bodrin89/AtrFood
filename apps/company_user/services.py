@@ -28,7 +28,7 @@ class CompanyUserServices:
             company_address, created = CompanyAddress.objects.get_or_create(**company_address_data)
             company_user = CompanyUserModel.objects.create(region=region, bank=bank_, company_address=company_address,
                                                            contact_person=contact_person,
-                                                           is_active=False,
+                                                           # is_active=False,
                                                            user_type='company',
                                                            **validated_data)
             # AddressModel.objects.create(user=company_user, **address_data)
@@ -37,12 +37,12 @@ class CompanyUserServices:
             message = 'Для подтверждения email, пожалуйста, перейдите по ссылке:'
             subject = 'Подтверждение email'
             email_url = 'confirm-email'
-            UserServices.confirmation_email(
-                user_token=company_user.confirmation_token,
-                message=message,
-                subject=subject,
-                email_url=email_url,
-                user_email=company_user.email
-            )
+            # UserServices.confirmation_email(
+            #     user_token=company_user.confirmation_token,
+            #     message=message,
+            #     subject=subject,
+            #     email_url=email_url,
+            #     user_email=company_user.email
+            # )
             # login(request, company_user)
         return company_user

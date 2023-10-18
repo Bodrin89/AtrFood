@@ -21,7 +21,7 @@ class IndividualUserService:
             region, created = RegionModel.objects.get_or_create(**region_data)
             user = IndividualUserModel.objects.create(
                 region=region,
-                is_active=False,
+                # is_active=False,
                 **validated_data
             )
             for address_data in addresses_data:
@@ -29,11 +29,11 @@ class IndividualUserService:
             message = 'Для подтверждения email, пожалуйста, перейдите по ссылке:'
             subject = 'Подтверждение email'
             email_url = 'confirm-email'
-            UserServices.confirmation_email(
-                user_token=user.confirmation_token,
-                user_email=user.email,
-                email_url=email_url,
-                message=message,
-                subject=subject
-                )
+            # UserServices.confirmation_email(
+            #     user_token=user.confirmation_token,
+            #     user_email=user.email,
+            #     email_url=email_url,
+            #     message=message,
+            #     subject=subject
+            #     )
         return user
