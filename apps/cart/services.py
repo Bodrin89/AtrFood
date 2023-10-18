@@ -161,7 +161,6 @@ class ServiceCart:
     @staticmethod
     def get_total_sum(request):
         """Получение общей суммы в корзине и проверка товара на наличие"""
-
         product_cart = request.session.get('product_cart', [])
         total_sum = []
         not_existence = []
