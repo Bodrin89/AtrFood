@@ -5,6 +5,7 @@ from django.db import transaction
 from apps.individual_user.models import IndividualUserModel
 from apps.user.models import AddressModel, RegionModel
 from config.settings import LOGGER
+from apps.user.services import UserServices
 
 
 class IndividualUserService:
@@ -20,10 +21,19 @@ class IndividualUserService:
             region, created = RegionModel.objects.get_or_create(**region_data)
             user = IndividualUserModel.objects.create(
                 region=region,
-                # is_active=False,
+                is_active=False,
                 **validated_data
             )
             for address_data in addresses_data:
                 AddressModel.objects.create(user=user, **address_data)
-            login(request, user)
+            message = 'Для подтверждения email, пожалуйста, перейдите по ссылке:'
+            subject = 'Подтверждение email'
+            email_url = 'confirm-email'
+            UserServices.confirmation_email(
+                user_token=user.confirmation_token,
+                user_email=user.email,
+                email_url=email_url,
+                message=message,
+                subject=subject
+                )
         return user
