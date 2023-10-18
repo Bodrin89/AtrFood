@@ -3,9 +3,9 @@ from rest_framework import serializers
 
 from apps.individual_user.models import IndividualUserModel
 from apps.individual_user.services import IndividualUserService
+from apps.user.models import AddressModel
 from apps.user.serializers import AddressSerializer, RegionSerializer
 from apps.user.services import UserServices
-from apps.user.models import AddressModel
 from config.settings import LOGGER
 
 
@@ -53,9 +53,9 @@ class GetUpdateIndividualSerializer(serializers.ModelSerializer):
 
     def validate_addresses(self, value):
         if not value or len(value) == 0:
-            raise serializers.ValidationError("Необходимо предоставить хотя бы один адрес.")
+            raise serializers.ValidationError('Необходимо предоставить хотя бы один адрес.')
         if len(value) > 3:
-            raise serializers.ValidationError("Можно добавить не более трех адресов.")
+            raise serializers.ValidationError('Можно добавить не более трех адресов.')
         return value
 
     def update(self, instance, validated_data):

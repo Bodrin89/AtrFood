@@ -1,10 +1,7 @@
 from django.urls import path
-
-from apps.review.views import (
-    # ReviewCreateView,
-    ReviewProductViewSet
-)
 from rest_framework.routers import DefaultRouter
+
+from apps.review.views import ReviewProductViewSet  # ReviewCreateView,
 
 router = DefaultRouter()
 

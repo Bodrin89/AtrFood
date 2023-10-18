@@ -13,7 +13,7 @@ def bik_validator(bik):
 
 
 def iban_validator(iban):
-    iban_ = iban.replace(" ", "")
+    iban_ = iban.replace(' ', '')
     list_iban = ' '.join(iban_).split()
     if not list_iban[0:2] == ['K', 'Z']:
         raise ValidationError('IBAN должен начинаться с "KZ"')

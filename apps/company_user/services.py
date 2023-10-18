@@ -2,7 +2,7 @@ from django.contrib.auth import login
 from django.contrib.auth.hashers import make_password
 from django.db import transaction
 
-from apps.company_user.models import CompanyUserModel, ContactPersonModel, CompanyAddress
+from apps.company_user.models import CompanyAddress, CompanyUserModel, ContactPersonModel
 from apps.user.models import AddressModel, RegionModel
 from config.settings import LOGGER
 from apps.user.services import UserServices
@@ -18,7 +18,7 @@ class CompanyUserServices:
             validated_data['password'] = make_password(validated_data['password'])
             LOGGER.debug(validated_data)
             bank = validated_data.pop('bank', None)
-            bank_ = bank.replace(" ", "")
+            bank_ = bank.replace(' ', '')
             contact_person_data = validated_data.pop('contact_person', None)
             company_address_data = validated_data.pop('company_address', None)
             addresses_data = validated_data.pop('addresses', [])

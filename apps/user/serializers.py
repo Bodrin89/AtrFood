@@ -50,7 +50,7 @@ class AddressSerializer(serializers.ModelSerializer):
         user = request.user
         if user.is_authenticated and not self.instance:
             if AddressModel.objects.filter(user=user).count() >= 3 and request.method != 'PUT':
-                raise serializers.ValidationError("Вы не можете добавить более трех адресов.")
+                raise serializers.ValidationError('Вы не можете добавить более трех адресов.')
         return attrs
 
     def create(self, validated_data):

@@ -9,7 +9,7 @@ class CartModel(models.Model):
         verbose_name = 'Корзина'
         verbose_name_plural = 'Корзины'
 
-    product = models.ForeignKey(ProductModel, on_delete=models.CASCADE, null=True, blank=True, verbose_name="товар")
-    quantity_product = models.IntegerField(verbose_name="выбор количества товара")
-    sum_products = models.FloatField(verbose_name="сумма по товару в корзине")
-    total_price = models.FloatField(verbose_name="итоговая сумма всех товаров")
+    product = models.ForeignKey(ProductModel, on_delete=models.CASCADE, null=True, blank=True, verbose_name='товар')
+    quantity_product = models.IntegerField(verbose_name='выбор количества товара')
+    sum_products = models.FloatField(verbose_name='сумма по товару в корзине')
+    total_price = models.FloatField(verbose_name='итоговая сумма всех товаров')

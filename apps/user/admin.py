@@ -1,7 +1,7 @@
 from django.contrib import admin
 from modeltranslation.admin import TranslationAdmin
 
-from apps.user.models import BaseUserModel, RegionModel, AddressModel
+from apps.user.models import AddressModel, BaseUserModel, RegionModel
 
 
 @admin.register(RegionModel)

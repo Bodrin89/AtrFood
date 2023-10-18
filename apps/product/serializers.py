@@ -1,8 +1,12 @@
 
 from rest_framework import serializers
 
-from apps.product.models import ProductModel, CategoryProductModel, SubCategoryProductModel, DescriptionProductModel, \
-    FavoriteProductModel, CompareProductModel
+from apps.product.models import (CategoryProductModel,
+                                 CompareProductModel,
+                                 DescriptionProductModel,
+                                 FavoriteProductModel,
+                                 ProductModel,
+                                 SubCategoryProductModel,)
 from apps.product.services import ServiceProduct
 from config.settings import LOGGER
 
@@ -102,8 +106,3 @@ class ProductInfoSerializer(serializers.ModelSerializer):
 #
 #     def create(self, validated_data):
 #         return ServiceProduct.add_delete_product_compare(validated_data)
-
-
-
-
-

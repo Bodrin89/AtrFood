@@ -17,8 +17,8 @@ class ReviewProductModel(models.Model):
         FOUR_STAR = 4
         FIVE_STAR = 5
 
-    count_stars = models.CharField(max_length=1, choices=Stars.choices, default=None, verbose_name="количество звезд")
-    review_text = models.TextField(blank=True, null=True, verbose_name="отзыв")
-    foto = models.ImageField(blank=True, null=True, upload_to='media', verbose_name="фото")
+    count_stars = models.CharField(max_length=1, choices=Stars.choices, default=None, verbose_name='количество звезд')
+    review_text = models.TextField(blank=True, null=True, verbose_name='отзыв')
+    foto = models.ImageField(blank=True, null=True, upload_to='media', verbose_name='фото')
     product = models.ForeignKey(ProductModel, on_delete=models.CASCADE)
     user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE)

@@ -1,5 +1,5 @@
-from modeltranslation.admin import TranslationAdmin
 from django.contrib import admin
+from modeltranslation.admin import TranslationAdmin
 
 from apps.individual_user.models import IndividualUserModel
 
