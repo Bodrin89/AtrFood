@@ -38,7 +38,7 @@ class CreateIndividualSerializer(serializers.ModelSerializer):
 
 
 class GetUpdateIndividualSerializer(serializers.ModelSerializer):
-    """Сериализатор для просмотра и смены информации для физ лица кроме(email, password)"""
+    """Сериализатор для просмотра и смены информации для физ лиц кроме(email, password)"""
 
     email = serializers.CharField(read_only=True)
     second_phone_number = serializers.CharField(max_length=50, required=False, allow_blank=True)
