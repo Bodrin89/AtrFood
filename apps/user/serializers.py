@@ -58,3 +58,38 @@ class AddressSerializer(serializers.ModelSerializer):
         validated_data['user'] = request.user
         return super().create(validated_data)
 
+
+class EmailSerializer(serializers.Serializer):
+    """Сериализатор для смены email"""
+
+    email = serializers.EmailField(required=True)
+
+
+class ChangePasswordSerializer(serializers.ModelSerializer):
+
+    new_password = serializers.CharField(
+        validators=[validate_password],
+        write_only=True,
+        style={'input_type': 'password'}
+    )
+    repeat_password = serializers.CharField(
+        validators=[validate_password],
+        write_only=True,
+        style={'input_type': 'password'}
+    )
+
+    class Meta:
+        model = User
+        fields = ('new_password', 'repeat_password')
+
+    def validate(self, attrs):
+        new_password = attrs.get('new_password')
+        repeat_password = attrs.get('repeat_password')
+        if new_password != repeat_password:
+            raise serializers.ValidationError({"repeat_password": "Пароли не совпадают"})
+        return attrs
+
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data['new_password'])
+        instance.save()
+        return instance
