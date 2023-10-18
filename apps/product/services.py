@@ -1,7 +1,12 @@
-from apps.product.models import CategoryProductModel, SubCategoryProductModel, ProductModel, DescriptionProductModel, \
-    FavoriteProductModel, CompareProductModel
-from config.settings import LOGGER
 from django.db import transaction
+
+from apps.product.models import (CategoryProductModel,
+                                 CompareProductModel,
+                                 DescriptionProductModel,
+                                 FavoriteProductModel,
+                                 ProductModel,
+                                 SubCategoryProductModel,)
+from config.settings import LOGGER
 
 
 class ServiceProduct:

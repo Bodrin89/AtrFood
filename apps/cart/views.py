@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from rest_framework import status
 from rest_framework.generics import CreateAPIView, DestroyAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
@@ -40,5 +40,3 @@ class TotalSumProduct(APIView):
     """Получение общей суммы в корзине и проверка товара на наличие"""
     def get(self, request, *args, **kwargs):
         return ServiceCart.get_total_sum(request)
-
-

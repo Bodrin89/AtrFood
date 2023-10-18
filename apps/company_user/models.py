@@ -1,8 +1,8 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from apps.promotion.models import LoyaltyModel
 from apps.user.models import AddressModel, BaseUserModel
-from django.utils.translation import gettext_lazy as _
 
 
 class ContactPersonModel(models.Model):
@@ -10,9 +10,9 @@ class ContactPersonModel(models.Model):
         verbose_name = 'Контактное лицо'
         verbose_name_plural = 'Контактные лица'
 
-    surname = models.CharField(max_length=255, verbose_name="фамилия")
-    first_name = models.CharField(max_length=255, verbose_name="имя")
-    second_name = models.CharField(max_length=255, verbose_name="отчество")
+    surname = models.CharField(max_length=255, verbose_name='фамилия')
+    first_name = models.CharField(max_length=255, verbose_name='имя')
+    second_name = models.CharField(max_length=255, verbose_name='отчество')
 
 
 class CompanyAddress(AddressModel):
@@ -20,8 +20,8 @@ class CompanyAddress(AddressModel):
         verbose_name = 'Адрес Компании'
         verbose_name_plural = 'Адреса компаний'
 
-    country = models.CharField(max_length=255, verbose_name="страна")
-    office_number = models.PositiveSmallIntegerField(verbose_name="номер офиса")
+    country = models.CharField(max_length=255, verbose_name='страна')
+    office_number = models.PositiveSmallIntegerField(verbose_name='номер офиса')
     apartment_number = None
     floor = None
 
@@ -35,15 +35,15 @@ class CompanyUserModel(BaseUserModel):
         CASH = ('cash', _('Cache'))
         NON_CASH = ('non_cash', _('Non_cash'))
 
-    company_name = models.CharField(max_length=255, verbose_name="название компании")
-    bin_iin = models.PositiveBigIntegerField(verbose_name="БИН/ИИН")
-    iik = models.CharField(max_length=255, verbose_name="ИИК")
-    bank = models.CharField(max_length=255, verbose_name="IBAN")
-    bik = models.CharField(max_length=255, verbose_name="БИК")
-    company_address = models.ForeignKey(CompanyAddress, on_delete=models.CASCADE, verbose_name="Адрес компании")
+    company_name = models.CharField(max_length=255, verbose_name='название компании')
+    bin_iin = models.PositiveBigIntegerField(verbose_name='БИН/ИИН')
+    iik = models.CharField(max_length=255, verbose_name='ИИК')
+    bank = models.CharField(max_length=255, verbose_name='IBAN')
+    bik = models.CharField(max_length=255, verbose_name='БИК')
+    company_address = models.ForeignKey(CompanyAddress, on_delete=models.CASCADE, verbose_name='Адрес компании')
     payment_method = models.CharField(max_length=10, choices=PaymentMethod.choices, default=PaymentMethod.NON_CASH,
-                                      verbose_name="способ оплаты")
-    contact_person = models.ForeignKey(ContactPersonModel, on_delete=models.CASCADE, verbose_name="контактное лицо")
-    loyalty = models.ForeignKey(LoyaltyModel, null=True, blank=True, on_delete=models.CASCADE, verbose_name="Уровень " \
-                                                                                                        "системы " \
-                                                                                            "лояльности")
+                                      verbose_name='способ оплаты')
+    contact_person = models.ForeignKey(ContactPersonModel, on_delete=models.CASCADE, verbose_name='контактное лицо')
+    loyalty = models.ForeignKey(LoyaltyModel, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Уровень ' \
+                                                                                                        'системы ' \
+                                                                                            'лояльности')

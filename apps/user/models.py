@@ -28,21 +28,21 @@ class BaseUserModel(AbstractUser):
     )
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ["username"]
+    REQUIRED_FIELDS = ['username']
 
     last_name = None
     first_name = None
     phone_number = models.CharField(
         max_length=20,
         validators=[validate_phone_number],
-        verbose_name="номер телефона"
+        verbose_name='номер телефона'
         )
     user_type = models.CharField(max_length=10, choices=USER_TYPES, default='individual')
-    email = models.EmailField(unique=True, verbose_name="электронная почта")
+    email = models.EmailField(unique=True, verbose_name='электронная почта')
     region = models.ForeignKey(
         RegionModel,
         on_delete=models.CASCADE,
-        verbose_name="место положения область/город",
+        verbose_name='место положения область/город',
         null=True,
         blank=True
         )
@@ -56,12 +56,12 @@ class AddressModel(models.Model):
         verbose_name = 'Адрес'
         verbose_name_plural = 'Адреса'
 
-    district = models.CharField(max_length=255, blank=True, null=True, verbose_name="район")
-    street = models.CharField(max_length=255, blank=True, null=True, verbose_name="улица")
-    house_number = models.CharField(max_length=255, blank=True, null=True, verbose_name="номер дома")
-    apartment_number = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name="номер квартиры")
-    floor = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name="этаж")
-    user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE, related_name='addresses', null=True, verbose_name="пользователь")
+    district = models.CharField(max_length=255, blank=True, null=True, verbose_name='район')
+    street = models.CharField(max_length=255, blank=True, null=True, verbose_name='улица')
+    house_number = models.CharField(max_length=255, blank=True, null=True, verbose_name='номер дома')
+    apartment_number = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='номер квартиры')
+    floor = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='этаж')
+    user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE, related_name='addresses', null=True, verbose_name='пользователь')
 
     def __str__(self):
         return self.district

@@ -12,4 +12,3 @@ def validate_phone_number(phone_number: str) -> ValidationError | str:
     if not len(list_number[2::]) == 10:
         raise ValidationError('The number must be in the format +7 (xxx) xxx-xx-xx, or 8 (xxx) xxx-xx-xx')
     return phone_number
-

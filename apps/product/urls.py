@@ -1,7 +1,13 @@
 from django.urls import path
 
-from apps.product.views import CreateProductView, GetProductView, ListProductSubcategoryView, ListProductView, \
-    AddProductFavoriteView, AddProductCompareView, ListFavoriteProductView, ListCompareProductView
+from apps.product.views import (AddProductCompareView,
+                                AddProductFavoriteView,
+                                CreateProductView,
+                                GetProductView,
+                                ListCompareProductView,
+                                ListFavoriteProductView,
+                                ListProductSubcategoryView,
+                                ListProductView,)
 
 urlpatterns = [
     path('products/create', CreateProductView.as_view(), name='create-product'),

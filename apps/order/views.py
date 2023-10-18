@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework import permissions
 from rest_framework.viewsets import ModelViewSet
+
 from apps.order.models import Order
 from apps.order.serializers import CreateOrderSerializer, GetOrderSerializer
 
@@ -19,4 +20,3 @@ class CreateOrderViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(session=self.request.session, request=self.request)
-

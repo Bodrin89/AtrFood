@@ -19,7 +19,7 @@ class CreateCartSerializer(serializers.ModelSerializer):
         Проверка, что quantity_product больше 0
         """
         if value <= 0:
-            raise serializers.ValidationError("Количество товара должно быть больше 0")
+            raise serializers.ValidationError('Количество товара должно быть больше 0')
         return value
 
     def create(self, validated_data):

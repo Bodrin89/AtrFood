@@ -2,7 +2,7 @@
 
 from modeltranslation.translator import TranslationOptions, register
 
-from apps.user.models import BaseUserModel, RegionModel, AddressModel
+from apps.user.models import AddressModel, BaseUserModel, RegionModel
 
 
 @register(RegionModel)

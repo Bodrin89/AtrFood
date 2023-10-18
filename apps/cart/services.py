@@ -24,11 +24,11 @@ class ServiceCart:
         try:
             ProductModel.objects.get(id=product_id, existence=True)
         except ProductModel.DoesNotExist:
-            raise Exception("Товара нет в наличии")
+            raise Exception('Товара нет в наличии')
         try:
             ProductModel.objects.get(id=product_id, quantity_stock__gte=quantity_product)
         except ProductModel.DoesNotExist:
-            raise Exception("Нужного количества нет на складе")
+            raise Exception('Нужного количества нет на складе')
 
     @staticmethod
     def _get_discount(product: ProductModel, quantity_product: int, limit_sum_product: float) -> list[DiscountModel]:
@@ -150,13 +150,13 @@ class ServiceCart:
         product_id = kwargs.get('product_id')
 
         if not any(item.get('product_id') == product_id for item in product_cart):
-            return Response({"message": 'Товар не найден в корзине'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'message': 'Товар не найден в корзине'}, status=status.HTTP_404_NOT_FOUND)
 
         updated_cart = [item for item in product_cart if item.get('product_id') != product_id]
 
         request.session['product_cart'] = updated_cart
         request.session.modified = True
-        return Response({"message": 'Товар удален из корзины'}, status=status.HTTP_204_NO_CONTENT)
+        return Response({'message': 'Товар удален из корзины'}, status=status.HTTP_204_NO_CONTENT)
 
     @staticmethod
     def get_total_sum(request):
@@ -171,5 +171,4 @@ class ServiceCart:
                 total_sum.append(item.get('sum_products'))
             else:
                 not_existence.append(product.id)
-        return Response({'total_sum': sum(total_sum), "Товары не в наличии": not_existence})
-
+        return Response({'total_sum': sum(total_sum), 'Товары не в наличии': not_existence})

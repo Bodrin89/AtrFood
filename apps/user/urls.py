@@ -1,13 +1,7 @@
 from django.urls import path
-
-from apps.user.views import (
-    LoginView,
-    LogoutView,
-    ProfileViewSet,
-    AddressViewSet,
-    ClientViewSet,
-)
 from rest_framework.routers import DefaultRouter
+
+from apps.user.views import AddressViewSet, ClientViewSet, LoginView, LogoutView, ProfileViewSet
 
 router = DefaultRouter()
 

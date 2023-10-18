@@ -1,7 +1,6 @@
 from django.contrib import admin
 from modeltranslation.admin import TranslationAdmin
 
-
 from apps.company_user.models import CompanyUserModel, ContactPersonModel
 
 
@@ -13,5 +12,3 @@ class CompanyUser(TranslationAdmin):
 @admin.register(CompanyUserModel)
 class CompanyUser(TranslationAdmin):
     pass
-
-
