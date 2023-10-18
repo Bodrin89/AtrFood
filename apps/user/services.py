@@ -6,7 +6,6 @@ from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
 from rest_framework.exceptions import AuthenticationFailed, ValidationError
 from rest_framework.request import Request
-from django.contrib.sites.models import Site
 from apps.company_user.models import CompanyUserModel, ContactPersonModel
 from apps.individual_user.models import IndividualUserModel
 from apps.user.models import BaseUserModel
