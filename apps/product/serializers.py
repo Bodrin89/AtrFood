@@ -6,15 +6,15 @@ from apps.product.models import (CategoryProductModel,
                                  DescriptionProductModel,
                                  FavoriteProductModel,
                                  ProductModel,
-                                 SubCategoryProductModel,)
+                                 SubCategoryProductModel, CatalogModel, )
 from apps.product.services import ServiceProduct
 from config.settings import LOGGER
 
 
-class CategorySerializer(serializers.ModelSerializer):
-    """Категория"""
+class CatalogSerializer(serializers.ModelSerializer):
+    """Каталог"""
     class Meta:
-        model = CategoryProductModel
+        model = CatalogModel
         fields = ('name',)
 
 
@@ -25,6 +25,23 @@ class SubCategoryProductSerializer(serializers.ModelSerializer):
         fields = ('name',)
 
 
+class ListProductSerializer(serializers.ModelSerializer):
+    """Получение всех товаров"""
+
+    class Meta:
+        model = ProductModel
+        fields = '__all__'
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    """Категория"""
+    subcategories = SubCategoryProductSerializer(many=True)
+
+    class Meta:
+        model = CategoryProductModel
+        fields = ('name', 'subcategories',)
+
+
 class DescriptionProductSerializer(serializers.ModelSerializer):
     """Описание товара"""
     class Meta:
@@ -32,32 +49,30 @@ class DescriptionProductSerializer(serializers.ModelSerializer):
         fields = ('manufacturer', 'made_in', 'description', 'package')
 
 
-class CreateProductSerializer(serializers.ModelSerializer):
-    """Создание товара"""
-    category = CategorySerializer()
-    subcategory = SubCategoryProductSerializer()
-    product_data = DescriptionProductSerializer()
+# class CreateProductSerializer(serializers.ModelSerializer):
+#     """Создание товара"""
+#     # catalog = CatalogSerializer()
+#     # category = CategorySerializer()
+#     subcategory = SubCategoryProductSerializer()
+#     product_data = DescriptionProductSerializer()
+#
+#     class Meta:
+#         model = ProductModel
+#         fields = ('id', 'name', 'foto', 'price', 'discount_price', 'product_data', 'quantity_stock', 'subcategory')
+#         read_only_fields = ('id', 'discount_price',)
+#
+#     def create(self, validated_data):
+#         return ServiceProduct.create_product(validated_data)
 
+class ListCatalogSerializer(serializers.ModelSerializer):
+    """Получение всех каталогов"""
     class Meta:
-        model = ProductModel
-        fields = ('id', 'name', 'foto', 'price', 'discount_price', 'product_data', 'quantity_stock',
-                  'category', 'subcategory')
-        read_only_fields = ('id', 'discount_price',)
-
-    def create(self, validated_data):
-        return ServiceProduct.create_product(validated_data)
+        model = CatalogModel
+        fields = ('name',)
 
 
 class RetrieveProductSerializer(serializers.ModelSerializer):
     """Получение товара по id"""
-    class Meta:
-        model = ProductModel
-        fields = '__all__'
-
-
-class ListProductSerializer(serializers.ModelSerializer):
-    """Получение всех товаров"""
-
     class Meta:
         model = ProductModel
         fields = '__all__'

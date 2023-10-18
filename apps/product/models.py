@@ -3,6 +3,15 @@ from django.db import models
 from apps.user.models import BaseUserModel
 
 
+class CatalogModel(models.Model):
+    """Модель каталога категорий товара"""
+    class Meta:
+        verbose_name = 'Каталог товаров'
+        verbose_name_plural = 'Каталоги товаров'
+
+    name = models.CharField(max_length=255)
+
+
 class CategoryProductModel(models.Model):
     """Модель категорий товара"""
     class Meta:
@@ -10,6 +19,7 @@ class CategoryProductModel(models.Model):
         verbose_name_plural = 'Категории товаров'
 
     name = models.CharField(max_length=255)
+    catalog = models.ForeignKey(CatalogModel, on_delete=models.CASCADE, related_name='catalogs')
 
     def __str__(self):
         return self.name
@@ -22,7 +32,7 @@ class SubCategoryProductModel(models.Model):
         verbose_name_plural = 'Подкатегории товаров'
 
     name = models.CharField(max_length=255)
-    category = models.ForeignKey(CategoryProductModel, on_delete=models.CASCADE)
+    category = models.ForeignKey(CategoryProductModel, on_delete=models.CASCADE, related_name='subcategories')
 
     def __str__(self):
         return self.name
@@ -56,10 +66,8 @@ class ProductModel(models.Model):
     quantity_select = models.IntegerField(blank=True, null=True, verbose_name='выбор количества') #TODO убрать
     existence = models.BooleanField(null=True, blank=True, default=True, verbose_name='наличие товара на складе')
     product_data = models.ForeignKey(DescriptionProductModel, on_delete=models.CASCADE, verbose_name='данные товара')
-    category = models.ForeignKey(CategoryProductModel, on_delete=models.CASCADE, verbose_name='категория товара',
-                                 null=True, blank=True)
-    subcategory = models.ForeignKey(SubCategoryProductModel, on_delete=models.CASCADE, null=True, blank=True,
-                                    verbose_name='подкатегория товара')
+    subcategory = models.ForeignKey(SubCategoryProductModel, on_delete=models.CASCADE,
+                                    verbose_name='подкатегория товара', related_name='products')
 
     def __str__(self):
         return self.name
