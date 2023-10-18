@@ -95,6 +95,7 @@ class ClientViewSet(mixins.RetrieveModelMixin,
 
 class ConfirmEmailView(APIView):
     """Подтверждение электронной почты при создании нового пользователя"""
+
     def get(self, request, *args, **kwargs):
         token = request.query_params.get('token')
         user = get_user_model().objects.filter(confirmation_token=token).first()
@@ -160,6 +161,7 @@ class EmailUrlView(APIView):
 
 class UpdateEmailView(APIView):
     """Смена Электронной почты"""
+
     def get(self, request):
         token = request.query_params.get('token')
         email = request.query_params.get('email')
