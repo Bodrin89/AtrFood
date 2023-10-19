@@ -42,6 +42,7 @@ class ServiceCart:
         )
         return discounts
 
+
     @staticmethod
     def get_level_loyalty(user_id, discount_amounts):
         """Получение уровня лояльности"""
