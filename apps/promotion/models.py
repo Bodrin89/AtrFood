@@ -33,6 +33,8 @@ class DiscountModel(models.Model):
     ]
 
     name = models.CharField(max_length=255, verbose_name='Наименование акции')
+    image = models.ImageField(upload_to='media', null=True, blank=True, verbose_name="фото акции")
+    is_show = models.BooleanField(default=True, verbose_name="вывод на фронт")
     category_product = models.ForeignKey(CategoryProductModel, on_delete=models.CASCADE,
                                          verbose_name='Категория товара')
     product = models.ManyToManyField(ProductModel, related_name='products', verbose_name='товары по акции')
@@ -52,6 +54,9 @@ class DiscountModel(models.Model):
     discount_amount = models.PositiveIntegerField(blank=True, null=True, verbose_name='Размер скидки')
     gift = models.ForeignKey(ProductModel, on_delete=models.CASCADE, blank=True, null=True, verbose_name='Подарок')
 
+    # def save(self, created=False, *args, **kwargs):
+    #     if created:
+    #         LOGGER.debug('DDD')
 
 class LoyaltyModel(models.Model):
     """Модель системы лояльности"""
