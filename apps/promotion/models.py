@@ -90,10 +90,11 @@ def update_discount_price(sender, instance, action, reverse, model, pk_set, **kw
         for discount in prod:
             products = discount.product.all()
             not_remove_product.append(products)
-        a = [item for sublist in not_remove_product for item in sublist]
+        product = [item for sublist in not_remove_product for item in sublist]
         for item in removed_products:
-            if item not in a:
-                item.discount_price = item.price
+            if item not in product:
+                item.discount_price = None
+                # item.discount_price = item.price
                 item.save()
 
 
@@ -108,6 +109,7 @@ def change_discount_price(prod):
             discount_amounts = [discount.discount_amount for discount in discounts]
             product.discount_price = get_sum_price_product(product.price, quantity_product, discount_amounts)
             product.save()
+
 
 def get_discount(product: ProductModel, quantity_product: int, limit_sum_product: float) -> list[DiscountModel]:
     """Фильтр акций по условиям"""

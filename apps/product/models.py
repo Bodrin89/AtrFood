@@ -60,7 +60,6 @@ class ProductModel(models.Model):
     foto = models.ImageField(null=True, blank=True, upload_to='media', verbose_name='фото товара')
     price = models.FloatField(verbose_name='стоимость за единицу')
     article = models.CharField(max_length=255, null=True, blank=True, verbose_name='артикул товара')
-    # discount = models.PositiveSmallIntegerField(blank=True, null=True, verbose_name="скидка/старая цена товара")
     discount_price = models.FloatField(blank=True, null=True, verbose_name='цена с учетом скидки')
     quantity_stock = models.IntegerField(verbose_name='количество на складе')
     quantity_select = models.IntegerField(blank=True, null=True, verbose_name='выбор количества') #TODO убрать

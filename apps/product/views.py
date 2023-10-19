@@ -8,6 +8,7 @@ from rest_framework.generics import (CreateAPIView,
 from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
 from rest_framework.permissions import IsAdminUser
 
+from apps.product.filters import ProductFilter
 from apps.product.models import CatalogModel, CategoryProductModel, ProductModel
 from apps.product.serializers import (AddProductCompareSerializer,
                                       AddProductFavoriteSerializer,
@@ -38,7 +39,9 @@ class ListProductView(ListAPIView):
     queryset = ProductModel.objects.all()
     pagination_class = PageNumberPagination
     filter_backends = [SearchFilter, DjangoFilterBackend]
-    filterset_fields = ['subcategory__category__name', 'existence', 'article', 'name', 'product_data__manufacturer']
+    filterset_class = ProductFilter
+    filterset_fields = ['subcategory__category__name', 'existence', 'article', 'name', 'product_data__manufacturer',
+                        'price']
 
     def get(self, request, *args, **kwargs):
         """Получение параметров пагинации из query_params)"""
