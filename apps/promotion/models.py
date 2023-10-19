@@ -1,8 +1,7 @@
-from itertools import chain
 
 from django.db import models
-from django.db.models import Q, F
-from django.db.models.signals import post_save, m2m_changed, pre_save
+from django.db.models import F, Q
+from django.db.models.signals import m2m_changed, post_save
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 

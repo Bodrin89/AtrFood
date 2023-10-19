@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from django.db.models import Sum, Q, F
+from django.db.models import F, Q, Sum
 from django.utils import timezone
 
 from apps.company_user.models import CompanyUserModel

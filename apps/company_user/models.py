@@ -1,7 +1,4 @@
 from django.db import models
-
-from apps.promotion.models import LoyaltyModel
-from apps.user.models import AddressModel, BaseUserModel
 from django.utils.translation import gettext_lazy as _
 
 from apps.promotion.models import LoyaltyModel
@@ -38,12 +35,12 @@ class CompanyUserModel(BaseUserModel):
         CASH = ('cash', _('Cache'))
         NON_CASH = ('non_cash', _('Non_cash'))
 
-    company_name = models.CharField(max_length=255, verbose_name="название компании")
-    bin_iin = models.PositiveBigIntegerField(verbose_name="БИН/ИИН")
-    iik = models.CharField(max_length=255, verbose_name="ИИК")
-    bank = models.CharField(max_length=255, verbose_name="IBAN")
-    bik = models.CharField(max_length=255, verbose_name="БИК")
-    company_address = models.ForeignKey(CompanyAddress, on_delete=models.CASCADE, verbose_name="Адрес компании")
+    company_name = models.CharField(max_length=255, verbose_name='название компании')
+    bin_iin = models.PositiveBigIntegerField(verbose_name='БИН/ИИН')
+    iik = models.CharField(max_length=255, verbose_name='ИИК')
+    bank = models.CharField(max_length=255, verbose_name='IBAN')
+    bik = models.CharField(max_length=255, verbose_name='БИК')
+    company_address = models.ForeignKey(CompanyAddress, on_delete=models.CASCADE, verbose_name='Адрес компании')
     payment_method = models.CharField(max_length=10, choices=PaymentMethod.choices, default=PaymentMethod.NON_CASH,
                                       verbose_name='способ оплаты')
     contact_person = models.ForeignKey(ContactPersonModel, on_delete=models.CASCADE, verbose_name='контактное лицо')

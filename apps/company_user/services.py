@@ -4,8 +4,8 @@ from django.db import transaction
 
 from apps.company_user.models import CompanyAddress, CompanyUserModel, ContactPersonModel
 from apps.user.models import AddressModel, RegionModel
-from config.settings import LOGGER
 from apps.user.services import UserServices
+from config.settings import LOGGER
 
 
 class CompanyUserServices:

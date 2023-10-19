@@ -86,7 +86,7 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         new_password = attrs.get('new_password')
         repeat_password = attrs.get('repeat_password')
         if new_password != repeat_password:
-            raise serializers.ValidationError({"repeat_password": "Пароли не совпадают"})
+            raise serializers.ValidationError({'repeat_password': 'Пароли не совпадают'})
         return attrs
 
     def update(self, instance, validated_data):

@@ -8,13 +8,14 @@ from rest_framework.generics import (CreateAPIView,
 from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
 from rest_framework.permissions import IsAdminUser
 
-from apps.product.models import ProductModel, CatalogModel, CategoryProductModel
+from apps.product.models import CatalogModel, CategoryProductModel, ProductModel
 from apps.product.serializers import (AddProductCompareSerializer,
                                       AddProductFavoriteSerializer,
+                                      CategorySerializer,
+                                      ListCatalogSerializer,
                                       ListProductSerializer,
-                                      RetrieveProductSerializer, ListCatalogSerializer, CategorySerializer, )
+                                      RetrieveProductSerializer,)
 from config.settings import LOGGER
-
 
 # class CreateProductView(CreateAPIView):
 #     """Создание товара"""
