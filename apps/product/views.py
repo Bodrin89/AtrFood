@@ -1,6 +1,11 @@
+from datetime import timedelta
+
+from django.db.models import Sum
+from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
 from apps.product.filters import ProductFilter
+from apps.order.models import OrderItem
 from rest_framework.generics import (CreateAPIView,
                                      ListAPIView,
                                      RetrieveAPIView,
@@ -8,7 +13,7 @@ from rest_framework.generics import (CreateAPIView,
                                      get_object_or_404,)
 from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
 from rest_framework.permissions import IsAdminUser
-
+from apps.product.services import ServiceProduct
 from apps.product.filters import ProductFilter
 from apps.product.models import CatalogModel, CategoryProductModel, ProductModel
 from apps.product.serializers import (AddProductCompareSerializer,
@@ -33,6 +38,11 @@ class GetProductView(RetrieveAPIView):
     def get_queryset(self):
         pk = self.kwargs.get('pk')
         return ProductModel.objects.filter(id=pk)
+
+    def get(self, request, *args, **kwargs):
+        pk = self.kwargs.get('pk')
+        ServiceProduct.add_viewed_products(pk, request)
+        return super().get(request, *args, **kwargs)
 
 
 class ListProductView(ListAPIView):
@@ -134,3 +144,47 @@ class ListCompareProductView(ListAPIView):
         if len(compare_product_ids) <= 1:
             raise ValueError('Необходимо два товара для сравнения')
         return ProductModel.objects.filter(id__in=compare_product_ids)
+
+
+class PopularProductsView(ListAPIView):
+    """Список первых 20 популярных товаров"""
+
+    serializer_class = ListProductSerializer
+
+    def get_queryset(self):
+        three_months_ago = timezone.now() - timedelta(days=40)
+        popular_products = (
+            OrderItem.objects.filter(order__date_created__gte=three_months_ago)
+            .values('product_id')
+            .annotate(total_quantity=Sum('quantity'))
+            .order_by('-total_quantity')
+            [:20]
+        )
+
+        popular_product_ids = [item['product_id'] for item in popular_products]
+        return ProductModel.objects.filter(id__in=popular_product_ids)
+
+
+class ViewedProductsView(ListAPIView):
+    """Список первых 20 просмотренных товаров"""
+
+    serializer_class = ListProductSerializer
+
+    def get_queryset(self):
+        viewed_products = self.request.session.get('viewed_products', [])
+        if viewed_products:
+            return ProductModel.objects.filter(id__in=viewed_products)
+        return ProductModel.objects.none()
+
+
+class SimilarProductsView(ListAPIView):
+    """Список похожих товаров"""
+
+    serializer_class = ListProductSerializer
+
+    def get_queryset(self):
+        viewed_products = self.request.session.get('viewed_products', [])
+        if viewed_products:
+            first_product = ProductModel.objects.get(id=viewed_products[0])
+            return ProductModel.objects.filter(subcategory=first_product.subcategory).exclude(id=first_product.id)[:20]
+        return ProductModel.objects.none()

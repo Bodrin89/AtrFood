@@ -103,3 +103,14 @@ class ServiceProduct:
     #     if create:
     #         return compare_product
     #     return compare_product.delete()
+
+    @staticmethod
+    def add_viewed_products(product_id, request):
+        """Добавление просмотренные товары в сессию"""
+
+        viewed_products = request.session.get('viewed_products', [])
+        if product_id not in viewed_products:
+            viewed_products.insert(0, product_id)
+        request.session['viewed_products'] = viewed_products[:20]
+        request.session.modified = True
+        return request

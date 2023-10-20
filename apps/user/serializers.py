@@ -12,10 +12,11 @@ class LoginSerializer(serializers.ModelSerializer):
     password = serializers.CharField(validators=[validate_password],
                                      write_only=True, style={'input_type': 'password'})
     email = serializers.EmailField(required=True)
+    remember = serializers.BooleanField(default=False)
 
     class Meta:
         model = BaseUserModel
-        fields = ('id', 'email', 'password',)
+        fields = ('id', 'email', 'password', 'remember')
         read_only_fields = ('id',)
 
     def validate(self, data):
@@ -23,13 +24,11 @@ class LoginSerializer(serializers.ModelSerializer):
         user = User.objects.filter(email=email).first()
         if user is not None and not user.is_active:
             raise serializers.ValidationError('Аккаунт необходимо подтвердить по электронной почте.')
-
         return data
 
 
 class RegionSerializer(serializers.ModelSerializer):
     """Сериализатор региона"""
-
 
     class Meta:
         model = RegionModel

@@ -4,7 +4,7 @@ from apps.order.views import CreateOrderViewSet
 
 router = DefaultRouter()
 
-router.register(r'order', CreateOrderViewSet, basename='order')
+router.register(r'', CreateOrderViewSet, basename='order')
 
 
 urlpatterns = [
