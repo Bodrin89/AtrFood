@@ -36,10 +36,9 @@ class DiscountModel(models.Model):
     name = models.CharField(max_length=255, verbose_name='Наименование акции')
     image = models.ImageField(upload_to='media', null=True, blank=True, verbose_name="фото акции")
     is_show = models.BooleanField(default=True, verbose_name="вывод на фронт")
-    category_product = models.ForeignKey(CategoryProductModel, on_delete=models.CASCADE,
+    category_product = models.ForeignKey(CategoryProductModel,null=True, blank=True, on_delete=models.CASCADE,
                                          verbose_name='Категория товара')
-    product = models.ManyToManyField(ProductModel, related_name='products', null=True, blank=True,
-                                     verbose_name='товары по акции')
+    product = models.ManyToManyField(ProductModel, related_name='products', verbose_name='товары по акции')
     use_limit_sum_product = models.BooleanField(default=True, verbose_name='Учитывать лимит по сумме товара в корзине')
     limit_sum_product = models.FloatField(default=0, verbose_name='Сумма товара в корзине после которой действует '
                                                                   'акция')
