@@ -1,5 +1,6 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
+from apps.product.filters import ProductFilter
 from rest_framework.generics import (CreateAPIView,
                                      ListAPIView,
                                      RetrieveAPIView,
@@ -36,8 +37,17 @@ class ListProductView(ListAPIView):
     serializer_class = ListProductSerializer
     queryset = ProductModel.objects.all()
     pagination_class = PageNumberPagination
-    filter_backends = [SearchFilter, DjangoFilterBackend]
-    filterset_fields = ['subcategory__category__name', 'existence', 'article', 'name', 'product_data__manufacturer']
+    filter_backends = [SearchFilter, DjangoFilterBackend, OrderingFilter]
+    filterset_class = ProductFilter
+    search_fields = ['name', 'description']
+    # filterset_fields = [
+    #     'subcategory__category__name',
+    #     'existence',
+    #     'article',
+    #     'name',
+    #     'product_data__manufacturer',
+    #     'product_data__made_in'
+    # ]
 
     def get(self, request, *args, **kwargs):
         """Получение параметров пагинации из query_params)"""

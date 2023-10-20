@@ -20,6 +20,7 @@ from apps.review.serializers import ReviewCreateSerializer
 #         product = get_object_or_404(ProductModel, id=product_id)
 #         serializer.save(product=product)
 
+
 class ReviewProductViewSet(ModelViewSet):
     """Просмотр всех отзывов и создание отзывов с проверкой на покупку товара"""
     serializer_class = ReviewCreateSerializer
