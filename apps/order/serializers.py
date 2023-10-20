@@ -1,8 +1,10 @@
 from rest_framework import serializers
 
 from apps.order.models import Order, OrderItem
+from apps.user.models import AddressModel
 from apps.order.services import ServiceOrder
 from apps.product.serializers import ProductInfoSerializer
+from apps.user.serializers import AddressSerializer
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
@@ -16,9 +18,21 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 class CreateOrderSerializer(serializers.ModelSerializer):
     """Сериализатор создания заказа"""
+
+    delivery_address = serializers.PrimaryKeyRelatedField(
+        queryset=AddressModel.objects.none(),
+        many=False
+    )
+
     class Meta:
         model = Order
         fields = ('payment_method', 'delivery_address', 'contact_phone')
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs['context']['request'].user
+        super(CreateOrderSerializer, self).__init__(*args, **kwargs)
+        if user.is_authenticated:
+            self.fields['delivery_address'].queryset = AddressModel.objects.filter(user=user)
 
     def create(self, validated_data):
         return ServiceOrder.create_order(validated_data)
@@ -28,6 +42,7 @@ class GetOrderSerializer(serializers.ModelSerializer):
     """Сериализатор заказов пользователя"""
 
     items = OrderItemSerializer(many=True, read_only=True)
+    delivery_address = AddressSerializer(read_only=True)
 
     class Meta:
         model = Order
