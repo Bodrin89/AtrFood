@@ -5,7 +5,7 @@ from django.db.models.signals import m2m_changed, post_save
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 
-from apps.product.models import CategoryProductModel, ProductModel
+from apps.product.models import CategoryProductModel, ProductModel, SubCategoryProductModel
 from apps.promotion.tasks import send_email_promotion
 from config.settings import LOGGER
 
@@ -36,8 +36,8 @@ class DiscountModel(models.Model):
     name = models.CharField(max_length=255, verbose_name='Наименование акции')
     image = models.ImageField(upload_to='media', null=True, blank=True, verbose_name="фото акции")
     is_show = models.BooleanField(default=True, verbose_name="вывод на фронт")
-    category_product = models.ForeignKey(CategoryProductModel,null=True, blank=True, on_delete=models.CASCADE,
-                                         verbose_name='Категория товара')
+    subcategory_product = models.ForeignKey(SubCategoryProductModel, null=True, blank=True, on_delete=models.CASCADE,
+                                            verbose_name='Категория товара')
     product = models.ManyToManyField(ProductModel, related_name='products', verbose_name='товары по акции')
     use_limit_sum_product = models.BooleanField(default=True, verbose_name='Учитывать лимит по сумме товара в корзине')
     limit_sum_product = models.FloatField(default=0, verbose_name='Сумма товара в корзине после которой действует '
@@ -137,4 +137,3 @@ def get_discount(product: ProductModel, quantity_product: int, limit_sum_product
 def get_sum_price_product(price, quantity_product, discount_amounts):
     """Расчет суммы товаров в корзине с учетом всех скидок"""
     return (price - (price * sum(discount_amounts)) / 100) * quantity_product
-
