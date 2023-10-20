@@ -1,9 +1,14 @@
 from django.contrib import admin
-from modeltranslation.admin import TranslationAdmin
-
-from apps.individual_user.models import IndividualUserModel
-from apps.user.models import AddressModel
+from apps.user.models import AddressModel, BaseUserModel
 from apps.order.models import Order
+
+
+class ClientUserProxy(BaseUserModel):
+    class Meta:
+        proxy = True
+        app_label = "clients"
+        verbose_name = 'Клиент'
+        verbose_name_plural = "Клиенты"
 
 
 class OrderInline(admin.StackedInline):
@@ -24,8 +29,12 @@ class AddressInline(admin.TabularInline):
     max_num = 0
 
 
-@admin.register(IndividualUserModel)
-class IndividualUserAdmin(TranslationAdmin):
+@admin.register(ClientUserProxy)
+class ClientUserAdmin(admin.ModelAdmin):
     list_display = ['email', 'phone_number', 'username']
+
+    def get_queryset(self, request):
+        qs = super(ClientUserAdmin, self).get_queryset(request)
+        return qs.filter(is_staff=False)
     inlines = [AddressInline, OrderInline]
     exclude = ('groups', 'user_permissions', 'is_staff', 'is_superuser', 'user_type')
