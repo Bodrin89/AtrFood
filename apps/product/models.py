@@ -11,6 +11,9 @@ class CatalogModel(models.Model):
 
     name = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.name
+
 
 class CategoryProductModel(models.Model):
     """Модель категорий товара"""
@@ -49,6 +52,9 @@ class DescriptionProductModel(models.Model):
     description = models.TextField(verbose_name='Описание товара')
     package = models.CharField(max_length=255, verbose_name='Формат упаковки')
 
+    def __str__(self):
+        return self.manufacturer
+
 
 class ProductModel(models.Model):
     """Модель товара"""
@@ -56,17 +62,18 @@ class ProductModel(models.Model):
         verbose_name = 'Товар'
         verbose_name_plural = 'Товары'
 
-    name = models.CharField(null=True, blank=True, max_length=255, verbose_name='наименование товара')
-    foto = models.ImageField(null=True, blank=True, upload_to='media', verbose_name='фото товара')
-    price = models.FloatField(verbose_name='стоимость за единицу')
-    article = models.CharField(max_length=255, null=True, blank=True, verbose_name='артикул товара')
-    discount_price = models.FloatField(blank=True, null=True, verbose_name='цена с учетом скидки')
-    quantity_stock = models.IntegerField(verbose_name='количество на складе')
-    quantity_select = models.IntegerField(blank=True, null=True, verbose_name='выбор количества') #TODO убрать
-    existence = models.BooleanField(null=True, blank=True, default=True, verbose_name='наличие товара на складе')
-    product_data = models.ForeignKey(DescriptionProductModel, on_delete=models.CASCADE, verbose_name='данные товара')
+    name = models.CharField(null=True, blank=True, max_length=255, verbose_name='Наименование товара')
+    foto = models.ImageField(null=True, blank=True, upload_to='media', verbose_name='Фото товара')
+    price = models.FloatField(verbose_name='Стоимость за единицу')
+    article = models.CharField(max_length=255, null=True, blank=True, verbose_name='Артикул товара')
+    discount_price = models.FloatField(blank=True, null=True, verbose_name='Цена с учетом скидки')
+    quantity_stock = models.IntegerField(verbose_name='Количество на складе')
+    rating = models.IntegerField(default=0, verbose_name='Рейтинг товара')
+    # quantity_select = models.IntegerField(blank=True, null=True, verbose_name='выбор количества')
+    existence = models.BooleanField(null=True, blank=True, default=True, verbose_name='Наличие товара на складе')
+    product_data = models.ForeignKey(DescriptionProductModel, on_delete=models.CASCADE, verbose_name='Данные товара')
     subcategory = models.ForeignKey(SubCategoryProductModel, on_delete=models.CASCADE,
-                                    verbose_name='подкатегория товара', related_name='products')
+                                    verbose_name='Подкатегория товара', related_name='products')
 
     def __str__(self):
         return self.name
