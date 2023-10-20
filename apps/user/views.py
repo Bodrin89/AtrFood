@@ -31,6 +31,8 @@ class LoginView(CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = UserServices.login_user(request, serializer)
+        if request.data.get('remember') is None or request.data.get('remember') is False:
+            request.session.set_expiry(0)
         login(request=request, user=user)
         return Response(data={'id': user.pk, 'email': user.email}, status=status.HTTP_200_OK)
 
