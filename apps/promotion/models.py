@@ -1,4 +1,4 @@
-
+from django.core.mail import send_mail
 from django.db import models
 from django.db.models import F, Q
 from django.db.models.signals import m2m_changed, post_save
@@ -6,6 +6,7 @@ from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 
 from apps.product.models import CategoryProductModel, ProductModel
+from apps.promotion.tasks import send_email_promotion
 from config.settings import LOGGER
 
 
@@ -54,9 +55,13 @@ class DiscountModel(models.Model):
     discount_amount = models.PositiveIntegerField(blank=True, null=True, verbose_name='Размер скидки')
     gift = models.ForeignKey(ProductModel, on_delete=models.CASCADE, blank=True, null=True, verbose_name='Подарок')
 
-    # def save(self, created=False, *args, **kwargs):
-    #     if created:
-    #         LOGGER.debug('DDD')
+    def save(self, created=False, *args, **kwargs):
+        """При создании новой акции, отправляется письмо с названием акции"""
+        created = not bool(self.pk)
+        super().save(*args, **kwargs)
+        if created:
+            send_email_promotion.apply_async(args=[self.name])
+
 
 class LoyaltyModel(models.Model):
     """Модель системы лояльности"""
@@ -78,6 +83,7 @@ class LoyaltyModel(models.Model):
 
 
 prod = DiscountModel.objects.all()
+
 
 @receiver(post_save, sender=DiscountModel)
 def apply_discount_to_products(sender, instance, created, **kwargs):
@@ -131,3 +137,4 @@ def get_discount(product: ProductModel, quantity_product: int, limit_sum_product
 def get_sum_price_product(price, quantity_product, discount_amounts):
     """Расчет суммы товаров в корзине с учетом всех скидок"""
     return (price - (price * sum(discount_amounts)) / 100) * quantity_product
+
