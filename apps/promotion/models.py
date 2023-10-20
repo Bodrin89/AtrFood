@@ -5,7 +5,7 @@ from django.db.models.signals import m2m_changed, post_save
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 
-from apps.product.models import CategoryProductModel, ProductModel, SubCategoryProductModel
+from apps.product.models import ProductModel, SubCategoryProductModel
 from apps.promotion.tasks import send_email_promotion
 from config.settings import LOGGER
 
@@ -37,7 +37,7 @@ class DiscountModel(models.Model):
     image = models.ImageField(upload_to='media', null=True, blank=True, verbose_name="фото акции")
     is_show = models.BooleanField(default=True, verbose_name="вывод на фронт")
     subcategory_product = models.ForeignKey(SubCategoryProductModel, null=True, blank=True, on_delete=models.CASCADE,
-                                            verbose_name='Категория товара')
+                                            verbose_name='Скидка для всей подкатегории товара')
     product = models.ManyToManyField(ProductModel, related_name='products', verbose_name='товары по акции')
     use_limit_sum_product = models.BooleanField(default=True, verbose_name='Учитывать лимит по сумме товара в корзине')
     limit_sum_product = models.FloatField(default=0, verbose_name='Сумма товара в корзине после которой действует '
@@ -113,6 +113,9 @@ def change_discount_price(prod):
     """Изменение цены со скидкой"""
     for discount in prod:
         products = discount.product.all()
+        product_from_subcategory = discount.subcategory_product.product.all()
+        LOGGER.debug(f'**** {products}')
+        LOGGER.debug(f'%%%%{product_from_subcategory}')
         for product in products:
             quantity_product = 1
             limit_sum_product = 1.0
