@@ -1,12 +1,13 @@
 
 from rest_framework import serializers
 
-from apps.product.models import (CategoryProductModel,
+from apps.product.models import (CatalogModel,
+                                 CategoryProductModel,
                                  CompareProductModel,
                                  DescriptionProductModel,
                                  FavoriteProductModel,
                                  ProductModel,
-                                 SubCategoryProductModel, CatalogModel, )
+                                 SubCategoryProductModel,)
 from apps.product.services import ServiceProduct
 from config.settings import LOGGER
 

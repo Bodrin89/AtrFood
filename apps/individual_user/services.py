@@ -4,8 +4,8 @@ from django.db import transaction
 
 from apps.individual_user.models import IndividualUserModel
 from apps.user.models import AddressModel, RegionModel
-from config.settings import LOGGER
 from apps.user.services import UserServices
+from config.settings import LOGGER
 
 
 class IndividualUserService:

@@ -1,19 +1,17 @@
 from django.urls import path
-
-from apps.user.views import (
-    LoginView,
-    LogoutView,
-    ProfileViewSet,
-    AddressViewSet,
-    ClientViewSet,
-    ConfirmEmailView,
-    EmailUrlView,
-    UpdateEmailView,
-    ForgotPasswordView,
-    UpdatePasswordViewNotInProfile,
-    UpdatePasswordViewInProfile
-)
 from rest_framework.routers import DefaultRouter
+
+from apps.user.views import (AddressViewSet,
+                             ClientViewSet,
+                             ConfirmEmailView,
+                             EmailUrlView,
+                             ForgotPasswordView,
+                             LoginView,
+                             LogoutView,
+                             ProfileViewSet,
+                             UpdateEmailView,
+                             UpdatePasswordViewInProfile,
+                             UpdatePasswordViewNotInProfile,)
 
 router = DefaultRouter()
 

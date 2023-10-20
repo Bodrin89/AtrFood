@@ -9,11 +9,14 @@ from rest_framework.generics import (CreateAPIView,
 from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
 from rest_framework.permissions import IsAdminUser
 
-from apps.product.models import ProductModel, CatalogModel, CategoryProductModel
+from apps.product.filters import ProductFilter
+from apps.product.models import CatalogModel, CategoryProductModel, ProductModel
 from apps.product.serializers import (AddProductCompareSerializer,
                                       AddProductFavoriteSerializer,
+                                      CategorySerializer,
+                                      ListCatalogSerializer,
                                       ListProductSerializer,
-                                      RetrieveProductSerializer, ListCatalogSerializer, CategorySerializer, )
+                                      RetrieveProductSerializer,)
 from config.settings import LOGGER
 
 
@@ -40,14 +43,8 @@ class ListProductView(ListAPIView):
     filter_backends = [SearchFilter, DjangoFilterBackend, OrderingFilter]
     filterset_class = ProductFilter
     search_fields = ['name', 'description']
-    # filterset_fields = [
-    #     'subcategory__category__name',
-    #     'existence',
-    #     'article',
-    #     'name',
-    #     'product_data__manufacturer',
-    #     'product_data__made_in'
-    # ]
+    filterset_fields = ['subcategory__category__name', 'existence', 'article', 'name', 'product_data__manufacturer',
+                        'price']
 
     def get(self, request, *args, **kwargs):
         """Получение параметров пагинации из query_params)"""

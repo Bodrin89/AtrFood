@@ -4,9 +4,9 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 from apps.user.validators import validate_phone_number
-from django.utils.translation import gettext_lazy as _
 
 
 class RegionModel(models.Model):
@@ -46,15 +46,15 @@ class BaseUserModel(AbstractUser):
     )
 
     username = models.CharField(
-        _("username"),
+        _('username'),
         max_length=150,
         unique=True,
         help_text=_(
-            "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
+            'Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'
         ),
         validators=[AbstractUser.username_validator],
         error_messages={
-            "unique": _("A user with that username already exists."),
+            'unique': _('A user with that username already exists.'),
         },
         blank=True,
         null=True,
@@ -71,7 +71,7 @@ class BaseUserModel(AbstractUser):
         )
     confirmation_token = models.UUIDField(default=uuid.uuid4, editable=False)
     user_type = models.CharField(max_length=10, choices=USER_TYPES, default='individual', verbose_name='Тип пользователя')
-    email = models.EmailField(unique=True, verbose_name="Электронная почта")
+    email = models.EmailField(unique=True, verbose_name='Электронная почта')
     region = models.ForeignKey(
         RegionModel,
         on_delete=models.CASCADE,

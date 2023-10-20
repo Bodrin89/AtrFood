@@ -1,23 +1,21 @@
-from django.contrib.auth import login, logout, get_user_model
+from django.contrib.auth import get_user_model, login, logout
 from django.db.models import QuerySet
-from rest_framework import permissions, status, mixins
-from rest_framework.generics import CreateAPIView, UpdateAPIView
 from rest_framework import mixins, permissions, status
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, UpdateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet, ReadOnlyModelViewSet
 
-from apps.user.serializers import LoginSerializer, AddressSerializer, RegionSerializer, EmailSerializer, ChangePasswordSerializer
-from apps.user.models import AddressModel
-from apps.user.services import UserServices
-from apps.individual_user.models import IndividualUserModel
 from apps.company_user.models import CompanyUserModel
 from apps.company_user.serializers import CreateCompanySerializer, GetUpdateCompanySerializer
 from apps.individual_user.models import IndividualUserModel
 from apps.individual_user.serializers import CreateIndividualSerializer, GetUpdateIndividualSerializer
 from apps.user.models import AddressModel
-from apps.user.serializers import AddressSerializer, LoginSerializer, RegionSerializer
+from apps.user.serializers import (AddressSerializer,
+                                   ChangePasswordSerializer,
+                                   EmailSerializer,
+                                   LoginSerializer,
+                                   RegionSerializer,)
 from apps.user.services import UserServices
 
 User = get_user_model()

@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from django.db.models import Sum
+from django.db.models import F, Q, Sum
 from django.utils import timezone
 
 from apps.company_user.models import CompanyUserModel
@@ -18,4 +18,3 @@ class ServicePromotion:
             if item.date_end_discount < timezone.now().date():
                 item.is_active = False
                 item.save()
-

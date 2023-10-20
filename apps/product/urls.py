@@ -3,11 +3,14 @@ from django.urls import path
 from apps.product.views import (AddProductCompareView,
                                 AddProductFavoriteView,
                                 GetProductView,
+                                ListCatalogView,
+                                ListCategorySubcategoryView,
                                 ListCompareProductView,
                                 ListFavoriteProductView,
+                                ListProductCatalogView,
+                                ListProductCategoryView,
                                 ListProductSubcategoryView,
-                                ListProductView, ListProductCategoryView, ListProductCatalogView, ListCatalogView,
-                                ListCategorySubcategoryView, )
+                                ListProductView,)
 
 urlpatterns = [
     # path('products/create', CreateProductView.as_view(), name='create-product'),
