@@ -52,7 +52,7 @@ class DiscountModel(models.Model):
     date_end_discount = models.DateField(verbose_name='Дата окончания акции')
     is_active = models.BooleanField(default=True, verbose_name='Действующая/архивная акция')
     action_type = models.CharField(max_length=20, choices=ACTION_TYPE_CHOICES, verbose_name='Тип акции')
-    discount_amount = models.PositiveIntegerField(blank=True, null=True, verbose_name='Размер скидки')
+    discount_amount = models.PositiveIntegerField(default=0, blank=True, null=True, verbose_name='Размер скидки')
     gift = models.ForeignKey(ProductModel, on_delete=models.CASCADE, blank=True, null=True, verbose_name='Подарок')
 
     def save(self, created=False, *args, **kwargs):
@@ -83,13 +83,17 @@ class LoyaltyModel(models.Model):
     sum_step = models.PositiveIntegerField(verbose_name='Порог цены')
 
 
+
 @receiver(post_save, sender=DiscountModel)
 def apply_discount_to_products(instance, sender, **kwargs):
     """Обработчик события создания скидки"""
     prod = DiscountModel.objects.all()
     all_products = change_discount_price(prod)
-    instance_prod = set().union(all_products['dict_products'].get(instance))
-    instance.product.add(*instance_prod)
+    if instance.product:
+        instance_prod = set().union(all_products['dict_products'].get(instance, []))
+        instance.product.add(*instance_prod)
+    else:
+        LOGGER.warning("DiscountModel product is not set.")
 
 
 @receiver(m2m_changed, sender=DiscountModel.product.through)
@@ -142,7 +146,9 @@ def change_discount_price(prod):
     """Изменение цены со скидкой"""
     products = []
     dict_products = {}
+    LOGGER.debug(f'_____{dict_products}')
     for discount in prod:
+        LOGGER.debug(f'0000{discount.product.all()}')
         if product := discount.product.all():
             products.append(product)
             dict_products[discount] = product
