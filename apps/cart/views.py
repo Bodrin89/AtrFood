@@ -4,6 +4,7 @@ from rest_framework.generics import CreateAPIView, DestroyAPIView, ListAPIView, 
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.cart.models import CartModel
 from apps.cart.serializers import CreateCartSerializer, ListCartSerializer
 from apps.cart.services import ServiceCart
 from apps.product.models import ProductModel
@@ -14,6 +15,7 @@ class CreateCartView(CreateAPIView):
     """Добавление товара в корзину"""
 
     serializer_class = CreateCartSerializer
+    queryset = CartModel.objects.all()
 
     def perform_create(self, serializer):
         product_id = self.kwargs.get('product_id')
