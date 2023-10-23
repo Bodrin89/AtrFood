@@ -33,6 +33,7 @@ class LoginView(CreateAPIView):
         user = UserServices.login_user(request, serializer)
         if request.data.get('remember') is None or request.data.get('remember') is False:
             request.session.set_expiry(0)
+            request.session.modify = True
         login(request=request, user=user)
         return Response(data={'id': user.pk, 'email': user.email}, status=status.HTTP_200_OK)
 
