@@ -26,14 +26,6 @@ class SubCategoryProductSerializer(serializers.ModelSerializer):
         fields = ('name',)
 
 
-class ListProductSerializer(serializers.ModelSerializer):
-    """Получение всех товаров"""
-
-    class Meta:
-        model = ProductModel
-        fields = '__all__'
-
-
 class CategorySerializer(serializers.ModelSerializer):
     """Категория"""
     subcategories = SubCategoryProductSerializer(many=True)
@@ -48,6 +40,17 @@ class DescriptionProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = DescriptionProductModel
         fields = ('manufacturer', 'made_in', 'description', 'package')
+
+
+class ListProductSerializer(serializers.ModelSerializer):
+    """Получение всех товаров"""
+
+    product_data = DescriptionProductSerializer()
+    subcategory = SubCategoryProductSerializer()
+
+    class Meta:
+        model = ProductModel
+        fields = '__all__'
 
 
 # class CreateProductSerializer(serializers.ModelSerializer):

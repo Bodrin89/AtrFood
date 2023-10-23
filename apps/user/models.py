@@ -37,8 +37,8 @@ class CustomUserManager(BaseUserManager):
 
 class BaseUserModel(AbstractUser):
     class Meta:
-        verbose_name = 'Базовый Пользователь'
-        verbose_name_plural = 'Базовые Пользователи'
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
 
     USER_TYPES = (
         ('individual', 'Individual'),
@@ -99,4 +99,4 @@ class AddressModel(models.Model):
     user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE, related_name='addresses', null=True, verbose_name='пользователь')
 
     def __str__(self):
-        return self.district
+        return f'{self.district}, {self.street}'

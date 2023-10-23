@@ -14,6 +14,9 @@ class ContactPersonModel(models.Model):
     first_name = models.CharField(max_length=255, verbose_name='имя')
     second_name = models.CharField(max_length=255, verbose_name='отчество')
 
+    def __str__(self):
+        return f'{self.surname} {self.first_name} {self.second_name}'
+
 
 class CompanyAddress(AddressModel):
     class Meta:
@@ -24,6 +27,9 @@ class CompanyAddress(AddressModel):
     office_number = models.PositiveSmallIntegerField(verbose_name='номер офиса')
     apartment_number = None
     floor = None
+
+    def __str__(self):
+        return self.country
 
 
 class CompanyUserModel(BaseUserModel):

@@ -8,7 +8,7 @@ from apps.company_user.models import CompanyUserModel
 from apps.individual_user.models import IndividualUserModel
 from apps.product.models import ProductModel
 from apps.promotion.models import LoyaltyModel
-from apps.user.models import BaseUserModel
+from apps.user.models import BaseUserModel, AddressModel
 from apps.user.validators import validate_phone_number
 from config.settings import LOGGER
 
@@ -38,11 +38,12 @@ class Order(models.Model):
 
     payment_date = models.DateTimeField(null=True, blank=True, verbose_name='дата оплаты')
     user = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Покупатель', null=True)
-    payment_method = models.CharField(max_length=10, choices=PAYMENT_METHOD_CHOICES)
+    payment_method = models.CharField(max_length=10, choices=PAYMENT_METHOD_CHOICES, verbose_name='Метод оплаты')
     date_created = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
-    delivery_address = models.CharField(max_length=250, verbose_name='Адрес доставки')
+    # delivery_address = models.CharField(max_length=250, verbose_name='Адрес доставки')
+    delivery_address = models.ForeignKey(AddressModel, on_delete=models.CASCADE, verbose_name='Адрес доставки')
     contact_phone = models.CharField(max_length=20, verbose_name='Номер телефона', validators=[validate_phone_number])
-    status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, blank=True, null=True)
+    status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, blank=True, null=True, verbose_name='Статус заказа')
     total_quantity = models.PositiveIntegerField(verbose_name='Общее количество', blank=True, null=True)
     total_price = models.PositiveIntegerField(verbose_name='Общая стоимость', blank=True, null=True)
     payment_manager = models.ForeignKey(

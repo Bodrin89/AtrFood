@@ -11,9 +11,10 @@ class RegionAdmin(TranslationAdmin):
 
 @admin.register(BaseUserModel)
 class BaseUserAdmin(TranslationAdmin):
-    pass
+    def get_queryset(self, request):
+        qs = super(BaseUserAdmin, self).get_queryset(request)
+        return qs.filter(is_staff=True)
+    exclude = ('user_type', 'region')
 
 
-@admin.register(AddressModel)
-class AddressAdmin(TranslationAdmin):
-    pass
+

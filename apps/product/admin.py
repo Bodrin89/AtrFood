@@ -1,7 +1,7 @@
 
 
 from django.contrib import admin
-from django.contrib.admin import ModelAdmin
+from django.contrib.admin import ModelAdmin, StackedInline
 
 from apps.product.models import (CatalogModel,
                                  CategoryProductModel,
@@ -28,9 +28,4 @@ class SubCategoryProductAdmin(admin.ModelAdmin):
 
 @admin.register(ProductModel)
 class ProductAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(DescriptionProductModel)
-class DescriptionProductAdmin(admin.ModelAdmin):
     pass
