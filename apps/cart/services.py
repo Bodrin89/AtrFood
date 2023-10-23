@@ -1,6 +1,7 @@
 from django.db.models import F, Q
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework import serializers
 
 from apps.company_user.models import CompanyUserModel
 from apps.individual_user.models import IndividualUserModel
@@ -24,11 +25,11 @@ class ServiceCart:
         try:
             ProductModel.objects.get(id=product_id, existence=True)
         except ProductModel.DoesNotExist:
-            raise Exception('Товара нет в наличии')
+            raise serializers.ValidationError('Товара нет в наличии')
         try:
             ProductModel.objects.get(id=product_id, quantity_stock__gte=quantity_product)
         except ProductModel.DoesNotExist:
-            raise Exception('Нужного количества нет на складе')
+            raise serializers.ValidationError('Нужного количества нет на складе')
 
     @staticmethod
     def _get_discount(product: ProductModel, quantity_product: int, limit_sum_product: float) -> list[DiscountModel]:

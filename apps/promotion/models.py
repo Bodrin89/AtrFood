@@ -1,11 +1,12 @@
-
-from django.db import models
+from django.core.mail import send_mail
+from django.db import models, transaction
 from django.db.models import F, Q
-from django.db.models.signals import m2m_changed, post_save
+from django.db.models.signals import m2m_changed, post_save, pre_save, post_delete, pre_delete
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 
-from apps.product.models import CategoryProductModel, ProductModel
+from apps.product.models import ProductModel, SubCategoryProductModel
+from apps.promotion.tasks import send_email_promotion
 from config.settings import LOGGER
 
 
@@ -33,8 +34,10 @@ class DiscountModel(models.Model):
     ]
 
     name = models.CharField(max_length=255, verbose_name='Наименование акции')
-    category_product = models.ForeignKey(CategoryProductModel, on_delete=models.CASCADE,
-                                         verbose_name='Категория товара')
+    image = models.ImageField(upload_to='media', null=True, blank=True, verbose_name="фото акции")
+    is_show = models.BooleanField(default=True, verbose_name="вывод на фронт")
+    subcategory_product = models.ForeignKey(SubCategoryProductModel, null=True, blank=True, on_delete=models.CASCADE,
+                                            verbose_name='Скидка для всей подкатегории товара')
     product = models.ManyToManyField(ProductModel, related_name='products', verbose_name='товары по акции')
     use_limit_sum_product = models.BooleanField(default=True, verbose_name='Учитывать лимит по сумме товара в корзине')
     limit_sum_product = models.FloatField(default=0, verbose_name='Сумма товара в корзине после которой действует '
@@ -47,10 +50,18 @@ class DiscountModel(models.Model):
     limit_product = models.PositiveIntegerField(verbose_name='Ограничение по количеству товара')
     use_limit_loyalty = models.BooleanField(default=True, verbose_name='Учитывать систему лояльности')
     date_end_discount = models.DateField(verbose_name='Дата окончания акции')
-    is_active = models.BooleanField(default=False, verbose_name='Действующая/архивная акция')
+    is_active = models.BooleanField(default=True, verbose_name='Действующая/архивная акция')
     action_type = models.CharField(max_length=20, choices=ACTION_TYPE_CHOICES, verbose_name='Тип акции')
     discount_amount = models.PositiveIntegerField(blank=True, null=True, verbose_name='Размер скидки')
     gift = models.ForeignKey(ProductModel, on_delete=models.CASCADE, blank=True, null=True, verbose_name='Подарок')
+
+    def save(self, created=False, *args, **kwargs):
+        """При создании новой акции, отправляется письмо с названием акции"""
+        created = not bool(self.pk)
+        super().save(*args, **kwargs)
+        if created:
+            # send_email_promotion.apply_async(args=[self.name])
+            pass
 
 
 class LoyaltyModel(models.Model):
@@ -72,19 +83,35 @@ class LoyaltyModel(models.Model):
     sum_step = models.PositiveIntegerField(verbose_name='Порог цены')
 
 
-prod = DiscountModel.objects.all()
-
 @receiver(post_save, sender=DiscountModel)
-def apply_discount_to_products(sender, instance, created, **kwargs):
+def apply_discount_to_products(instance, sender, **kwargs):
     """Обработчик события создания скидки"""
-    change_discount_price(prod)
+    prod = DiscountModel.objects.all()
+    all_products = change_discount_price(prod)
+    instance_prod = set().union(all_products['dict_products'].get(instance))
+    instance.product.add(*instance_prod)
 
 
 @receiver(m2m_changed, sender=DiscountModel.product.through)
 def update_discount_price(sender, instance, action, reverse, model, pk_set, **kwargs):
     """Обработчик события изменения скидки при удалении какого-то продукта из скидки"""
-    change_discount_price(prod)
+    prod = DiscountModel.objects.all()
+    all_products = change_discount_price(prod)
+    if action == 'post_add':
+        # add_prod = instance.product.all()
+        for item in all_products['all_products']:
+            discounts = get_discount(item)
+            discount_amounts = [discount.discount_amount for discount in discounts]
+            item.discount_price = get_sum_price_product(item.price, discount_amounts)
+            item.save()
     if action == 'post_remove':
+        try:
+            instance_prod = set().union(all_products['dict_products'].get(instance))
+            instance.product.add(*instance_prod)
+        except Exception as e:
+            LOGGER.error(f'error{e}')
+            pass
+
         removed_products = ProductModel.objects.filter(pk__in=pk_set)
         not_remove_product = []
         for discount in prod:
@@ -94,35 +121,48 @@ def update_discount_price(sender, instance, action, reverse, model, pk_set, **kw
         for item in removed_products:
             if item not in product:
                 item.discount_price = None
-                # item.discount_price = item.price
                 item.save()
+
+
+@receiver(pre_delete, sender=DiscountModel)
+def delete_products(sender, instance, **kwargs):
+    """Сбрасывание цены со скидкой у товара при удалении скидки"""
+    prod = DiscountModel.objects.all()
+    all_products = change_discount_price(prod)
+    for item in all_products['all_products']:
+        discounts = get_discount(item)
+        discount_amounts = [discount.discount_amount for discount in discounts if discount != instance]
+        item.discount_price = get_sum_price_product(item.price, discount_amounts)
+        if item.discount_price == item.price:
+            item.discount_price = None
+        item.save()
 
 
 def change_discount_price(prod):
     """Изменение цены со скидкой"""
+    products = []
+    dict_products = {}
     for discount in prod:
-        products = discount.product.all()
-        for product in products:
-            quantity_product = 1
-            limit_sum_product = 1.0
-            discounts = get_discount(product, quantity_product, limit_sum_product)
-            discount_amounts = [discount.discount_amount for discount in discounts]
-            product.discount_price = get_sum_price_product(product.price, quantity_product, discount_amounts)
-            product.save()
+        if product := discount.product.all():
+            products.append(product)
+            dict_products[discount] = product
+        try:
+            if subcategory_product := discount.subcategory_product.products.all():
+                products.append(subcategory_product)
+                dict_products[discount] = subcategory_product
+        except Exception as e:
+            LOGGER.error(f'error {e}')
+            pass
+    all_products = set().union(*products)
+    return {'dict_products': dict_products, 'all_products': all_products}
 
 
-def get_discount(product: ProductModel, quantity_product: int, limit_sum_product: float) -> list[DiscountModel]:
+def get_discount(product: ProductModel) -> list[DiscountModel]:
     """Фильтр акций по условиям"""
-    discounts = product.products.all().filter(
-        Q(is_active=True) &
-        (Q(use_limit_person=True, count_person__lt=F('limit_person')) | ~Q(use_limit_person=True)) &
-        (Q(use_limit_product=True, limit_product__gt=F('count_product') + quantity_product) | ~Q(
-            use_limit_product=True)) &
-        (Q(use_limit_sum_product=True, limit_sum_product__lt=limit_sum_product) | ~Q(use_limit_sum_product=True))
-    )
+    discounts = product.products.all().filter(is_active=True)
     return discounts
 
 
-def get_sum_price_product(price, quantity_product, discount_amounts):
+def get_sum_price_product(price, discount_amounts):
     """Расчет суммы товаров в корзине с учетом всех скидок"""
-    return (price - (price * sum(discount_amounts)) / 100) * quantity_product
+    return price - (price * sum(discount_amounts)) / 100
