@@ -93,7 +93,7 @@ def apply_discount_to_products(instance, sender, **kwargs):
         instance_prod = set().union(all_products['dict_products'].get(instance, []))
         instance.product.add(*instance_prod)
     else:
-        LOGGER.warning("DiscountModel product is not set.")
+        pass
 
 
 @receiver(m2m_changed, sender=DiscountModel.product.through)
@@ -146,9 +146,7 @@ def change_discount_price(prod):
     """Изменение цены со скидкой"""
     products = []
     dict_products = {}
-    LOGGER.debug(f'_____{dict_products}')
     for discount in prod:
-        LOGGER.debug(f'0000{discount.product.all()}')
         if product := discount.product.all():
             products.append(product)
             dict_products[discount] = product
