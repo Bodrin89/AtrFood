@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import ExpressionWrapper, F, IntegerField, Sum
 from django.db.models.signals import post_delete, post_save, pre_save
@@ -57,7 +58,7 @@ class Order(models.Model):
     )
 
     def __str__(self):
-        return f'Заказ {self.id} - {self.get_status_display()}'
+        return f'Заказ №{self.id}'
 
     def save(self, *args, **kwargs):
         if not self.status:
@@ -68,6 +69,7 @@ class Order(models.Model):
         super(Order, self).save(*args, **kwargs)
 
     def update_totals(self):
+        """Обновляем общую цену заказа и кол-во товаров в заказае"""
         self.total_quantity = self.items.all().aggregate(Sum('quantity'))['quantity__sum'] or 0
         self.total_price = self.items.all().aggregate(Sum('price'))['price__sum'] or 0
 
@@ -92,6 +94,17 @@ class OrderItem(models.Model):
 @receiver(post_delete, sender=OrderItem)
 def update_order_totals(sender, instance, **kwargs):
     instance.order.update_totals()
+
+
+@receiver(post_save, sender=OrderItem)
+def update_stock(sender, instance, created, **kwargs):
+    """Обновляем количество товара на складе после создания OrderItem."""
+    if created:
+        if instance.product.quantity_stock < instance.quantity:
+            raise ValidationError(f"Недостаточно товара {instance.product.name} на складе.")
+
+        instance.product.quantity_stock = F('quantity_stock') - instance.quantity
+        instance.product.save(update_fields=['quantity_stock'])
 
 
 @receiver(post_save, sender=Order)
