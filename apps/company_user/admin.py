@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.utils.html import format_html
 from modeltranslation.admin import TranslationAdmin
 
-from apps.company_user.models import CompanyUserModel
+from apps.company_user.models import CompanyUserModel, ContactPersonModel, CompanyAddress
 from apps.user.models import AddressModel
 from apps.order.models import Order
 
@@ -21,8 +21,19 @@ class AddressInline(admin.TabularInline):
     max_num = 0
 
 
+@admin.register(ContactPersonModel)
+class ContactPersonModelAdmin(TranslationAdmin):
+    pass
+
+
+@admin.register(CompanyAddress)
+class CompanyAddressAdmin(TranslationAdmin):
+    pass
+
+
 @admin.register(CompanyUserModel)
 class CompanyUserAdmin(TranslationAdmin):
     list_display = ['email', 'phone_number', 'username', 'company_name']
     inlines = [AddressInline, OrderInline]
     exclude = ('groups', 'user_permissions', 'is_staff', 'is_superuser', 'user_type')
+

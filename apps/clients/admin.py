@@ -24,6 +24,11 @@ class AddressInline(admin.TabularInline):
     max_num = 0
 
 
+@admin.register(AddressModel)
+class AddressModelAdmin(admin.ModelAdmin):
+    pass
+
+
 @admin.register(ClientUserProxy)
 class ClientUserAdmin(admin.ModelAdmin):
     list_display = ['email', 'phone_number', 'username']

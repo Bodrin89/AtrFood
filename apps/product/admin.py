@@ -28,6 +28,11 @@ class SubCategoryProductAdmin(admin.ModelAdmin):
     pass
 
 
+@admin.register(DescriptionProductModel)
+class DescriptionProductModelAdmin(admin.ModelAdmin):
+    pass
+
+
 @admin.register(ProductModel)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'price', 'subcategory',)
