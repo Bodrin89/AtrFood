@@ -6,10 +6,10 @@ from apps.promotion.tasks import send_email_promotion
 from apps.promotion.models import DiscountModel, LoyaltyModel
 from config.settings import LOGGER
 
+
 def resend_promotion_email(modeladmin, request, queryset):
     """Добавление действия отправки повторного email с акцией"""
     for discount in queryset:
-        LOGGER.debug(discount.name)
         send_email_promotion.apply_async(args=[discount.name])
     modeladmin.message_user(request, _('Emails resent successfully.'), messages.SUCCESS)
 

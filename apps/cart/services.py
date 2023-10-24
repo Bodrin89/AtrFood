@@ -1,4 +1,4 @@
-from django.db.models import F, Q
+from django.db.models import F, Q, QuerySet
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import serializers
@@ -43,6 +43,24 @@ class ServiceCart:
         )
         return discounts
 
+    @staticmethod
+    def _get_gifts_product(product):
+        """Проверка на наличие подарка в акции"""
+        gift_queryset = product.products.values('gift')
+        filtered_gifts = gift_queryset.filter(gift__isnull=False)
+        gifts = []
+
+        if filtered_gifts:
+            for item in filtered_gifts:
+                gift = ProductModel.objects.get(id=item['gift'])
+                foto_url = gift.foto.url if gift.foto else None
+                gifts.append({
+                    'name': gift.name,
+                    'foto': foto_url,
+                    'article': gift.article
+                })
+        return gifts
+
 
     @staticmethod
     def get_level_loyalty(user_id, discount_amounts):
@@ -84,9 +102,15 @@ class ServiceCart:
         price = ProductModel.objects.get(id=product_id).price
         limit_sum_product = price * quantity_product
 
+
         ServiceCart._check_existence(product_id, quantity_product)
 
         ServicePromotion.check_date_promotions()
+
+        gifts = ServiceCart._get_gifts_product(product)
+
+
+
 
         discounts = ServiceCart._get_discount(product, quantity_product, limit_sum_product)
         discount_amounts = [discount.discount_amount for discount in discounts]
@@ -100,7 +124,7 @@ class ServiceCart:
         for item in product_cart:
             if item.get('product_id') == product_id:
                 item['quantity_product'] = quantity_product
-                item['sum_products'] = ServiceCart._get_sum_price_product(price, quantity_product, discount_amounts)
+                item['sum_products'] = ServiceCart._get_sum_price_product(price, quantity_product, discount_amounts),
                 found = True
                 break
 
@@ -108,7 +132,8 @@ class ServiceCart:
             product_cart.append({
                 'product_id': product_id,
                 'quantity_product': quantity_product,
-                'sum_products': ServiceCart._get_sum_price_product(price, quantity_product, discount_amounts)
+                'sum_products': ServiceCart._get_sum_price_product(price, quantity_product, discount_amounts),
+                'gifts': gifts
             })
         session['product_cart'] = product_cart
         session.modified = True
@@ -124,6 +149,7 @@ class ServiceCart:
         product_id = instance['product_id']
         quantity_product = instance['quantity_product']
         sum_products = instance['sum_products']
+        gifts = instance['gifts']
 
         try:
             product = ProductModel.objects.get(id=product_id)
@@ -131,6 +157,7 @@ class ServiceCart:
                 'product_id': product_id,
                 'quantity_product': quantity_product,
                 'sum_products': sum_products,
+                'gifts': gifts,
                 'product': {
                     'id': product.id,
                     'name': product.name,
