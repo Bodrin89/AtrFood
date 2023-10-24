@@ -31,7 +31,7 @@ class ServiceCart:
             raise serializers.ValidationError('Нужного количества нет на складе')
 
     @staticmethod
-    def _get_discount(product: ProductModel, quantity_product: int, limit_sum_product: float) -> list[DiscountModel]:
+    def _get_discount(product: ProductModel, quantity_product: int, limit_sum_product: float) -> QuerySet[DiscountModel]:
         """Фильтр акций по условиям"""
         discounts = product.products.all().filter(
             Q(is_active=True) &
@@ -43,15 +43,14 @@ class ServiceCart:
         return discounts
 
     @staticmethod
-    def _get_gifts_product(product):
-        """Проверка на наличие подарка в акции"""
-        gift_queryset = product.products.values('gift')
-        filtered_gifts = gift_queryset.filter(gift__isnull=False)
-        gifts = []
+    def _get_gifts_product(discount):
+        """Проверка на наличие подарка в акции, получение списка подарков во всех акциях товара"""
+        filtered_gifts = discount.filter(gift_id__isnull=False)
 
+        gifts = []
         if filtered_gifts:
-            for item in filtered_gifts:
-                gift = ProductModel.objects.get(id=item['gift'])
+            for item in filtered_gifts.values():
+                gift = ProductModel.objects.get(id=item['gift_id'])
                 foto_url = gift.foto.url if gift.foto else None
                 gifts.append({
                     'name': gift.name,
@@ -99,27 +98,33 @@ class ServiceCart:
         quantity_product = validated_data['quantity_product']
         product: ProductModel = validated_data['product']
         price = ProductModel.objects.get(id=product_id).price
+        try:
+            if quantity_product >= product.opt_quantity:
+                price = product.opt_price
+        except TypeError:
+            pass
+
         limit_sum_product = price * quantity_product
 
         ServiceCart._check_existence(product_id, quantity_product)
 
         ServicePromotion.check_date_promotions()
 
-        gifts = ServiceCart._get_gifts_product(product)
-
         discounts = ServiceCart._get_discount(product, quantity_product, limit_sum_product)
         discount_amounts = [discount.discount_amount for discount in discounts]
+
+        gifts = ServiceCart._get_gifts_product(discounts)
 
         if validated_data['user'].id and product.products.filter(use_limit_loyalty=True).exists():
             user_id = validated_data['user'].id
             ServiceCart.get_level_loyalty(user_id, discount_amounts)
 
         found = False
-
         for item in product_cart:
             if item.get('product_id') == product_id:
                 item['quantity_product'] = quantity_product
                 item['sum_products'] = ServiceCart._get_sum_price_product(price, quantity_product, discount_amounts),
+                item['gifts'] = gifts
                 found = True
                 break
 
