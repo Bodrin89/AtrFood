@@ -13,7 +13,7 @@ from apps.product.views import (AddProductCompareView,
                                 ListProductView,
                                 PopularProductsView,
                                 SimilarProductsView,
-                                ViewedProductsView,)
+                                ViewedProductsView, NewProductView, )
 
 urlpatterns = [
     # path('products/create', CreateProductView.as_view(), name='create-product'),
@@ -32,4 +32,5 @@ urlpatterns = [
     path('products/popular', PopularProductsView.as_view(), name='popular_products'),
     path('products/viewed', ViewedProductsView.as_view(), name='viewed_products'),
     path('products/similar', SimilarProductsView.as_view(), name='similar_products'),
+    path('products/new', NewProductView.as_view(), name='new_products'),
 ]

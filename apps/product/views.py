@@ -187,3 +187,11 @@ class SimilarProductsView(ListAPIView):
             first_product = ProductModel.objects.get(id=viewed_products[0])
             return ProductModel.objects.filter(subcategory=first_product.subcategory).exclude(id=first_product.id)[:20]
         return ProductModel.objects.none()
+
+
+class NewProductView(ListAPIView):
+    """Список новых товаров"""
+    serializer_class = ListProductSerializer
+
+    def get_queryset(self):
+        return ProductModel.objects.order_by('-date_create')[:20]
