@@ -47,17 +47,3 @@ class UserServices:
             # serializer = serializer_data(data={'password': user.password, 'email': user.email})
             # # serializer.is_valid(raise_exception=True)
             return user
-
-    @staticmethod
-    def confirmation_email(user_token, user_email,  email_url, message, subject):
-        domain = settings.ALLOWED_HOSTS[0]
-        subject = subject
-        message = f'{message} {domain}/{email_url}/?token={user_token}'
-        send_mail(subject, message, EMAIL_HOST_USER, [user_email, ])
-
-    @staticmethod
-    def update_email(user_token,  email_url, message, subject, new_email):
-        domain = settings.ALLOWED_HOSTS[0]
-        subject = subject
-        message = f'{message} {domain}/{email_url}/?token={user_token}&email={new_email}'
-        send_mail(subject, message, EMAIL_HOST_USER, [new_email, ])

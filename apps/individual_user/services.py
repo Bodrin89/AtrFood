@@ -4,7 +4,7 @@ from django.db import transaction
 
 from apps.individual_user.models import IndividualUserModel
 from apps.user.models import AddressModel, RegionModel
-from apps.user.services import UserServices
+from apps.user.tasks import confirmation_email
 from config.settings import LOGGER
 
 
@@ -24,16 +24,18 @@ class IndividualUserService:
                 # is_active=False,
                 **validated_data
             )
-            for address_data in addresses_data:
-                AddressModel.objects.create(user=user, **address_data)
+            # for address_data in addresses_data:
+            #     AddressModel.objects.create(user=user, **address_data)
+            AddressModel.objects.create(user=user, **addresses_data)
             message = 'Для подтверждения email, пожалуйста, перейдите по ссылке:'
             subject = 'Подтверждение email'
-            email_url = 'confirm-email'
-            # UserServices.confirmation_email(
-            #     user_token=user.confirmation_token,
-            #     user_email=user.email,
-            #     email_url=email_url,
-            #     message=message,
-            #     subject=subject
-            #     )
+            email_url = 'api/user/confirm-email'
+            confirmation_email.apply_async(args=[
+                user.confirmation_token,
+                user.email,
+                email_url,
+                message,
+                subject
+                ]
+            )
         return user
