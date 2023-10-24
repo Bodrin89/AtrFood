@@ -63,6 +63,9 @@ class DiscountModel(models.Model):
             # send_email_promotion.apply_async(args=[self.name])
             pass
 
+    def __str__(self):
+        return self.name
+
 
 class LoyaltyModel(models.Model):
     """Модель системы лояльности"""
@@ -82,14 +85,23 @@ class LoyaltyModel(models.Model):
     discount_percentage = models.PositiveSmallIntegerField(verbose_name='Процент скидки')
     sum_step = models.PositiveIntegerField(verbose_name='Порог цены')
 
+    def __str__(self):
+        return self.level
+
 
 @receiver(post_save, sender=DiscountModel)
 def apply_discount_to_products(instance, sender, **kwargs):
     """Обработчик события создания скидки"""
     prod = DiscountModel.objects.all()
     all_products = change_discount_price(prod)
-    instance_prod = set().union(all_products['dict_products'].get(instance))
-    instance.product.add(*instance_prod)
+    # instance_prod = set().union(all_products['dict_products'].get(instance))
+    # instance.product.add(*instance_prod)
+    try:
+        instance_prod = set().union(all_products['dict_products'].get(instance))
+        instance.product.add(*instance_prod)
+    except Exception as e:
+        LOGGER.error(f'error{e}')
+        pass
 
 
 @receiver(m2m_changed, sender=DiscountModel.product.through)
@@ -165,4 +177,6 @@ def get_discount(product: ProductModel) -> list[DiscountModel]:
 
 def get_sum_price_product(price, discount_amounts):
     """Расчет суммы товаров в корзине с учетом всех скидок"""
-    return price - (price * sum(discount_amounts)) / 100
+    # return price - (price * sum(discount_amounts)) / 100
+    return price - (price * sum(filter(None, discount_amounts))) / 100
+
