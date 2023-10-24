@@ -24,11 +24,11 @@ class ServiceCart:
         try:
             ProductModel.objects.get(id=product_id, existence=True)
         except ProductModel.DoesNotExist:
-            raise serializers.ValidationError('Товара нет в наличии')
+            raise serializers.ValidationError({'error': 'Товара нет в наличии'})
         try:
             ProductModel.objects.get(id=product_id, quantity_stock__gte=quantity_product)
         except ProductModel.DoesNotExist:
-            raise serializers.ValidationError('Нужного количества нет на складе')
+            raise serializers.ValidationError({'error': 'Нужного количества нет на складе'})
 
     @staticmethod
     def _get_discount(product: ProductModel, quantity_product: int, limit_sum_product: float) -> QuerySet[DiscountModel]:
