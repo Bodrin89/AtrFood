@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from apps.cart.models import CartModel
 from apps.cart.services import ServiceCart
-from apps.product.models import ProductModel
+from apps.product.serializers import RetrieveProductSerializer
 from config.settings import LOGGER
 
 
@@ -23,6 +23,7 @@ class CreateCartSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
+        LOGGER.debug(validated_data)
         return ServiceCart.add_cart(validated_data)
 
 

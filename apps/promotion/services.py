@@ -19,7 +19,3 @@ class ServicePromotion:
             if item.date_end_discount < timezone.now().date():
                 item.is_active = False
                 item.save()
-
-
-
-

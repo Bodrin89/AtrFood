@@ -22,4 +22,3 @@ class CreateOrderViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(session=self.request.session, request=self.request)
-

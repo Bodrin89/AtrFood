@@ -1,7 +1,7 @@
 from django.core.mail import send_mail
 from django.db import models, transaction
 from django.db.models import F, Q
-from django.db.models.signals import m2m_changed, post_save, pre_save, post_delete, pre_delete
+from django.db.models.signals import m2m_changed, post_delete, post_save, pre_delete, pre_save
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 
@@ -34,8 +34,8 @@ class DiscountModel(models.Model):
     ]
 
     name = models.CharField(max_length=255, verbose_name='Наименование акции')
-    image = models.ImageField(upload_to='media', null=True, blank=True, verbose_name="фото акции")
-    is_show = models.BooleanField(default=True, verbose_name="вывод на фронт")
+    image = models.ImageField(upload_to='media', null=True, blank=True, verbose_name='фото акции')
+    is_show = models.BooleanField(default=True, verbose_name='вывод на фронт')
     subcategory_product = models.ForeignKey(SubCategoryProductModel, null=True, blank=True, on_delete=models.CASCADE,
                                             verbose_name='Скидка для всей подкатегории товара')
     product = models.ManyToManyField(ProductModel, related_name='products', verbose_name='товары по акции')
@@ -52,7 +52,7 @@ class DiscountModel(models.Model):
     date_end_discount = models.DateField(verbose_name='Дата окончания акции')
     is_active = models.BooleanField(default=True, verbose_name='Действующая/архивная акция')
     action_type = models.CharField(max_length=20, choices=ACTION_TYPE_CHOICES, verbose_name='Тип акции')
-    discount_amount = models.PositiveIntegerField(blank=True, null=True, verbose_name='Размер скидки')
+    discount_amount = models.PositiveIntegerField(default=0, blank=True, null=True, verbose_name='Размер скидки')
     gift = models.ForeignKey(ProductModel, on_delete=models.CASCADE, blank=True, null=True, verbose_name='Подарок')
 
     def save(self, created=False, *args, **kwargs):
@@ -94,13 +94,10 @@ def apply_discount_to_products(instance, sender, **kwargs):
     """Обработчик события создания скидки"""
     prod = DiscountModel.objects.all()
     all_products = change_discount_price(prod)
-    # instance_prod = set().union(all_products['dict_products'].get(instance))
-    # instance.product.add(*instance_prod)
-    try:
-        instance_prod = set().union(all_products['dict_products'].get(instance))
+    if instance.product:
+        instance_prod = set().union(all_products['dict_products'].get(instance, []))
         instance.product.add(*instance_prod)
-    except Exception as e:
-        LOGGER.error(f'error{e}')
+    else:
         pass
 
 

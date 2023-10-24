@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from apps.product.models import ProductModel
 from apps.product.serializers import ListProductSerializer
 from apps.promotion.models import DiscountModel
 
@@ -11,5 +12,3 @@ class ListDiscountSerializer(serializers.ModelSerializer):
         model = DiscountModel
         fields = '__all__'
         # fields = ('name', 'product')
-
-

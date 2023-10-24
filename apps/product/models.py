@@ -69,7 +69,8 @@ class ProductModel(models.Model):
     discount_price = models.FloatField(blank=True, null=True, verbose_name='Цена с учетом скидки')
     quantity_stock = models.IntegerField(verbose_name='Количество на складе')
     rating = models.IntegerField(default=0, verbose_name='Рейтинг товара')
-    # quantity_select = models.IntegerField(blank=True, null=True, verbose_name='выбор количества')
+    opt_quantity = models.PositiveIntegerField(null=True, blank=True, verbose_name="Количество товара для ОПТа")
+    opt_price = models.FloatField(null=True, blank=True, verbose_name="ОПТовая цена за единицу товара")
     existence = models.BooleanField(null=True, blank=True, default=True, verbose_name='Наличие товара на складе')
     product_data = models.ForeignKey(DescriptionProductModel, on_delete=models.CASCADE, verbose_name='Данные товара')
     subcategory = models.ForeignKey(SubCategoryProductModel, on_delete=models.CASCADE,

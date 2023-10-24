@@ -1,8 +1,8 @@
 from django.db import models
+from django.db.models import Avg
 
 from apps.product.models import ProductModel
 from apps.user.models import BaseUserModel
-from django.db.models import Avg
 
 
 class ReviewProductModel(models.Model):

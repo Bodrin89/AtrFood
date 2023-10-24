@@ -12,9 +12,8 @@ from apps.product.views import (AddProductCompareView,
                                 ListProductSubcategoryView,
                                 ListProductView,
                                 PopularProductsView,
-                                ViewedProductsView,
                                 SimilarProductsView,
-                                )
+                                ViewedProductsView,)
 
 urlpatterns = [
     # path('products/create', CreateProductView.as_view(), name='create-product'),

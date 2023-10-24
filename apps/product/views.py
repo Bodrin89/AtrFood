@@ -4,8 +4,6 @@ from django.db.models import Sum
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
-from apps.product.filters import ProductFilter
-from apps.order.models import OrderItem
 from rest_framework.generics import (CreateAPIView,
                                      ListAPIView,
                                      RetrieveAPIView,
@@ -13,7 +11,8 @@ from rest_framework.generics import (CreateAPIView,
                                      get_object_or_404,)
 from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
 from rest_framework.permissions import IsAdminUser
-from apps.product.services import ServiceProduct
+
+from apps.order.models import OrderItem
 from apps.product.filters import ProductFilter
 from apps.product.models import CatalogModel, CategoryProductModel, ProductModel
 from apps.product.serializers import (AddProductCompareSerializer,
@@ -22,8 +21,8 @@ from apps.product.serializers import (AddProductCompareSerializer,
                                       ListCatalogSerializer,
                                       ListProductSerializer,
                                       RetrieveProductSerializer,)
+from apps.product.services import ServiceProduct
 from config.settings import LOGGER
-
 
 # class CreateProductView(CreateAPIView):
 #     """Создание товара"""

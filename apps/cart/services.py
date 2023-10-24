@@ -1,7 +1,6 @@
-from django.db.models import F, Q
-from rest_framework import status
+from django.db.models import F, Q, QuerySet
+from rest_framework import serializers, status
 from rest_framework.response import Response
-from rest_framework import serializers
 
 from apps.company_user.models import CompanyUserModel
 from apps.individual_user.models import IndividualUserModel
@@ -32,7 +31,7 @@ class ServiceCart:
             raise serializers.ValidationError('Нужного количества нет на складе')
 
     @staticmethod
-    def _get_discount(product: ProductModel, quantity_product: int, limit_sum_product: float) -> list[DiscountModel]:
+    def _get_discount(product: ProductModel, quantity_product: int, limit_sum_product: float) -> QuerySet[DiscountModel]:
         """Фильтр акций по условиям"""
         discounts = product.products.all().filter(
             Q(is_active=True) &
@@ -42,6 +41,23 @@ class ServiceCart:
             (Q(use_limit_sum_product=True, limit_sum_product__lt=limit_sum_product) | ~Q(use_limit_sum_product=True))
         )
         return discounts
+
+    @staticmethod
+    def _get_gifts_product(discount):
+        """Проверка на наличие подарка в акции, получение списка подарков во всех акциях товара"""
+        filtered_gifts = discount.filter(gift_id__isnull=False)
+
+        gifts = []
+        if filtered_gifts:
+            for item in filtered_gifts.values():
+                gift = ProductModel.objects.get(id=item['gift_id'])
+                foto_url = gift.foto.url if gift.foto else None
+                gifts.append({
+                    'name': gift.name,
+                    'foto': foto_url,
+                    'article': gift.article
+                })
+        return gifts
 
 
     @staticmethod
@@ -82,6 +98,12 @@ class ServiceCart:
         quantity_product = validated_data['quantity_product']
         product: ProductModel = validated_data['product']
         price = ProductModel.objects.get(id=product_id).price
+        try:
+            if quantity_product >= product.opt_quantity:
+                price = product.opt_price
+        except TypeError:
+            pass
+
         limit_sum_product = price * quantity_product
 
         ServiceCart._check_existence(product_id, quantity_product)
@@ -91,16 +113,18 @@ class ServiceCart:
         discounts = ServiceCart._get_discount(product, quantity_product, limit_sum_product)
         discount_amounts = [discount.discount_amount for discount in discounts]
 
+        gifts = ServiceCart._get_gifts_product(discounts)
+
         if validated_data['user'].id and product.products.filter(use_limit_loyalty=True).exists():
             user_id = validated_data['user'].id
             ServiceCart.get_level_loyalty(user_id, discount_amounts)
 
         found = False
-
         for item in product_cart:
             if item.get('product_id') == product_id:
                 item['quantity_product'] = quantity_product
-                item['sum_products'] = ServiceCart._get_sum_price_product(price, quantity_product, discount_amounts)
+                item['sum_products'] = ServiceCart._get_sum_price_product(price, quantity_product, discount_amounts),
+                item['gifts'] = gifts
                 found = True
                 break
 
@@ -108,7 +132,8 @@ class ServiceCart:
             product_cart.append({
                 'product_id': product_id,
                 'quantity_product': quantity_product,
-                'sum_products': ServiceCart._get_sum_price_product(price, quantity_product, discount_amounts)
+                'sum_products': ServiceCart._get_sum_price_product(price, quantity_product, discount_amounts),
+                'gifts': gifts
             })
         session['product_cart'] = product_cart
         session.modified = True
@@ -124,6 +149,7 @@ class ServiceCart:
         product_id = instance['product_id']
         quantity_product = instance['quantity_product']
         sum_products = instance['sum_products']
+        gifts = instance['gifts']
 
         try:
             product = ProductModel.objects.get(id=product_id)
@@ -131,6 +157,7 @@ class ServiceCart:
                 'product_id': product_id,
                 'quantity_product': quantity_product,
                 'sum_products': sum_products,
+                'gifts': gifts,
                 'product': {
                     'id': product.id,
                     'name': product.name,

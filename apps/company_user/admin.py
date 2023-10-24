@@ -10,7 +10,7 @@ from apps.order.models import Order
 
 class OrderInline(admin.StackedInline):
     model = Order
-    fk_name = "user"
+    fk_name = 'user'
     ordering = ['-date_created']
     extra = 0
     exclude = ('payment_date', 'total_quantity')

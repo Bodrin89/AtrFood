@@ -15,6 +15,3 @@ class BaseUserAdmin(TranslationAdmin):
         qs = super(BaseUserAdmin, self).get_queryset(request)
         return qs.filter(is_staff=True)
     exclude = ('user_type', 'region')
-
-
-
