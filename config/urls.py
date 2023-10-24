@@ -15,7 +15,6 @@ urlpatterns = [
     path('api/', include(('apps.cart.urls', 'apps.cart'))),
     path('api/order/', include(('apps.order.urls', 'apps.order'))),
     path('api/', include(('apps.promotion.urls', 'apps.promotion'))),
-    path('api/order', include(('apps.order.urls', 'apps.order'))),
 
     prefix_default_language=True,
 )

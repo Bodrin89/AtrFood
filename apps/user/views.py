@@ -17,6 +17,7 @@ from apps.user.serializers import (AddressSerializer,
                                    LoginSerializer,
                                    RegionSerializer,)
 from apps.user.services import UserServices
+from apps.user.tasks import confirmation_email, update_email
 
 User = get_user_model()
 
@@ -105,8 +106,8 @@ class ConfirmEmailView(APIView):
             user.save()
             return Response(
                 {
-                'status': 'Success',
-                'message': 'Email успешно подтвержден.'
+                    'status': 'Success',
+                    'message': 'Email успешно подтвержден.'
                 },
                 status=status.HTTP_200_OK
             )
@@ -138,16 +139,25 @@ class EmailUrlView(APIView):
                     },
                     status=status.HTTP_200_OK
                 )
+            if User.objects.filter(email=email).exists():
+                return Response(
+                    {
+                        'status': 'Error',
+                        'message': f'Данная электронная почта уже зарегистрирована.'
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
             token = self.request.user.confirmation_token
             message = 'Для подтверждения email, пожалуйста, перейдите по ссылке:'
             subject = 'Подтверждение email'
-            email_url = 'update-email'
-            UserServices.update_email(
-                user_token=token,
-                message=message,
-                subject=subject,
-                email_url=email_url,
-                new_email=email
+            email_url = 'api/user/update-email'
+            update_email.apply_async(args=[
+                token,
+                email_url,
+                message,
+                subject,
+                email
+            ]
             )
             return Response(
                 {
@@ -209,13 +219,14 @@ class ForgotPasswordView(APIView):
                 token = user.confirmation_token
                 message = 'Для восстановления пароля перейдите по ссылке: '
                 subject = 'Восстановление пароля'
-                email_url = 'update-password'
-                UserServices.confirmation_email(
-                    user_token=token,
-                    message=message,
-                    subject=subject,
-                    email_url=email_url,
-                    user_email=email
+                email_url = 'api/user/update-password'
+                confirmation_email.apply_async(args=[
+                    token,
+                    email,
+                    email_url,
+                    message,
+                    subject,
+                ]
                 )
                 return Response(
                     {
