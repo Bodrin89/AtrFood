@@ -1,19 +1,20 @@
 from django.contrib import admin
-from apps.user.models import AddressModel, BaseUserModel
+
 from apps.order.models import Order
+from apps.user.models import AddressModel, BaseUserModel
 
 
 class ClientUserProxy(BaseUserModel):
     class Meta:
         proxy = True
-        app_label = "clients"
+        app_label = 'clients'
         verbose_name = 'Клиент'
-        verbose_name_plural = "Клиенты"
+        verbose_name_plural = 'Клиенты'
 
 
 class OrderInline(admin.StackedInline):
     model = Order
-    fk_name = "user"
+    fk_name = 'user'
     ordering = ['-date_created']
     extra = 0
     readonly_fields = ['get_order_id', ]

@@ -4,13 +4,13 @@ from django.utils.html import format_html
 from modeltranslation.admin import TranslationAdmin
 
 from apps.company_user.models import CompanyUserModel
-from apps.user.models import AddressModel
 from apps.order.models import Order
+from apps.user.models import AddressModel
 
 
 class OrderInline(admin.StackedInline):
     model = Order
-    fk_name = "user"
+    fk_name = 'user'
     ordering = ['-date_created']
     extra = 0
     readonly_fields = ['get_order_id', ]

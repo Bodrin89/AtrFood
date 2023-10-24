@@ -1,7 +1,7 @@
 from django.core.mail import send_mail
 from django.db import models, transaction
 from django.db.models import F, Q
-from django.db.models.signals import m2m_changed, post_save, pre_save, post_delete, pre_delete
+from django.db.models.signals import m2m_changed, post_delete, post_save, pre_delete, pre_save
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 
@@ -34,8 +34,8 @@ class DiscountModel(models.Model):
     ]
 
     name = models.CharField(max_length=255, verbose_name='Наименование акции')
-    image = models.ImageField(upload_to='media', null=True, blank=True, verbose_name="фото акции")
-    is_show = models.BooleanField(default=True, verbose_name="вывод на фронт")
+    image = models.ImageField(upload_to='media', null=True, blank=True, verbose_name='фото акции')
+    is_show = models.BooleanField(default=True, verbose_name='вывод на фронт')
     subcategory_product = models.ForeignKey(SubCategoryProductModel, null=True, blank=True, on_delete=models.CASCADE,
                                             verbose_name='Скидка для всей подкатегории товара')
     product = models.ManyToManyField(ProductModel, related_name='products', verbose_name='товары по акции')

@@ -1,7 +1,6 @@
 from django.db.models import F, Q, QuerySet
-from rest_framework import status
+from rest_framework import serializers, status
 from rest_framework.response import Response
-from rest_framework import serializers
 
 from apps.company_user.models import CompanyUserModel
 from apps.individual_user.models import IndividualUserModel
@@ -102,15 +101,11 @@ class ServiceCart:
         price = ProductModel.objects.get(id=product_id).price
         limit_sum_product = price * quantity_product
 
-
         ServiceCart._check_existence(product_id, quantity_product)
 
         ServicePromotion.check_date_promotions()
 
         gifts = ServiceCart._get_gifts_product(product)
-
-
-
 
         discounts = ServiceCart._get_discount(product, quantity_product, limit_sum_product)
         discount_amounts = [discount.discount_amount for discount in discounts]

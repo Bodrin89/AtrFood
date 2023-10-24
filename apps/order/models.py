@@ -8,7 +8,7 @@ from apps.company_user.models import CompanyUserModel
 from apps.individual_user.models import IndividualUserModel
 from apps.product.models import ProductModel
 from apps.promotion.models import LoyaltyModel
-from apps.user.models import BaseUserModel, AddressModel
+from apps.user.models import AddressModel, BaseUserModel
 from apps.user.validators import validate_phone_number
 from config.settings import LOGGER
 

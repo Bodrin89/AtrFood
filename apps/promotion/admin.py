@@ -1,9 +1,9 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.admin import ModelAdmin
 from django.utils.translation import gettext_lazy as _
-from django.contrib import messages
-from apps.promotion.tasks import send_email_promotion
+
 from apps.promotion.models import DiscountModel, LoyaltyModel
+from apps.promotion.tasks import send_email_promotion
 from config.settings import LOGGER
 
 
