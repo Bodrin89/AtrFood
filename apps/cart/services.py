@@ -118,12 +118,13 @@ class ServiceCart:
         if validated_data['user'].id and product.products.filter(use_limit_loyalty=True).exists():
             user_id = validated_data['user'].id
             ServiceCart.get_level_loyalty(user_id, discount_amounts)
+        LOGGER.debug(product.date_create)
 
         found = False
         for item in product_cart:
             if item.get('product_id') == product_id:
                 item['quantity_product'] = quantity_product
-                item['sum_products'] = ServiceCart._get_sum_price_product(price, quantity_product, discount_amounts),
+                item['sum_products'] = ServiceCart._get_sum_price_product(price, quantity_product, discount_amounts)
                 item['gifts'] = gifts
                 found = True
                 break
@@ -136,6 +137,7 @@ class ServiceCart:
                 'gifts': gifts
             })
         session['product_cart'] = product_cart
+        LOGGER.debug(session['product_cart'])
         session.modified = True
         for item in discounts:
             item.count_person += 1
@@ -199,4 +201,5 @@ class ServiceCart:
                 total_sum.append(item.get('sum_products'))
             else:
                 not_existence.append(product.id)
+        LOGGER.debug(total_sum)
         return Response({'total_sum': sum(total_sum), 'Товары не в наличии': not_existence})

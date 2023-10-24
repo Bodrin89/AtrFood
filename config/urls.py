@@ -10,11 +10,11 @@ urlpatterns = [
     path('api/user/', include(('apps.user.urls', 'apps.user'))),
     path('api/', include(('apps.individual_user.urls', 'apps.individual_user'))),
     path('api/', include(('apps.company_user.urls', 'apps.company_user'))),
-    path('api/', include(('apps.product.urls', 'apps.product'))),
+    path('api/products/', include(('apps.product.urls', 'apps.product'))),
     path('api/review/', include(('apps.review.urls', 'apps.review'))),
-    path('api/', include(('apps.cart.urls', 'apps.cart'))),
+    path('api/cart/', include(('apps.cart.urls', 'apps.cart'))),
     path('api/order/', include(('apps.order.urls', 'apps.order'))),
-    path('api/', include(('apps.promotion.urls', 'apps.promotion'))),
+    path('api/discounts/', include(('apps.promotion.urls', 'apps.promotion'))),
 
     prefix_default_language=True,
 )
