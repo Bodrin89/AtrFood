@@ -37,7 +37,7 @@ class CreateCompanySerializer(serializers.ModelSerializer):
     company_address = CompanyAddressSerializer()
     contact_person = ContactPersonSerializer()
     # address = AddressSerializer(write_only=True)
-    addresses = AddressSerializer(many=True, required=True)
+    addresses = AddressSerializer(required=True)
     region = RegionSerializer()
     user_type = serializers.CharField(read_only=True)
 

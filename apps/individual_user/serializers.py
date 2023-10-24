@@ -18,7 +18,7 @@ class CreateIndividualSerializer(serializers.ModelSerializer):
     second_phone_number = serializers.CharField(max_length=50, required=False, allow_blank=True)
     region = RegionSerializer(required=True)
     # address = AddressSerializer(write_only=True)
-    addresses = AddressSerializer(many=True, required=True)
+    addresses = AddressSerializer(required=True)
     user_type = serializers.CharField(read_only=True)
 
     class Meta:

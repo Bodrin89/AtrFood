@@ -63,6 +63,9 @@ class DiscountModel(models.Model):
             # send_email_promotion.apply_async(args=[self.name])
             pass
 
+    def __str__(self):
+        return self.name
+
 
 class LoyaltyModel(models.Model):
     """Модель системы лояльности"""
@@ -82,6 +85,8 @@ class LoyaltyModel(models.Model):
     discount_percentage = models.PositiveSmallIntegerField(verbose_name='Процент скидки')
     sum_step = models.PositiveIntegerField(verbose_name='Порог цены')
 
+    def __str__(self):
+        return self.level
 
 
 @receiver(post_save, sender=DiscountModel)
@@ -169,4 +174,6 @@ def get_discount(product: ProductModel) -> list[DiscountModel]:
 
 def get_sum_price_product(price, discount_amounts):
     """Расчет суммы товаров в корзине с учетом всех скидок"""
-    return price - (price * sum(discount_amounts)) / 100
+    # return price - (price * sum(discount_amounts)) / 100
+    return price - (price * sum(filter(None, discount_amounts))) / 100
+

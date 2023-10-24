@@ -20,10 +20,10 @@ router.register(r'full_profile_info', ProfileViewSet, basename='full_profile_inf
 router.register(r'address', AddressViewSet, basename='address')
 
 urlpatterns = [
-    path('login', LoginView.as_view(), name='login'),
-    path('logout', LogoutView.as_view(), name='logout'),
+    path('login/', LoginView.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
     path('confirm-email/', ConfirmEmailView.as_view(), name='confirm-email'),
-    path('email_url', EmailUrlView.as_view(), name='email_url'),
+    path('email_url/', EmailUrlView.as_view(), name='email_url'),
     path('update-email/', UpdateEmailView.as_view(), name='update_email'),
     path('forgot-password/', ForgotPasswordView.as_view(), name='forgot-password'),
     path('update-password/', UpdatePasswordViewNotInProfile.as_view(), name='update_password'),

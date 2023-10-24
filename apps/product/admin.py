@@ -1,14 +1,16 @@
-
+from datetime import timedelta
 
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin, StackedInline
-
+from apps.order.models import OrderItem
 from apps.product.models import (CatalogModel,
                                  CategoryProductModel,
                                  DescriptionProductModel,
                                  ProductModel,
                                  SubCategoryProductModel,)
 from apps.promotion.models import DiscountModel, LoyaltyModel
+from django.db.models import Sum
+from django.utils import timezone
 
 
 @admin.register(CatalogModel)
@@ -26,6 +28,11 @@ class SubCategoryProductAdmin(admin.ModelAdmin):
     pass
 
 
+@admin.register(DescriptionProductModel)
+class DescriptionProductModelAdmin(admin.ModelAdmin):
+    pass
+
+
 @admin.register(ProductModel)
 class ProductAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('id', 'name', 'price', 'subcategory',)
