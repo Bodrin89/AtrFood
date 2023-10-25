@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from apps.cart.models import CartModel
 from apps.cart.services import ServiceCart
-from apps.product.models import ProductModel
+from apps.product.serializers import RetrieveProductSerializer
 from config.settings import LOGGER
 
 
@@ -14,7 +14,16 @@ class CreateCartSerializer(serializers.ModelSerializer):
         model = CartModel
         fields = ('quantity_product', 'user')
 
+    def validate_quantity_product(self, value):
+        """
+        Проверка, что quantity_product больше 0
+        """
+        if value <= 0:
+            raise serializers.ValidationError('Количество товара должно быть больше 0')
+        return value
+
     def create(self, validated_data):
+        LOGGER.debug(validated_data)
         return ServiceCart.add_cart(validated_data)
 
 

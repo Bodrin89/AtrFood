@@ -1,7 +1,12 @@
-from apps.product.models import CategoryProductModel, SubCategoryProductModel, ProductModel, DescriptionProductModel, \
-    FavoriteProductModel, CompareProductModel
-from config.settings import LOGGER
 from django.db import transaction
+
+from apps.product.models import (CategoryProductModel,
+                                 CompareProductModel,
+                                 DescriptionProductModel,
+                                 FavoriteProductModel,
+                                 ProductModel,
+                                 SubCategoryProductModel,)
+from config.settings import LOGGER
 
 
 class ServiceProduct:
@@ -19,30 +24,52 @@ class ServiceProduct:
             return True
         return False
 
-    @staticmethod
-    def create_product(validated_data: dict) -> ProductModel:
-        """Создание товара"""
-        with transaction.atomic():
-            category_product_data = validated_data.pop('category', None)
-            subcategory_product_data = validated_data.pop('subcategory', None)
-            category, _ = CategoryProductModel.objects.get_or_create(**category_product_data)
-            subcategory, _ = SubCategoryProductModel.objects.get_or_create(category=category,
-                                                                           **subcategory_product_data)
-            existence = ServiceProduct._calculation_existence(validated_data['quantity_stock'])
-            product_data = validated_data.pop('product_data', None)
-            product_data, _ = DescriptionProductModel.objects.get_or_create(**product_data)
-            discount = validated_data.pop('discount', None)
-            price = validated_data.get('price', None)
-            if discount:
-                discount_price = ServiceProduct._calculation_discount(price, discount)
-                product = ProductModel.objects.create(category=category, product_data=product_data,
-                                                      discount_price=discount_price, discount=discount,
-                                                      existence=existence, subcategory=subcategory, **validated_data)
-            else:
-                product = ProductModel.objects.create(category=category, product_data=product_data,
-                                                      discount_price=price, existence=existence,
-                                                      subcategory=subcategory, **validated_data)
-        return product
+    # @staticmethod
+    # def create_product(validated_data: dict) -> ProductModel:
+    #     """Создание товара"""
+    #     with transaction.atomic():
+    #         category_product_data = validated_data.pop('category', None)
+    #         subcategory_product_data = validated_data.pop('subcategory', None)
+    #         category, _ = CategoryProductModel.objects.get_or_create(**category_product_data)
+    #         subcategory, _ = SubCategoryProductModel.objects.get_or_create(category=category,
+    #                                                                        **subcategory_product_data)
+    #         existence = ServiceProduct._calculation_existence(validated_data['quantity_stock'])
+    #         product_data = validated_data.pop('product_data', None)
+    #         product_data, _ = DescriptionProductModel.objects.get_or_create(**product_data)
+    #         discount = validated_data.pop('discount', None)
+    #         price = validated_data.get('price', None)
+    #         if discount:
+    #             discount_price = ServiceProduct._calculation_discount(price, discount)
+    #             product = ProductModel.objects.create(category=category, product_data=product_data,
+    #                                                   discount_price=discount_price, discount=discount,
+    #                                                   existence=existence, subcategory=subcategory, **validated_data)
+    #         else:
+    #             product = ProductModel.objects.create(category=category, product_data=product_data,
+    #                                                   discount_price=price, existence=existence,
+    #                                                   subcategory=subcategory, **validated_data)
+    #     return product
+
+    # @staticmethod
+    # def create_product(validated_data: dict) -> ProductModel:
+    #     """Создание товара"""
+    #     with transaction.atomic():
+    #         subcategory_product_data = validated_data.pop('subcategory', None)
+    #         subcategory, _ = SubCategoryProductModel.objects.get_or_create(**subcategory_product_data)
+    #         existence = ServiceProduct._calculation_existence(validated_data['quantity_stock'])
+    #         product_data = validated_data.pop('product_data', None)
+    #         product_data, _ = DescriptionProductModel.objects.get_or_create(**product_data)
+    #         discount = validated_data.pop('discount', None)
+    #         price = validated_data.get('price', None)
+    #         if discount:
+    #             discount_price = ServiceProduct._calculation_discount(price, discount)
+    #             product = ProductModel.objects.create(product_data=product_data,
+    #                                                   discount_price=discount_price, discount=discount,
+    #                                                   existence=existence, subcategory=subcategory, **validated_data)
+    #         else:
+    #             product = ProductModel.objects.create(product_data=product_data,
+    #                                                   discount_price=price, existence=existence,
+    #                                                   subcategory=subcategory, **validated_data)
+    #     return product
 
     @staticmethod
     def add_delete_product_favorite(validated_data: dict) -> FavoriteProductModel:
@@ -76,3 +103,14 @@ class ServiceProduct:
     #     if create:
     #         return compare_product
     #     return compare_product.delete()
+
+    @staticmethod
+    def add_viewed_products(product_id, request):
+        """Добавление просмотренные товары в сессию"""
+
+        viewed_products = request.session.get('viewed_products', [])
+        if product_id not in viewed_products:
+            viewed_products.insert(0, product_id)
+        request.session['viewed_products'] = viewed_products[:20]
+        request.session.modified = True
+        return request

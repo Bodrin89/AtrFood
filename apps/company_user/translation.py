@@ -13,4 +13,3 @@ class ContactPersonTranslationOptions(TranslationOptions):
 @register(CompanyUserModel)
 class CompanyUserTranslationOptions(TranslationOptions):
     fields = ('company_address', 'contact_person')
-

@@ -1,7 +1,10 @@
 from typing import Callable
 
+from django.conf import settings
+from django.conf.global_settings import EMAIL_HOST_USER
 from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password
+from django.core.mail import send_mail
 from rest_framework.exceptions import AuthenticationFailed, ValidationError
 from rest_framework.request import Request
 
@@ -34,12 +37,13 @@ class UserServices:
     @staticmethod
     def login_user(user_data: Request, serializer_data: Callable) -> BaseUserModel:
         """Аутентификация пользователя"""
+
         if not (user := authenticate(
                 password=user_data.data.get('password', None),
                 email=user_data.data.get('email', None)
         )):
             raise AuthenticationFailed
         else:
-            serializer = serializer_data(data={'password': user.password, 'email': user.email})
-            serializer.is_valid(raise_exception=True)
+            # serializer = serializer_data(data={'password': user.password, 'email': user.email})
+            # # serializer.is_valid(raise_exception=True)
             return user

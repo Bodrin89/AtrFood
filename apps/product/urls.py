@@ -1,16 +1,36 @@
 from django.urls import path
 
-from apps.product.views import CreateProductView, GetProductView, ListProductSubcategoryView, ListProductView, \
-    AddProductFavoriteView, AddProductCompareView, ListFavoriteProductView, ListCompareProductView
+from apps.product.views import (AddProductCompareView,
+                                AddProductFavoriteView,
+                                GetProductView,
+                                ListCatalogView,
+                                ListCategorySubcategoryView,
+                                ListCompareProductView,
+                                ListFavoriteProductView,
+                                ListProductCatalogView,
+                                ListProductCategoryView,
+                                ListProductSubcategoryView,
+                                ListProductView,
+                                PopularProductsView,
+                                SimilarProductsView,
+                                ViewedProductsView, NewProductView, )
 
 urlpatterns = [
-    path('products/create', CreateProductView.as_view(), name='create-product'),
-    path('products', ListProductView.as_view(), name='list-product'),
-    path('categories/<int:category_id>/subcategories/<int:subcategory_id>/products/',
-         ListProductSubcategoryView.as_view(), name='similar-product'),
-    path('products/<int:pk>/retrieve', GetProductView.as_view(), name='retrieve-product'),
-    path('products/<int:product_id>/favorite', AddProductFavoriteView.as_view(), name='add-favorite-product'),
-    path('products/favorite', ListFavoriteProductView.as_view(), name='list-favorite-product'),
-    path('products/<int:product_id>/compare', AddProductCompareView.as_view(), name='add-compare-product'),
-    path('products/compare', ListCompareProductView.as_view(), name='add-compare-product'),
+    # path('products/create', CreateProductView.as_view(), name='create-product'),
+    path('', ListProductView.as_view(), name='list-product'),
+    path('subcategories/<int:subcategory_id>', ListProductSubcategoryView.as_view(),
+         name='subcategory-products'),
+    path('category/<int:category_id>', ListProductCategoryView.as_view(), name='category-products'),
+    path('catalog/<int:catalog_id>', ListProductCatalogView.as_view(), name='catalog-products'),
+    path('<int:pk>/retrieve', GetProductView.as_view(), name='retrieve-product'),
+    path('<int:product_id>/favorite', AddProductFavoriteView.as_view(), name='add-favorite-product'),
+    path('favorite', ListFavoriteProductView.as_view(), name='list-favorite-product'),
+    path('<int:product_id>/compare', AddProductCompareView.as_view(), name='add-compare-product'),
+    path('compare', ListCompareProductView.as_view(), name='add-compare-product'),
+    path('catalogs', ListCatalogView.as_view(), name='list-catalog'),
+    path('catalog/<int:catalog_id>/category', ListCategorySubcategoryView.as_view(), name='list-catalog-category-subcategory'),
+    path('popular', PopularProductsView.as_view(), name='popular_products'),
+    path('viewed', ViewedProductsView.as_view(), name='viewed_products'),
+    path('similar', SimilarProductsView.as_view(), name='similar_products'),
+    path('new', NewProductView.as_view(), name='new_products'),
 ]
