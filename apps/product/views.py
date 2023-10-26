@@ -35,7 +35,7 @@ class GetProductView(RetrieveAPIView):
 
     def get_queryset(self):
         pk = self.kwargs.get('pk')
-        return ProductModel.objects.filter(id=pk)
+        return ProductModel.objects.filter(id=pk, is_active=True)
 
     def get(self, request, *args, **kwargs):
         pk = self.kwargs.get('pk')
@@ -46,11 +46,11 @@ class GetProductView(RetrieveAPIView):
 class ListProductView(ListAPIView):
     """Получение всех товаров с возможностью фильтрации"""
     serializer_class = ListProductSerializer
-    queryset = ProductModel.objects.all()
+    queryset = ProductModel.objects.all().filter(is_active=True).order_by('id')
     pagination_class = PageNumberPagination
     filter_backends = [SearchFilter, DjangoFilterBackend, OrderingFilter]
     filterset_class = ProductFilter
-    search_fields = ['name', 'description']
+    search_fields = ['name', 'product_data__manufacturer']
     filterset_fields = ['subcategory__category__name', 'existence', 'article', 'name', 'product_data__manufacturer',
                         'price']
 
@@ -67,7 +67,7 @@ class ListProductSubcategoryView(ListAPIView):
 
     def get_queryset(self):
         subcategory_id = self.kwargs.get('subcategory_id')
-        return ProductModel.objects.filter(subcategory_id=subcategory_id).all()
+        return ProductModel.objects.all().filter(subcategory_id=subcategory_id, is_active=True)
 
 
 class ListProductCategoryView(ListAPIView):
@@ -76,7 +76,7 @@ class ListProductCategoryView(ListAPIView):
 
     def get_queryset(self):
         category_id = self.kwargs.get('category_id')
-        return ProductModel.objects.filter(subcategory__category_id=category_id).all()
+        return ProductModel.objects.all().filter(subcategory__category_id=category_id, is_active=True)
 
 
 class ListProductCatalogView(ListAPIView):
@@ -85,7 +85,7 @@ class ListProductCatalogView(ListAPIView):
 
     def get_queryset(self):
         catalog_id = self.kwargs.get('catalog_id')
-        return ProductModel.objects.filter(subcategory__category_id__catalog_id=catalog_id).all()
+        return ProductModel.objects.all().filter(subcategory__category_id__catalog_id=catalog_id, is_active=True)
 
 
 class ListCatalogView(ListAPIView):
@@ -96,7 +96,6 @@ class ListCatalogView(ListAPIView):
 
 class ListCategorySubcategoryView(ListAPIView):
     """Получение всех категорий каталога с подкатегориями категории"""
-    # queryset = CategoryProductModel.objects.all()
     serializer_class = CategorySerializer
 
     def get_queryset(self):
@@ -184,5 +183,14 @@ class SimilarProductsView(ListAPIView):
         viewed_products = self.request.session.get('viewed_products', [])
         if viewed_products:
             first_product = ProductModel.objects.get(id=viewed_products[0])
-            return ProductModel.objects.filter(subcategory=first_product.subcategory).exclude(id=first_product.id)[:20]
+            return ProductModel.objects.filter(subcategory=first_product.subcategory, is_active=True).exclude(
+                id=first_product.id)[:20]
         return ProductModel.objects.none()
+
+
+class NewProductView(ListAPIView):
+    """Список новых товаров"""
+    serializer_class = ListProductSerializer
+
+    def get_queryset(self):
+        return ProductModel.objects.filter(is_active=True).order_by('-date_create')[:20]

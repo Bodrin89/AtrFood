@@ -69,6 +69,7 @@ class ProductModel(models.Model):
     opt_quantity = models.PositiveIntegerField(null=True, blank=True, verbose_name="Количество товара для ОПТа")
     opt_price = models.FloatField(null=True, blank=True, verbose_name="ОПТовая цена за единицу товара")
     existence = models.BooleanField(null=True, blank=True, default=True, verbose_name='Наличие товара на складе')
+    date_create = models.DateField(auto_now_add=True, verbose_name="Дата создания товара")
     product_data = models.ForeignKey(DescriptionProductModel, on_delete=models.CASCADE, verbose_name='Данные товара')
     subcategory = models.ForeignKey(
         SubCategoryProductModel,
@@ -77,6 +78,7 @@ class ProductModel(models.Model):
         related_name='products'
     )
     reviewed = models.BooleanField(verbose_name='Наличие отзывов у продукта', default=False)
+    is_active = models.BooleanField(default=True, verbose_name="Товар активный/скрытый")
 
     def __str__(self):
         return self.name

@@ -15,7 +15,7 @@ class CreateCartView(CreateAPIView):
 
     def perform_create(self, serializer):
         product_id = self.kwargs.get('product_id')
-        product = get_object_or_404(ProductModel, id=product_id)
+        product = get_object_or_404(ProductModel, id=product_id, is_active=True)
         serializer.save(session=self.request.session, product_id=product_id, product=product)
 
 

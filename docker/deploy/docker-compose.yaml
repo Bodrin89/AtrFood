@@ -22,20 +22,33 @@ services:
     networks:
       - ArtFoot
 
-  api:
-    container_name: api_ArtFoot
-    build:
-      dockerfile: docker/deploy/Dockerfile
-      context: ../..
-    depends_on:
-      db:
-        condition: service_healthy
+#  api:
+#    container_name: api_ArtFoot
+#    build:
+#      dockerfile: docker/deploy/Dockerfile
+#      context: ../..
+#    depends_on:
+#      db:
+#        condition: service_healthy
+#    env_file:
+#      - ../../.env
+#    ports:
+#      - 80:80
+#    networks:
+#      - ArtFoot
+
+
+  redis:
+    container_name: redis
+    image: redis
+    restart: always
     env_file:
       - ../../.env
+    #    environment:
+    #      REDIS_HOST: ${REDIS_HOST}
+    #      REDIS_PASSWORD: ${REDIS_PASSWORD}
     ports:
-      - 80:80
-    networks:
-      - ArtFoot
+      - 6379:6379
 
 networks:
   ArtFoot:
