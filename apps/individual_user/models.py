@@ -1,5 +1,4 @@
 from django.db import models
-
 from apps.promotion.models import LoyaltyModel
 from apps.user.models import BaseUserModel
 

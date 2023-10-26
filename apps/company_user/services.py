@@ -3,9 +3,10 @@ from django.contrib.auth.hashers import make_password
 from django.db import transaction
 
 from apps.company_user.models import CompanyAddress, CompanyUserModel, ContactPersonModel
-from apps.user.models import AddressModel, RegionModel
+from apps.user.models import RegionModel
 from apps.user.tasks import confirmation_email
 from config.settings import LOGGER
+from apps.clients.models import AddressModel
 
 
 class CompanyUserServices:
@@ -29,7 +30,6 @@ class CompanyUserServices:
             company_user = CompanyUserModel.objects.create(region=region, bank=bank_, company_address=company_address,
                                                            contact_person=contact_person,
                                                            # is_active=False,
-                                                           user_type='company',
                                                            **validated_data)
             AddressModel.objects.create(user=company_user, **addresses_data)
             # for address_data in addresses_data:

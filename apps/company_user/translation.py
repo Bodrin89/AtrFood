@@ -1,7 +1,4 @@
-
-
 from modeltranslation.translator import TranslationOptions, register
-
 from apps.company_user.models import CompanyUserModel, ContactPersonModel
 
 
@@ -12,4 +9,4 @@ class ContactPersonTranslationOptions(TranslationOptions):
 
 @register(CompanyUserModel)
 class CompanyUserTranslationOptions(TranslationOptions):
-    fields = ('company_address', 'contact_person')
+    fields = ('contact_person', )

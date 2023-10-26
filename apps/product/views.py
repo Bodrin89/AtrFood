@@ -4,14 +4,13 @@ from django.db.models import Sum
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
-from rest_framework.generics import (CreateAPIView,
-                                     ListAPIView,
-                                     RetrieveAPIView,
-                                     RetrieveUpdateDestroyAPIView,
-                                     get_object_or_404,)
+from rest_framework.generics import (
+    CreateAPIView,
+    ListAPIView,
+    RetrieveAPIView,
+    get_object_or_404,
+)
 from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
-from rest_framework.permissions import IsAdminUser
-
 from apps.order.models import OrderItem
 from apps.product.filters import ProductFilter
 from apps.product.models import CatalogModel, CategoryProductModel, ProductModel

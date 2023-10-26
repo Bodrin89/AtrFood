@@ -1,5 +1,4 @@
 from django.db import transaction
-
 from apps.product.models import (CategoryProductModel,
                                  CompareProductModel,
                                  DescriptionProductModel,

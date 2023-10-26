@@ -1,10 +1,8 @@
 from rest_framework import status
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
-
 from apps.individual_user.serializers import CreateIndividualSerializer
-from apps.user.models import BaseUserModel
-from config.settings import LOGGER
+
 
 
 class SingUpIndividualView(CreateAPIView):

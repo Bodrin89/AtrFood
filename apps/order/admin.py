@@ -1,12 +1,13 @@
 from django.contrib import admin
-
 from apps.order.models import Order, OrderItem
 
 
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
-    max_num = 0
-    readonly_fields = ('get_product_price', 'product', 'quantity', 'price')
+    extra = 1
+    # max_num = 1
+    # readonly_fields = ('get_product_price', 'product', 'quantity', 'price')
+    readonly_fields = ('get_product_price', )
 
     def get_product_price(self, obj):
         return obj.product.price
@@ -16,3 +17,8 @@ class OrderItemInline(admin.TabularInline):
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     inlines = [OrderItemInline]
+    list_display = ['id', 'status', 'date_created']
+    readonly_fields = ('returned', )
+    list_editable = ('status',)
+    search_fields = ('id',)
+    list_filter = ('status', )

@@ -9,7 +9,8 @@ from apps.company_user.models import CompanyUserModel
 from apps.individual_user.models import IndividualUserModel
 from apps.product.models import ProductModel
 from apps.promotion.models import LoyaltyModel
-from apps.user.models import AddressModel, BaseUserModel
+from apps.user.models import BaseUserModel
+from apps.clients.models import AddressModel
 from apps.user.validators import validate_phone_number
 from config.settings import LOGGER
 
@@ -56,6 +57,7 @@ class Order(models.Model):
         related_name='managed_orders',
         limit_choices_to={'is_staff': True}
     )
+    returned = models.BooleanField(default=False, verbose_name='Оформлен возврат')
 
     def __str__(self):
         return f'Заказ №{self.id}'
@@ -68,11 +70,6 @@ class Order(models.Model):
                 self.status = 'new_unpaid'
         super(Order, self).save(*args, **kwargs)
 
-    def update_totals(self):
-        """Обновляем общую цену заказа и кол-во товаров в заказае"""
-        self.total_quantity = self.items.all().aggregate(Sum('quantity'))['quantity__sum'] or 0
-        self.total_price = self.items.all().aggregate(Sum('price'))['price__sum'] or 0
-
 
 class OrderItem(models.Model):
     """Модель товаров в заказе"""
@@ -82,7 +79,7 @@ class OrderItem(models.Model):
         verbose_name_plural = 'Товары в заказе'
 
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE, verbose_name='Заказ')
-    product = models.ForeignKey(ProductModel, on_delete=models.SET_NULL, verbose_name='Товар', null=True)
+    product = models.ForeignKey(ProductModel, on_delete=models.PROTECT, verbose_name='Товар', null=True)
     quantity = models.PositiveIntegerField(verbose_name='Количество товара')
     price = models.PositiveIntegerField(verbose_name='Стоимость товара с учетом количества')
 
@@ -93,11 +90,14 @@ class OrderItem(models.Model):
 @receiver(post_save, sender=OrderItem)
 @receiver(post_delete, sender=OrderItem)
 def update_order_totals(sender, instance, **kwargs):
-    instance.order.update_totals()
+    order = instance.order
+    order.total_quantity = order.items.all().aggregate(Sum('quantity'))['quantity__sum'] or 0
+    order.total_price = order.items.all().aggregate(Sum('price'))['price__sum'] or 0
+    order.save()
 
 
 @receiver(post_save, sender=OrderItem)
-def update_stock(sender, instance, created, **kwargs):
+def update_stock_on_orderitem_create(sender, instance, created, **kwargs):
     """Обновляем количество товара на складе после создания OrderItem."""
     if created:
         if instance.product.quantity_stock < instance.quantity:
@@ -105,6 +105,42 @@ def update_stock(sender, instance, created, **kwargs):
 
         instance.product.quantity_stock = F('quantity_stock') - instance.quantity
         instance.product.save(update_fields=['quantity_stock'])
+
+
+@receiver(pre_save, sender=OrderItem)
+def update_stock_on_orderitem_change(sender, instance, **kwargs):
+    """Обновляем количество товара на складе при изменении OrderItem."""
+    if instance.pk and instance.order.returned is not True:
+        old_instance = OrderItem.objects.get(pk=instance.pk)
+
+        old_quantity = old_instance.quantity
+        new_quantity = instance.quantity
+        if old_quantity != new_quantity:
+            total_quantity = instance.product.quantity_stock
+            total_quantity += old_quantity
+            total_quantity -= new_quantity
+            instance.product.quantity_stock = total_quantity
+            instance.product.save(update_fields=['quantity_stock'])
+
+
+@receiver(post_delete, sender=OrderItem)
+def update_stock_delete_orderitem(sender, instance, **kwargs):
+    """Обновляем количество товара на складе при удалении OrderItem."""
+    if instance.order.returned is not True:
+        instance.product.quantity_stock = F('quantity_stock') + instance.quantity
+        instance.product.save(update_fields=['quantity_stock'])
+
+
+@receiver(post_save, sender=Order)
+def handle_returned_order(sender, instance, **kwargs):
+    """Обновляем количество товара на складе если статус заказа возврат"""
+    if instance.status == 'returned' and instance.returned is False:
+        instance.returned = True
+        for item in instance.items.all():
+            product = item.product
+            product.quantity_stock += item.quantity
+            product.save()
+        instance.save()
 
 
 @receiver(post_save, sender=Order)

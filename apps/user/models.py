@@ -1,11 +1,8 @@
 import uuid
-
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-
 from apps.user.validators import validate_phone_number
 
 
@@ -84,19 +81,3 @@ class BaseUserModel(AbstractUser):
 
     # def get_absolute_url(self):
     #     return reverse('')
-
-
-class AddressModel(models.Model):
-    class Meta:
-        verbose_name = 'Адрес'
-        verbose_name_plural = 'Адреса'
-
-    district = models.CharField(max_length=255, blank=True, null=True, verbose_name='район')
-    street = models.CharField(max_length=255, blank=True, null=True, verbose_name='улица')
-    house_number = models.CharField(max_length=255, blank=True, null=True, verbose_name='номер дома')
-    apartment_number = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='номер квартиры')
-    floor = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='этаж')
-    user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE, related_name='addresses', null=True, verbose_name='пользователь')
-
-    def __str__(self):
-        return f'{self.district}, {self.street}'

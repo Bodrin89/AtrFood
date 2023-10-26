@@ -1,8 +1,6 @@
-
-
 from modeltranslation.translator import TranslationOptions, register
-
-from apps.user.models import AddressModel, BaseUserModel, RegionModel
+from apps.user.models import BaseUserModel, RegionModel
+from apps.clients.models import AddressModel
 
 
 @register(RegionModel)

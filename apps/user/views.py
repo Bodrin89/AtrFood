@@ -5,12 +5,11 @@ from rest_framework.generics import CreateAPIView, UpdateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet, ReadOnlyModelViewSet
-
 from apps.company_user.models import CompanyUserModel
 from apps.company_user.serializers import CreateCompanySerializer, GetUpdateCompanySerializer
 from apps.individual_user.models import IndividualUserModel
 from apps.individual_user.serializers import CreateIndividualSerializer, GetUpdateIndividualSerializer
-from apps.user.models import AddressModel
+from apps.clients.models import AddressModel
 from apps.user.serializers import (AddressSerializer,
                                    ChangePasswordSerializer,
                                    EmailSerializer,

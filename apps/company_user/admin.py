@@ -4,7 +4,7 @@ from django.utils.html import format_html
 from modeltranslation.admin import TranslationAdmin
 
 from apps.company_user.models import CompanyUserModel, ContactPersonModel, CompanyAddress
-from apps.user.models import AddressModel
+from apps.clients.models import AddressModel
 from apps.order.models import Order
 
 
@@ -13,7 +13,14 @@ class OrderInline(admin.StackedInline):
     fk_name = 'user'
     ordering = ['-date_created']
     extra = 0
-    exclude = ('payment_date', 'total_quantity')
+    exclude = ('total_quantity', )
+
+    def edit_link(self, instance):
+        url = reverse('admin:%s_%s_change' % (instance._meta.app_label,  instance._meta.model_name),  args=[instance.id] )
+        return format_html('<a href="{}">Просмотр заказа</a>', url)
+
+    edit_link.short_description = 'Действие'
+    readonly_fields = ('edit_link', 'returned')
 
 
 class AddressInline(admin.TabularInline):
@@ -27,7 +34,7 @@ class ContactPersonModelAdmin(TranslationAdmin):
 
 
 @admin.register(CompanyAddress)
-class CompanyAddressAdmin(TranslationAdmin):
+class CompanyAddressAdmin(admin.ModelAdmin):
     pass
 
 

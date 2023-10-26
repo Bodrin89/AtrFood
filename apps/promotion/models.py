@@ -4,9 +4,7 @@ from django.db.models import F, Q
 from django.db.models.signals import m2m_changed, post_delete, post_save, pre_delete, pre_save
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
-
 from apps.product.models import ProductModel, SubCategoryProductModel
-from apps.promotion.tasks import send_email_promotion
 from config.settings import LOGGER
 
 

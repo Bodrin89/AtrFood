@@ -1,14 +1,12 @@
 from django.db.models import F, Q, QuerySet
 from rest_framework import serializers, status
 from rest_framework.response import Response
-
 from apps.company_user.models import CompanyUserModel
 from apps.individual_user.models import IndividualUserModel
 from apps.product.models import ProductModel
 from apps.promotion.models import DiscountModel, LoyaltyModel
 from apps.promotion.services import ServicePromotion
 from apps.user.models import BaseUserModel
-from config.settings import LOGGER
 
 
 class ServiceCart:

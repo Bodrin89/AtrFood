@@ -1,31 +1,37 @@
-from datetime import timedelta
-
 from django.contrib import admin
-from django.contrib.admin import ModelAdmin, StackedInline
-from apps.order.models import OrderItem
-from apps.product.models import (CatalogModel,
-                                 CategoryProductModel,
-                                 DescriptionProductModel,
-                                 ProductModel,
-                                 SubCategoryProductModel,)
-from apps.promotion.models import DiscountModel, LoyaltyModel
-from django.db.models import Sum
-from django.utils import timezone
+from apps.product.models import (
+    CatalogModel,
+    CategoryProductModel,
+    DescriptionProductModel,
+    ProductModel,
+    SubCategoryProductModel,
+    ProductImage,
+)
+
+
+class ProductImageInline(admin.TabularInline):
+    model = ProductImage
+    extra = 1
 
 
 @admin.register(CatalogModel)
 class CatalogAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('id', 'name',)
+    search_fields = ('id', 'name')
 
 
 @admin.register(CategoryProductModel)
 class CategoryProductAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('id', 'name', 'catalog',)
+    search_fields = ('id', 'name')
+    list_filter = ('catalog',)
 
 
 @admin.register(SubCategoryProductModel)
 class SubCategoryProductAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('id', 'name', 'category',)
+    search_fields = ('id', 'name')
+    list_filter = ('category',)
 
 
 @admin.register(DescriptionProductModel)
@@ -35,4 +41,9 @@ class DescriptionProductModelAdmin(admin.ModelAdmin):
 
 @admin.register(ProductModel)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'price', 'subcategory',)
+    list_display = ('id', 'name', 'price', 'subcategory', 'reviewed')
+    search_fields = ('id', 'name', 'article')
+    list_filter = ('subcategory', 'reviewed')
+    readonly_fields = ('rating', )
+    inlines = (ProductImageInline,)
+

@@ -1,8 +1,6 @@
 from rest_framework import serializers
-
 from apps.cart.models import CartModel
 from apps.cart.services import ServiceCart
-from apps.product.serializers import RetrieveProductSerializer
 from config.settings import LOGGER
 
 

@@ -1,11 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-
-from apps.product.models import ProductModel
 from apps.review.models import ReviewProductModel
-from apps.review.services import ServiceReview
-from config.settings import LOGGER
 
 User = get_user_model()
 

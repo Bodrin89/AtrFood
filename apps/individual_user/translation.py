@@ -1,7 +1,4 @@
-
-
 from modeltranslation.translator import TranslationOptions, register
-
 from apps.individual_user.models import IndividualUserModel
 
 

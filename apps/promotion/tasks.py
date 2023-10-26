@@ -1,7 +1,6 @@
 import os
 from django.core.mail import send_mail
 from dotenv import load_dotenv
-
 from config.settings import LOGGER
 
 load_dotenv()

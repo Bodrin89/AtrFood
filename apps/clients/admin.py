@@ -1,7 +1,9 @@
 from django.contrib import admin
-
+from django.urls import reverse
+from django.utils.html import format_html
 from apps.order.models import Order
-from apps.user.models import AddressModel, BaseUserModel
+from apps.clients.models import AddressModel
+from apps.user.models import BaseUserModel
 
 
 class ClientUserProxy(BaseUserModel):
@@ -17,7 +19,14 @@ class OrderInline(admin.StackedInline):
     fk_name = 'user'
     ordering = ['-date_created']
     extra = 0
-    exclude = ('payment_date', 'total_quantity')
+    exclude = ('total_quantity', )
+
+    def edit_link(self, instance):
+        url = reverse('admin:%s_%s_change' % (instance._meta.app_label,  instance._meta.model_name),  args=[instance.id] )
+        return format_html('<a href="{}">Просмотр заказа</a>', url)
+
+    edit_link.short_description = 'Действие'
+    readonly_fields = ('edit_link', 'returned')
 
 
 class AddressInline(admin.TabularInline):
@@ -37,5 +46,10 @@ class ClientUserAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super(ClientUserAdmin, self).get_queryset(request)
         return qs.filter(is_staff=False)
+
+    def has_add_permission(self, request):
+        return False
+
     inlines = [AddressInline, OrderInline]
-    exclude = ('groups', 'user_permissions', 'is_staff', 'is_superuser', 'user_type')
+    exclude = ('groups', 'user_permissions', 'is_staff', 'is_superuser')
+    readonly_fields = ('user_type', )

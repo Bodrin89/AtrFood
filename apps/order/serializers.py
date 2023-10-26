@@ -1,9 +1,8 @@
 from rest_framework import serializers
-
 from apps.order.models import Order, OrderItem
 from apps.order.services import ServiceOrder
 from apps.product.serializers import ProductInfoSerializer
-from apps.user.models import AddressModel
+from apps.clients.models import AddressModel
 from apps.user.serializers import AddressSerializer
 
 

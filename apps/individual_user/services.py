@@ -1,11 +1,10 @@
-from django.contrib.auth import login
 from django.contrib.auth.hashers import make_password
 from django.db import transaction
-
 from apps.individual_user.models import IndividualUserModel
-from apps.user.models import AddressModel, RegionModel
+from apps.user.models import RegionModel
 from apps.user.tasks import confirmation_email
 from config.settings import LOGGER
+from apps.clients.models import AddressModel
 
 
 class IndividualUserService:

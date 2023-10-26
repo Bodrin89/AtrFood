@@ -1,7 +1,5 @@
 from django.db import models
 
-from apps.user.models import BaseUserModel
-
 
 class CatalogModel(models.Model):
     """Модель каталога категорий товара"""
@@ -63,7 +61,6 @@ class ProductModel(models.Model):
         verbose_name_plural = 'Товары'
 
     name = models.CharField(null=True, blank=True, max_length=255, verbose_name='Наименование товара')
-    foto = models.ImageField(null=True, blank=True, upload_to='media', verbose_name='Фото товара')
     price = models.FloatField(verbose_name='Стоимость за единицу')
     article = models.CharField(max_length=255, null=True, blank=True, verbose_name='Артикул товара')
     discount_price = models.FloatField(blank=True, null=True, verbose_name='Цена с учетом скидки')
@@ -73,11 +70,24 @@ class ProductModel(models.Model):
     opt_price = models.FloatField(null=True, blank=True, verbose_name="ОПТовая цена за единицу товара")
     existence = models.BooleanField(null=True, blank=True, default=True, verbose_name='Наличие товара на складе')
     product_data = models.ForeignKey(DescriptionProductModel, on_delete=models.CASCADE, verbose_name='Данные товара')
-    subcategory = models.ForeignKey(SubCategoryProductModel, on_delete=models.CASCADE,
-                                    verbose_name='Подкатегория товара', related_name='products')
+    subcategory = models.ForeignKey(
+        SubCategoryProductModel,
+        on_delete=models.CASCADE,
+        verbose_name='Подкатегория товара',
+        related_name='products'
+    )
+    reviewed = models.BooleanField(verbose_name='Наличие отзывов у продукта', default=False)
 
     def __str__(self):
         return self.name
+
+
+class ProductImage(models.Model):
+    product = models.ForeignKey(ProductModel, related_name='images', on_delete=models.CASCADE, verbose_name='Продукт')
+    image = models.ImageField(upload_to='product/', verbose_name='Изображение', blank=True, null=True)
+
+    def __str__(self):
+        return f'Изображение {self.image}'
 
 
 class FavoriteProductModel(models.Model):

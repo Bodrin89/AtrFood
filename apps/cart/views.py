@@ -1,14 +1,10 @@
 from django.shortcuts import get_object_or_404, render
-from rest_framework import status
-from rest_framework.generics import CreateAPIView, DestroyAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.response import Response
+from rest_framework.generics import CreateAPIView, DestroyAPIView, ListAPIView
 from rest_framework.views import APIView
-
 from apps.cart.models import CartModel
 from apps.cart.serializers import CreateCartSerializer, ListCartSerializer
 from apps.cart.services import ServiceCart
 from apps.product.models import ProductModel
-from config.settings import LOGGER
 
 
 class CreateCartView(CreateAPIView):

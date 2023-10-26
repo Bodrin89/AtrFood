@@ -4,7 +4,7 @@ from rest_framework import serializers
 from apps.company_user.models import CompanyAddress, CompanyUserModel, ContactPersonModel
 from apps.company_user.services import CompanyUserServices
 from apps.company_user.validators import bik_validator, bin_iin_validator, iban_validator
-from apps.user.models import AddressModel
+from apps.clients.models import AddressModel
 from apps.user.serializers import AddressSerializer, RegionSerializer
 from apps.user.services import UserServices
 
