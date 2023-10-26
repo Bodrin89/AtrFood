@@ -53,6 +53,7 @@ class ServiceCart:
                 gift = ProductModel.objects.get(id=item['gift_id'])
                 foto_url = gift.foto.url if gift.foto else None
                 gifts.append({
+                    'id': gift.id,
                     'name': gift.name,
                     'foto': foto_url,
                     'article': gift.article

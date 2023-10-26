@@ -44,7 +44,8 @@ class Order(models.Model):
     # delivery_address = models.CharField(max_length=250, verbose_name='Адрес доставки')
     delivery_address = models.ForeignKey(AddressModel, on_delete=models.CASCADE, verbose_name='Адрес доставки')
     contact_phone = models.CharField(max_length=20, verbose_name='Номер телефона', validators=[validate_phone_number])
-    status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, blank=True, null=True, verbose_name='Статус заказа')
+    status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, blank=True, null=True,
+                              verbose_name='Статус заказа')
     total_quantity = models.PositiveIntegerField(verbose_name='Общее количество', blank=True, null=True)
     total_price = models.PositiveIntegerField(verbose_name='Общая стоимость', blank=True, null=True)
     payment_manager = models.ForeignKey(
@@ -85,6 +86,8 @@ class OrderItem(models.Model):
     product = models.ForeignKey(ProductModel, on_delete=models.SET_NULL, verbose_name='Товар', null=True)
     quantity = models.PositiveIntegerField(verbose_name='Количество товара')
     price = models.PositiveIntegerField(verbose_name='Стоимость товара с учетом количества')
+    gift = models.ForeignKey(ProductModel, on_delete=models.SET_NULL, related_name='order_items_gift', null=True,
+                             blank=True, verbose_name='Подарок')
 
     def __str__(self):
         return f'{self.product.name} ({self.quantity})'

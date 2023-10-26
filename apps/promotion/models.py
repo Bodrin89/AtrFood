@@ -60,6 +60,7 @@ class DiscountModel(models.Model):
         created = not bool(self.pk)
         super().save(*args, **kwargs)
         if created:
+            # TODO потом раскомментировать
             # send_email_promotion.apply_async(args=[self.name])
             pass
 

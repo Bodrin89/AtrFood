@@ -115,6 +115,14 @@ class ProductInfoSerializer(serializers.ModelSerializer):
             'discount_price',
         ]
 
+
+class GiftInfoSerializer(serializers.ModelSerializer):
+    """Информация по подарку из акции"""
+
+    class Meta:
+        model = ProductModel
+        fields = ['name', 'foto', 'article', ]
+
 # class AddProductCompareSerializer(serializers.ModelSerializer):
 #     """Добавление/удаление товара для сравнения"""
 #     user = serializers.HiddenField(default=serializers.CurrentUserDefault())

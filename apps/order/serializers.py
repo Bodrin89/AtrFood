@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from apps.order.models import Order, OrderItem
 from apps.order.services import ServiceOrder
-from apps.product.serializers import ProductInfoSerializer
+from apps.product.serializers import ProductInfoSerializer, GiftInfoSerializer
 from apps.user.models import AddressModel
 from apps.user.serializers import AddressSerializer
 
@@ -10,6 +10,7 @@ from apps.user.serializers import AddressSerializer
 class OrderItemSerializer(serializers.ModelSerializer):
     """Сериализатор товаров заказа"""
     product = ProductInfoSerializer()
+    gift = GiftInfoSerializer()
 
     class Meta:
         model = OrderItem
