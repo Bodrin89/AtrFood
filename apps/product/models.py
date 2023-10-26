@@ -74,6 +74,7 @@ class ProductModel(models.Model):
     existence = models.BooleanField(null=True, blank=True, default=True, verbose_name='Наличие товара на складе')
     date_create = models.DateField(auto_now_add=True, verbose_name="Дата создания товара")
     product_data = models.ForeignKey(DescriptionProductModel, on_delete=models.CASCADE, verbose_name='Данные товара')
+    is_active = models.BooleanField(default=True, verbose_name="Товар активный/скрытый")
     subcategory = models.ForeignKey(SubCategoryProductModel, on_delete=models.CASCADE,
                                     verbose_name='Подкатегория товара', related_name='products')
 
