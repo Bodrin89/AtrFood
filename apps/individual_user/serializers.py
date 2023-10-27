@@ -1,5 +1,6 @@
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
+from django.utils.translation import gettext_lazy as _
 
 from apps.individual_user.models import IndividualUserModel
 from apps.individual_user.services import IndividualUserService
@@ -53,9 +54,9 @@ class GetUpdateIndividualSerializer(serializers.ModelSerializer):
 
     def validate_addresses(self, value):
         if not value or len(value) == 0:
-            raise serializers.ValidationError('Необходимо предоставить хотя бы один адрес.')
+            raise serializers.ValidationError(_('Необходимо предоставить хотя бы один адрес.'))
         if len(value) > 3:
-            raise serializers.ValidationError('Можно добавить не более трех адресов.')
+            raise serializers.ValidationError(_('Можно добавить не более трех адресов.'))
         return value
 
     def update(self, instance, validated_data):

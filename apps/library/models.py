@@ -38,7 +38,7 @@ class District(models.Model):
 class ManufacturingCompany(models.Model):
     class Meta:
         verbose_name = _('Компания производитель')
-        verbose_name_plural = _('Компании производитель')
+        verbose_name_plural = _('Компании производители')
 
     name = models.CharField(max_length=255, verbose_name=_('Компания производитель'))
 

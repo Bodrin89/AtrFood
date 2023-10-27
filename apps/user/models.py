@@ -11,8 +11,8 @@ from apps.user.validators import validate_phone_number
 
 class RegionModel(models.Model):
     class Meta:
-        verbose_name = 'Регион'
-        verbose_name_plural = 'Регионы'
+        verbose_name = _('Регион')
+        verbose_name_plural = _('Регионы')
 
     region = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
@@ -37,12 +37,12 @@ class CustomUserManager(BaseUserManager):
 
 class BaseUserModel(AbstractUser):
     class Meta:
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
+        verbose_name = _('Пользователь')
+        verbose_name_plural = _('Пользователи')
 
     USER_TYPES = (
-        ('individual', 'Individual'),
-        ('company', 'Company'),
+        ('individual', _('Individual')),
+        ('company', _('Company')),
     )
 
     username = models.CharField(
@@ -67,15 +67,16 @@ class BaseUserModel(AbstractUser):
     phone_number = models.CharField(
         max_length=20,
         validators=[validate_phone_number],
-        verbose_name='номер телефона'
+        verbose_name=_('номер телефона')
         )
     confirmation_token = models.UUIDField(default=uuid.uuid4, editable=False)
-    user_type = models.CharField(max_length=10, choices=USER_TYPES, default='individual', verbose_name='Тип пользователя')
-    email = models.EmailField(unique=True, verbose_name='Электронная почта')
+    user_type = models.CharField(max_length=10, choices=USER_TYPES, default='individual',
+                                 verbose_name=_('Тип пользователя'))
+    email = models.EmailField(unique=True, verbose_name=_('Электронная почта'))
     region = models.ForeignKey(
         RegionModel,
         on_delete=models.CASCADE,
-        verbose_name='место положения область/город',
+        verbose_name=_('место положения область/город'),
         null=True,
         blank=True
         )
@@ -88,15 +89,16 @@ class BaseUserModel(AbstractUser):
 
 class AddressModel(models.Model):
     class Meta:
-        verbose_name = 'Адрес'
-        verbose_name_plural = 'Адреса'
+        verbose_name = _('Адрес')
+        verbose_name_plural = _('Адреса')
 
-    district = models.CharField(max_length=255, blank=True, null=True, verbose_name='район')
-    street = models.CharField(max_length=255, blank=True, null=True, verbose_name='улица')
-    house_number = models.CharField(max_length=255, blank=True, null=True, verbose_name='номер дома')
-    apartment_number = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='номер квартиры')
-    floor = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='этаж')
-    user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE, related_name='addresses', null=True, verbose_name='пользователь')
+    district = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('район'))
+    street = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('улица'))
+    house_number = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('номер дома'))
+    apartment_number = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name=_('номер квартиры'))
+    floor = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name=_('этаж'))
+    user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE, related_name='addresses', null=True,
+                             verbose_name=_('пользователь'))
 
     def __str__(self):
         return f'{self.district}, {self.street}'

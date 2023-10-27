@@ -1,0 +1,851 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-10-27 09:35+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+
+#: apps/cart/models.py:10
+msgid "Корзина"
+msgstr "Себет"
+
+#: apps/cart/models.py:11
+msgid "Корзины"
+msgstr "Себеттер"
+
+#: apps/cart/models.py:13 apps/order/models.py:88 apps/product/models.py:63
+msgid "Товар"
+msgstr "Өнім"
+
+#: apps/cart/models.py:14
+msgid "Выбор количества товара"
+msgstr "Тауарлардың санын таңдау"
+
+#: apps/cart/models.py:15
+msgid "Сумма по товару в корзине"
+msgstr "Себеттегі заттың мөлшері"
+
+#: apps/cart/models.py:16
+msgid "Итоговая сумма всех товаров"
+msgstr "Барлық тауарлардың жалпы сомасы"
+
+#: apps/cart/serializers.py:22
+msgid "Количество товара должно быть больше 0"
+msgstr "Өнім саны 0-ден көп болуы керек"
+
+#: apps/cart/services.py:28
+msgid "Товара нет в наличии"
+msgstr "Өнім қоймада жоқ"
+
+#: apps/cart/services.py:32
+msgid "Нужного количества нет на складе"
+msgstr "Қажетті мөлшер қоймада жоқ"
+
+#: apps/cart/services.py:184
+msgid "Товар не найден в корзине"
+msgstr "Өнім себетте табылмады"
+
+#: apps/cart/services.py:190
+msgid "Товар удален из корзины"
+msgstr "Өнім арбадан шығарылды"
+
+#: apps/cart/services.py:204
+msgid "Товары не в наличии"
+msgstr "Өнімдер қоймада жоқ"
+
+#: apps/clients/admin.py:12
+msgid "Клиент"
+msgstr "Клиент"
+
+#: apps/clients/admin.py:13
+msgid "Клиенты"
+msgstr "Клиенттер"
+
+#: apps/company_user/models.py:10
+msgid "Контактное лицо"
+msgstr "Байланыстағы адам"
+
+#: apps/company_user/models.py:11
+msgid "Контактные лица"
+msgstr "Байланыс беттері"
+
+#: apps/company_user/models.py:13
+msgid "фамилия"
+msgstr "тегі"
+
+#: apps/company_user/models.py:14
+msgid "имя"
+msgstr "Аты"
+
+#: apps/company_user/models.py:15
+msgid "отчество"
+msgstr "тегі"
+
+#: apps/company_user/models.py:23
+msgid "Адрес Компании"
+msgstr "Компания мекенжайы"
+
+#: apps/company_user/models.py:24
+msgid "Адреса компаний"
+msgstr "Компания мекенжайлары"
+
+#: apps/company_user/models.py:26
+msgid "страна"
+msgstr "мемлекет"
+
+#: apps/company_user/models.py:27
+msgid "номер офиса"
+msgstr "кеңсе нөмірі"
+
+#: apps/company_user/models.py:37
+msgid "Юридическое лицо"
+msgstr "Заңды тұлға"
+
+#: apps/company_user/models.py:38
+msgid "Юридические лица"
+msgstr "Заңды тұлға"
+
+#: apps/company_user/models.py:41
+msgid "Cache"
+msgstr "қолма-қол ақша"
+
+#: apps/company_user/models.py:42
+msgid "Non_cash"
+msgstr "қолма-қол ақшасыз төлемдер"
+
+#: apps/company_user/models.py:44
+msgid "название компании"
+msgstr "Компанияның Аты"
+
+#: apps/company_user/models.py:45
+msgid "БИН/ИИН"
+msgstr "БСН/ЖСН"
+
+#: apps/company_user/models.py:46
+msgid "ИИК"
+msgstr "ЖСК"
+
+#: apps/company_user/models.py:47
+msgid "IBAN"
+msgstr "IBAN"
+
+#: apps/company_user/models.py:48
+msgid "БИК"
+msgstr "БСК"
+
+#: apps/company_user/models.py:49
+msgid "Адрес компании"
+msgstr "Компания мекенжайы"
+
+#: apps/company_user/models.py:51
+msgid "способ оплаты"
+msgstr "төлем тәсілі"
+
+#: apps/company_user/models.py:52
+msgid "контактное лицо"
+msgstr "Байланыстағы адам"
+
+#: apps/company_user/models.py:55 apps/individual_user/models.py:16
+msgid "Уровень системы лояльности"
+msgstr "Адалдық жүйесінің деңгейі"
+
+#: apps/company_user/serializers.py:80 apps/individual_user/serializers.py:57
+msgid "Необходимо предоставить хотя бы один адрес."
+msgstr "Кем дегенде бір мекенжай көрсетілуі керек."
+
+#: apps/company_user/serializers.py:82 apps/individual_user/serializers.py:59
+msgid "Можно добавить не более трех адресов."
+msgstr "Сіз үш мекенжайға дейін қоса аласыз."
+
+#: apps/company_user/services.py:38 apps/individual_user/services.py:31
+#: apps/user/views.py:152
+msgid "Для подтверждения email, пожалуйста, перейдите по ссылке:"
+msgstr "Электрондық поштаңызды растау үшін мына сілтемеге өтіңіз:"
+
+#: apps/company_user/services.py:39 apps/individual_user/services.py:32
+#: apps/user/views.py:153
+msgid "Подтверждение email"
+msgstr "Растау электрондық поштасы"
+
+#: apps/company_user/validators.py:8
+msgid "Поле bin_iin должно содержать 12 цифр"
+msgstr "БСН/ЖСН өрісінде 12 сан болуы керек"
+
+#: apps/company_user/validators.py:13
+msgid "Поле bik должно содержать 9 цифр"
+msgstr "БСК өрісінде 9 сан болуы керек"
+
+#: apps/company_user/validators.py:20
+msgid "IBAN должен начинаться с \"KZ\""
+msgstr "IBAN \"KZ\" деп басталуы керек"
+
+#: apps/company_user/validators.py:22
+msgid "IBAN должен состоять из 20 символов"
+msgstr "IBAN ұзындығы 20 таңба болуы керек"
+
+#: apps/company_user/views.py:19 apps/individual_user/views.py:20
+msgid "Подтверждение отправлено на ваш электронный адрес."
+msgstr "Электрондық пошта мекенжайыңызға растау жіберілді."
+
+#: apps/individual_user/models.py:10
+msgid "Физическое лицо"
+msgstr "Жеке"
+
+#: apps/individual_user/models.py:11
+msgid "Физические лица"
+msgstr "Жеке тұлғалар"
+
+#: apps/individual_user/models.py:14
+msgid "дополнительный номер телефона"
+msgstr "қосымша телефон нөмірі"
+
+#: apps/library/models.py:7 apps/library/models.py:10
+msgid "Город"
+msgstr "Қала"
+
+#: apps/library/models.py:8
+msgid "Города"
+msgstr "Қалалар"
+
+#: apps/library/models.py:18 apps/library/models.py:21
+msgid "Область"
+msgstr "Аймақ"
+
+#: apps/library/models.py:19
+msgid "Области"
+msgstr "Аймақтар"
+
+#: apps/library/models.py:29 apps/library/models.py:32
+msgid "Район"
+msgstr "Аудан"
+
+#: apps/library/models.py:30
+msgid "Районы"
+msgstr "Аудандар"
+
+#: apps/library/models.py:40 apps/library/models.py:43
+#: apps/product/models.py:51
+msgid "Компания производитель"
+msgstr "Өндірістік компания"
+
+#: apps/library/models.py:41
+msgid "Компании производители"
+msgstr "Өндірістік компаниялар"
+
+#: apps/library/models.py:51 apps/library/models.py:54
+#: apps/library/models.py:65
+msgid "Страна производитель"
+msgstr "Өндіруші ел"
+
+#: apps/library/models.py:52
+msgid "Страны производители"
+msgstr "Өндіруші елдер"
+
+#: apps/library/models.py:62
+msgid "Наименование уровня лояльности"
+msgstr "Адалдық деңгейінің атауы"
+
+#: apps/library/models.py:63
+msgid "Наименование уровней лояльности"
+msgstr "Адалдық деңгейлерінің атауы"
+
+#: apps/order/admin.py:14
+msgid "Цена за единицу товара"
+msgstr "Тауар өлшемінің бағасы"
+
+#: apps/order/models.py:24 apps/order/models.py:87
+msgid "Заказ"
+msgstr "Тапсырыс"
+
+#: apps/order/models.py:25
+msgid "Заказы"
+msgstr "Тапсырыстар"
+
+#: apps/order/models.py:28
+msgid "Новые заказы оплаченные"
+msgstr "Жаңа тапсырыстар төленді"
+
+#: apps/order/models.py:29
+msgid "Новые заказы не оплаченные"
+msgstr "Жаңа тапсырыстар төленбейді"
+
+#: apps/order/models.py:30
+msgid "Заказы в обработке"
+msgstr "Тапсырыстар өңделуде"
+
+#: apps/order/models.py:31
+msgid "Завершенные заказы"
+msgstr "Аяқталған тапсырыстар"
+
+#: apps/order/models.py:32
+msgid "Возврат товара"
+msgstr "Тауарды қайтару"
+
+#: apps/order/models.py:36
+msgid "Наличный"
+msgstr "Дақ"
+
+#: apps/order/models.py:37
+msgid "Безналичный"
+msgstr "Қолма-қол ақшасыз"
+
+#: apps/order/models.py:38
+msgid "Оплата экварингом"
+msgstr "Сатып алу арқылы төлеу"
+
+#: apps/order/models.py:41
+msgid "дата оплаты"
+msgstr "төлем күні"
+
+#: apps/order/models.py:42
+msgid "Покупатель"
+msgstr "Сатып алушы"
+
+#: apps/order/models.py:43
+msgid "Метод оплаты"
+msgstr "Төлем тәсілі"
+
+#: apps/order/models.py:44
+msgid "Дата создания"
+msgstr "құрылған күні"
+
+#: apps/order/models.py:46
+msgid "Адрес доставки"
+msgstr "Жеткізу мекенжайы"
+
+#: apps/order/models.py:47
+msgid "Номер телефона"
+msgstr "Телефон нөмірі"
+
+#: apps/order/models.py:50
+msgid "Статус заказа"
+msgstr "Тапсырыс мәртебесі"
+
+#: apps/order/models.py:51
+msgid "Общее количество"
+msgstr "Жалпы саны"
+
+#: apps/order/models.py:52
+msgid "Общая стоимость"
+msgstr "жалпы құны"
+
+#: apps/order/models.py:58
+msgid "Менеджер, ответственный за оплату"
+msgstr "Төлемге жауапты менеджер"
+
+#: apps/order/models.py:84
+msgid "Товар в заказе"
+msgstr "Тапсырыс бойынша өнім"
+
+#: apps/order/models.py:85
+msgid "Товары в заказе"
+msgstr "Тапсырыс бойынша өнімдер"
+
+#: apps/order/models.py:89
+msgid "Количество товара"
+msgstr "Тауарлардың саны"
+
+#: apps/order/models.py:90
+msgid "Стоимость товара с учетом количества"
+msgstr "Саны бойынша өнімнің өзіндік құны"
+
+#: apps/order/models.py:92 apps/promotion/models.py:18
+#: apps/promotion/models.py:34 apps/promotion/models.py:58
+msgid "Подарок"
+msgstr "Қазіргі"
+
+#: apps/order/models.py:110
+msgid "Недостаточно товара "
+msgstr "Өнім жеткіліксіз"
+
+#: apps/order/models.py:110
+msgid " на складе."
+msgstr "қоймада."
+
+#: apps/order/services.py:19
+msgid "Корзина пуста"
+msgstr "Себет бос"
+
+#: apps/order/services.py:45
+msgid "Продукт с ID"
+msgstr "бар өнім ID"
+
+#: apps/order/services.py:45
+msgid "не найден"
+msgstr "табылмады"
+
+#: apps/product/models.py:10
+msgid "Каталог товаров"
+msgstr "Каталог"
+
+#: apps/product/models.py:11
+msgid "Каталоги товаров"
+msgstr "Өнім каталогтары"
+
+#: apps/product/models.py:22
+msgid "Категория товара"
+msgstr "Өнім санаты"
+
+#: apps/product/models.py:23
+msgid "Категории товаров"
+msgstr "Өнім санаттары"
+
+#: apps/product/models.py:35 apps/product/models.py:80
+msgid "Подкатегория товара"
+msgstr "Өнімнің ішкі санаты"
+
+#: apps/product/models.py:36
+msgid "Подкатегории товаров"
+msgstr "Өнімнің ішкі санаттары"
+
+#: apps/product/models.py:48 apps/product/models.py:53
+msgid "Описание товара"
+msgstr "Өнім Сипаттамасы"
+
+#: apps/product/models.py:49
+msgid "Описания товаров"
+msgstr "Өнім сипаттамалары"
+
+#: apps/product/models.py:52
+msgid "Страна изготовитель"
+msgstr "Өндіруші ел"
+
+#: apps/product/models.py:54
+msgid "Формат упаковки"
+msgstr "Қаптама пішімі"
+
+#: apps/product/models.py:64
+msgid "Товары"
+msgstr "Тауарлар"
+
+#: apps/product/models.py:66
+msgid "Наименование товара"
+msgstr "тауардың аты"
+
+#: apps/product/models.py:67
+msgid "Фото товара"
+msgstr "Өнім фотосы"
+
+#: apps/product/models.py:68
+msgid "Стоимость за единицу"
+msgstr "Бірліктің құны"
+
+#: apps/product/models.py:69
+msgid "Артикул товара"
+msgstr "Өнім коды"
+
+#: apps/product/models.py:70
+msgid "Цена с учетом скидки"
+msgstr "Бағасы жеңілдікпен"
+
+#: apps/product/models.py:71
+msgid "Количество на складе"
+msgstr "Қоймадағы саны"
+
+#: apps/product/models.py:72
+msgid "Рейтинг товара"
+msgstr "Өнім рейтингі"
+
+#: apps/product/models.py:73
+msgid "Количество товара для ОПТа"
+msgstr "Көтерме саудаға арналған тауарлардың саны"
+
+#: apps/product/models.py:74
+msgid "ОПТовая цена за единицу товара"
+msgstr "Бір заттың КӨТЕРМЕ БАҒАСЫ"
+
+#: apps/product/models.py:75
+msgid "Наличие товара на складе"
+msgstr "Қоймадағы тауарлардың болуы"
+
+#: apps/product/models.py:76
+msgid "Дата создания товара"
+msgstr "Өнімнің жасалған күні"
+
+#: apps/product/models.py:77
+msgid "Данные товара"
+msgstr "Өнім деректері"
+
+#: apps/product/models.py:78
+msgid "Товар активный/скрытый"
+msgstr "Өнім белсенді/жасырын"
+
+#: apps/product/models.py:89
+msgid "Избранный товар"
+msgstr "Таңдаулы өнім"
+
+#: apps/product/models.py:90
+msgid "Избранные товары"
+msgstr "Таңдаулы өнімдер"
+
+#: apps/product/models.py:101
+msgid "Товар для сравнения"
+msgstr "Салыстыру өнімі"
+
+#: apps/product/models.py:102
+msgid "Товары для сравнения"
+msgstr "Салыстыруға арналған өнімдер"
+
+#: apps/promotion/admin.py:21
+msgid "Emails resent successfully."
+msgstr "Электрондық хаттар сәтті қайта жіберілді."
+
+#: apps/promotion/admin.py:23
+msgid "Отправить email с акцией"
+msgstr "Жарнамамен электрондық хат жіберіңіз"
+
+#: apps/promotion/models.py:19
+msgid "Подарки"
+msgstr "Қазіргі"
+
+#: apps/promotion/models.py:21
+msgid "Название подарка"
+msgstr "Сыйлықтың аты"
+
+#: apps/promotion/models.py:22
+msgid "Описание подарка"
+msgstr "Сыйлықтың сипаттамасы"
+
+#: apps/promotion/models.py:29
+msgid "Акция"
+msgstr "Науқан"
+
+#: apps/promotion/models.py:30
+msgid "Акции"
+msgstr "Қор"
+
+#: apps/promotion/models.py:33
+msgid "Скидка"
+msgstr "Жеңілдік"
+
+#: apps/promotion/models.py:37
+msgid "Наименование акции"
+msgstr "Науқанның атауы"
+
+#: apps/promotion/models.py:38
+msgid "фото акции"
+msgstr "акцияның фотосы"
+
+#: apps/promotion/models.py:41
+msgid "Скидка для всей подкатегории товара"
+msgstr "Өнімнің барлық ішкі санаты үшін жеңілдік"
+
+#: apps/promotion/models.py:42
+msgid "товары по акции"
+msgstr "сатылымдағы өнімдер"
+
+#: apps/promotion/models.py:44
+msgid "Учитывать лимит по сумме товара в корзине"
+msgstr "Себеттегі тауарлардың мөлшеріне шектеуді қарастырыңыз"
+
+#: apps/promotion/models.py:46
+msgid "Сумма товара в корзине после которой действует акция"
+msgstr "Науқан жарамды болғаннан кейін арбадағы тауарлардың саны"
+
+#: apps/promotion/models.py:47
+msgid "количество человек воспользовавшихся акцией"
+msgstr "науқанды пайдаланған адамдар саны"
+
+#: apps/promotion/models.py:48
+msgid "количество купленных товаров по акции"
+msgstr "сатып алынған жарнамалық заттардың саны"
+
+#: apps/promotion/models.py:49
+msgid "Учитывать лимит по количеству человек"
+msgstr "Адамдар санына шектеуді қарастырыңыз"
+
+#: apps/promotion/models.py:50
+msgid "Ограничение по количеству человек"
+msgstr "Адам санына шектеу"
+
+#: apps/promotion/models.py:51
+msgid "Учитывать лимит по количеству товара"
+msgstr "Тауарлар санына шектеуді ескеріңіз"
+
+#: apps/promotion/models.py:52
+msgid "Ограничение по количеству товара"
+msgstr "Өнім санының шегі"
+
+#: apps/promotion/models.py:53
+msgid "Учитывать систему лояльности"
+msgstr "Адалдық жүйесін қарастырыңыз"
+
+#: apps/promotion/models.py:54
+msgid "Дата окончания акции"
+msgstr "Науқанның аяқталу күні"
+
+#: apps/promotion/models.py:55
+msgid "Действующая/архивная акция"
+msgstr "Ағымдағы/мұрағатталған жарнама"
+
+#: apps/promotion/models.py:56
+msgid "Тип акции"
+msgstr "Жарнама түрі"
+
+#: apps/promotion/models.py:57
+msgid "Размер скидки"
+msgstr "Жеңілдік сомасы"
+
+#: apps/promotion/models.py:77
+msgid "Система лояльности"
+msgstr "Адалдық жүйесі"
+
+#: apps/promotion/models.py:78
+msgid "Системы лояльности"
+msgstr "Адалдық жүйелері"
+
+#: apps/promotion/models.py:81
+msgid "бронза"
+msgstr "қола"
+
+#: apps/promotion/models.py:82
+msgid "серебро"
+msgstr "күміс"
+
+#: apps/promotion/models.py:83
+msgid "золото"
+msgstr "алтын"
+
+#: apps/promotion/models.py:84
+msgid "платина"
+msgstr "платина"
+
+#: apps/promotion/models.py:87
+msgid "Уровень лояльности"
+msgstr "Адалдық деңгейі"
+
+#: apps/promotion/models.py:89
+msgid "Процент скидки не может быть меньше 0"
+msgstr "Жеңілдік пайызы 0-ден төмен болмауы керек"
+
+#: apps/promotion/models.py:90
+msgid "Процент скидки не может быть больше 100 "
+msgstr "Жеңілдік пайызы 100-ден аспауы керек"
+
+#: apps/promotion/models.py:91
+msgid "Процент скидки"
+msgstr "Жеңілдік пайызы"
+
+#: apps/promotion/models.py:92
+msgid "Порог цены"
+msgstr "Баға шегі"
+
+#: apps/review/models.py:12
+msgid "Отзыв на товар"
+msgstr "Өнімді шолу"
+
+#: apps/review/models.py:13
+msgid "Отзывы на товары"
+msgstr "Өнім шолулары"
+
+#: apps/review/models.py:23
+msgid "Количество звезд"
+msgstr "Жұлдыздар саны"
+
+#: apps/review/models.py:24
+msgid "Отзыв"
+msgstr "Қарау"
+
+#: apps/review/models.py:25
+msgid "Фото"
+msgstr "Фото"
+
+#: apps/review/models.py:26
+msgid "Продукт"
+msgstr "Өнім"
+
+#: apps/review/models.py:27 apps/user/models.py:40
+msgid "Пользователь"
+msgstr "Пайдаланушы"
+
+#: apps/review/serializers.py:38
+msgid "Только авторизованный пользователь может оставить отзыв"
+msgstr "Тек рұқсаты бар пайдаланушы ғана пікір қалдыра алады"
+
+#: apps/review/views.py:43
+msgid ""
+"Вы не можете оставить отзыв на этот товар, так как не совершали его покупку."
+msgstr ""
+"Сіз бұл өнімге пікір қалдыра алмайсыз, себебі сіз оны сатып алмағансыз."
+
+#: apps/review/views.py:52
+msgid "Необходимо указать ID продукта."
+msgstr "Өнім идентификаторы көрсетілуі керек."
+
+#: apps/review/views.py:61
+msgid "Комментарии по данному продукту отсутствуют"
+msgstr "Бұл өнімге түсініктемелер жоқ"
+
+#: apps/user/models.py:14
+msgid "Регион"
+msgstr "Аймақ"
+
+#: apps/user/models.py:15
+msgid "Регионы"
+msgstr "Аймақтар"
+
+#: apps/user/models.py:41
+msgid "Пользователи"
+msgstr "Пайдаланушылар"
+
+#: apps/user/models.py:44
+msgid "Individual"
+msgstr "Жеке"
+
+#: apps/user/models.py:45
+msgid "Company"
+msgstr "Заңды тұлға"
+
+#: apps/user/models.py:49
+msgid "username"
+msgstr "пайдаланушы аты"
+
+#: apps/user/models.py:53
+msgid "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
+msgstr ""
+"Міндетті. 150 таңба немесе одан аз. Тек әріптер, сандар және @/./+/-/_."
+
+#: apps/user/models.py:57
+msgid "A user with that username already exists."
+msgstr "Бұл пайдаланушы аты бар пайдаланушы бұрыннан бар."
+
+#: apps/user/models.py:70
+msgid "номер телефона"
+msgstr "Телефон нөмірі"
+
+#: apps/user/models.py:74
+msgid "Тип пользователя"
+msgstr "Пайдаланушы түрі"
+
+#: apps/user/models.py:75
+msgid "Электронная почта"
+msgstr "Электрондық пошта"
+
+#: apps/user/models.py:79
+msgid "место положения область/город"
+msgstr "орналасқан аймақ/қала"
+
+#: apps/user/models.py:92
+msgid "Адрес"
+msgstr "Мекенжай"
+
+#: apps/user/models.py:93
+msgid "Адреса"
+msgstr "Мекенжай"
+
+#: apps/user/models.py:95
+msgid "район"
+msgstr "аумақ"
+
+#: apps/user/models.py:96
+msgid "улица"
+msgstr "Көше"
+
+#: apps/user/models.py:97
+msgid "номер дома"
+msgstr "үй нөмірі"
+
+#: apps/user/models.py:98
+msgid "номер квартиры"
+msgstr "пәтер нөмірі"
+
+#: apps/user/models.py:99
+msgid "этаж"
+msgstr "қабат"
+
+#: apps/user/models.py:101
+msgid "пользователь"
+msgstr "пайдаланушы"
+
+#: apps/user/serializers.py:27
+msgid "Аккаунт необходимо подтвердить по электронной почте."
+msgstr "Тіркелгіні электрондық пошта арқылы растау керек."
+
+#: apps/user/serializers.py:53
+msgid "Вы не можете добавить более трех адресов."
+msgstr "Сіз үш мекенжайдан артық қоса алмайсыз."
+
+#: apps/user/serializers.py:89
+msgid "Пароли не совпадают"
+msgstr "Құпия сөз сәйкес келмеді"
+
+#: apps/user/validators.py:14
+msgid "Телефонный номер должен быть в формате +7 (xxx) xxx-xx-xx"
+msgstr "Телефон нөмірі +7 (ххх) xxx-xx-xx форматында болуы керек"
+
+#: apps/user/views.py:111
+msgid "Email успешно подтвержден."
+msgstr "Электрондық пошта сәтті расталды."
+
+#: apps/user/views.py:118 apps/user/views.py:269
+msgid "Пользователь не найден."
+msgstr "Пайдаланушы табылмады."
+
+#: apps/user/views.py:139
+msgid "У вас уже указана данная почта."
+msgstr "Сізде бұл электрондық пошта мекенжайы бұрыннан бар."
+
+#: apps/user/views.py:147
+msgid "Данная электронная почта уже зарегистрирована."
+msgstr "Бұл электрондық пошта бұрыннан тіркелген."
+
+#: apps/user/views.py:166
+msgid "Уведомление отправлено на новую электронную почту:"
+msgstr "Хабарландыру жаңа электрондық поштаға жіберілді:"
+
+#: apps/user/views.py:184
+msgid "Токен и email обязательны."
+msgstr "Токен және электрондық пошта қажет."
+
+#: apps/user/views.py:195
+msgid "Email успешно изменен."
+msgstr "Электрондық пошта сәтті өзгертілді."
+
+#: apps/user/views.py:202
+msgid "Неверный токен или email."
+msgstr "Жарамсыз белгі немесе электрондық пошта."
+
+#: apps/user/views.py:221
+msgid "Для восстановления пароля перейдите по ссылке: "
+msgstr "Құпия сөзді қалпына келтіру үшін мына сілтемені орындаңыз:"
+
+#: apps/user/views.py:222
+msgid "Восстановление пароля"
+msgstr "Құпия сөзді қалпына келтіру"
+
+#: apps/user/views.py:235
+msgid "Уведомление отправлено на электронную почту:"
+msgstr "Электрондық пошта арқылы жіберілген хабарлама:"
+
+#: apps/user/views.py:243
+msgid "Пользователь с данной электронной почтой не найден"
+msgstr "Осы электрондық поштасы бар пайдаланушы табылмады"
+
+#: apps/user/views.py:260
+msgid "Неверная ссылка."
+msgstr "Жарамсыз URL."
+
+#: apps/user/views.py:280 apps/user/views.py:304
+msgid "Пароль изменен."
+msgstr "Құпия сөз өзгертілді."
+
+#: config/settings.py:146
+msgid "Kazakh"
+msgstr "қазақ"
+
+#: config/settings.py:147
+msgid "Russian"
+msgstr "орыс"

@@ -1,6 +1,7 @@
 from django.db.models import F, Q, QuerySet
 from rest_framework import serializers, status
 from rest_framework.response import Response
+from django.utils.translation import gettext_lazy as _
 
 from apps.company_user.models import CompanyUserModel
 from apps.individual_user.models import IndividualUserModel
@@ -24,11 +25,11 @@ class ServiceCart:
         try:
             ProductModel.objects.get(id=product_id, existence=True)
         except ProductModel.DoesNotExist:
-            raise serializers.ValidationError({'error': 'Товара нет в наличии'})
+            raise serializers.ValidationError({'error': _('Товара нет в наличии')})
         try:
             ProductModel.objects.get(id=product_id, quantity_stock__gte=quantity_product)
         except ProductModel.DoesNotExist:
-            raise serializers.ValidationError({'error': 'Нужного количества нет на складе'})
+            raise serializers.ValidationError({'error': _('Нужного количества нет на складе')})
 
     @staticmethod
     def _get_discount(product: ProductModel, quantity_product: int, limit_sum_product: float) -> QuerySet[DiscountModel]:
@@ -119,7 +120,6 @@ class ServiceCart:
         if validated_data['user'].id and product.products.filter(use_limit_loyalty=True).exists():
             user_id = validated_data['user'].id
             ServiceCart.get_level_loyalty(user_id, discount_amounts)
-        LOGGER.debug(product.date_create)
 
         found = False
         for item in product_cart:
@@ -138,7 +138,6 @@ class ServiceCart:
                 'gifts': gifts
             })
         session['product_cart'] = product_cart
-        LOGGER.debug(session['product_cart'])
         session.modified = True
         for item in discounts:
             item.count_person += 1
@@ -182,13 +181,13 @@ class ServiceCart:
         product_id = kwargs.get('product_id')
 
         if not any(item.get('product_id') == product_id for item in product_cart):
-            return Response({'message': 'Товар не найден в корзине'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'message': _('Товар не найден в корзине')}, status=status.HTTP_404_NOT_FOUND)
 
         updated_cart = [item for item in product_cart if item.get('product_id') != product_id]
 
         request.session['product_cart'] = updated_cart
         request.session.modified = True
-        return Response({'message': 'Товар удален из корзины'}, status=status.HTTP_204_NO_CONTENT)
+        return Response({'message': _('Товар удален из корзины')}, status=status.HTTP_204_NO_CONTENT)
 
     @staticmethod
     def get_total_sum(request):
@@ -202,5 +201,4 @@ class ServiceCart:
                 total_sum.append(item.get('sum_products'))
             else:
                 not_existence.append(product.id)
-        LOGGER.debug(total_sum)
-        return Response({'total_sum': sum(total_sum), 'Товары не в наличии': not_existence})
+        return Response({'total_sum': sum(total_sum), _('Товары не в наличии'): not_existence})

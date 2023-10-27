@@ -1,6 +1,7 @@
 from django.contrib.auth import login
 from django.contrib.auth.hashers import make_password
 from django.db import transaction
+from django.utils.translation import gettext_lazy as _
 
 from apps.company_user.models import CompanyAddress, CompanyUserModel, ContactPersonModel
 from apps.user.models import AddressModel, RegionModel
@@ -34,8 +35,8 @@ class CompanyUserServices:
             AddressModel.objects.create(user=company_user, **addresses_data)
             # for address_data in addresses_data:
             #     AddressModel.objects.create(user=company_user, **address_data)
-            message = 'Для подтверждения email, пожалуйста, перейдите по ссылке:'
-            subject = 'Подтверждение email'
+            message = _('Для подтверждения email, пожалуйста, перейдите по ссылке:')
+            subject = _('Подтверждение email')
             email_url = 'api/user/confirm-email'
             confirmation_email.apply_async(args=[
                 company_user.confirmation_token,
