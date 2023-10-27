@@ -1,8 +1,8 @@
 from rest_framework import serializers
+from django.utils.translation import gettext_lazy as _
 
 from apps.cart.models import CartModel
 from apps.cart.services import ServiceCart
-from apps.product.serializers import RetrieveProductSerializer
 from config.settings import LOGGER
 
 
@@ -19,11 +19,10 @@ class CreateCartSerializer(serializers.ModelSerializer):
         Проверка, что quantity_product больше 0
         """
         if value <= 0:
-            raise serializers.ValidationError('Количество товара должно быть больше 0')
+            raise serializers.ValidationError(_('Количество товара должно быть больше 0'))
         return value
 
     def create(self, validated_data):
-        LOGGER.debug(validated_data)
         return ServiceCart.add_cart(validated_data)
 
 

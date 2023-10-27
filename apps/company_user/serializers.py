@@ -1,5 +1,6 @@
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
+from django.utils.translation import gettext_lazy as _
 
 from apps.company_user.models import CompanyAddress, CompanyUserModel, ContactPersonModel
 from apps.company_user.services import CompanyUserServices
@@ -36,7 +37,6 @@ class CreateCompanySerializer(serializers.ModelSerializer):
     bank = serializers.CharField(validators=[iban_validator])
     company_address = CompanyAddressSerializer()
     contact_person = ContactPersonSerializer()
-    # address = AddressSerializer(write_only=True)
     addresses = AddressSerializer(required=True)
     region = RegionSerializer()
     user_type = serializers.CharField(read_only=True)
@@ -77,9 +77,9 @@ class GetUpdateCompanySerializer(serializers.ModelSerializer):
 
     def validate_addresses(self, value):
         if not value or len(value) == 0:
-            raise serializers.ValidationError('Необходимо предоставить хотя бы один адрес.')
+            raise serializers.ValidationError(_('Необходимо предоставить хотя бы один адрес.'))
         if len(value) > 3:
-            raise serializers.ValidationError('Можно добавить не более трех адресов.')
+            raise serializers.ValidationError(_('Можно добавить не более трех адресов.'))
         return value
 
     def update(self, instance, validated_data):

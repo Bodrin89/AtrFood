@@ -147,9 +147,9 @@ LANGUAGES = [
     ('ru', _('Russian')),
 ]
 
-# LOCALE_PATHS = [
-#     os.path.join(BASE_DIR, 'apps/locale'),
-# ]
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'apps/locale'),
+]
 
 
 TIME_ZONE = 'UTC'

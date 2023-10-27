@@ -1,6 +1,7 @@
 from django.contrib.auth import login
 from django.contrib.auth.hashers import make_password
 from django.db import transaction
+from django.utils.translation import gettext_lazy as _
 
 from apps.individual_user.models import IndividualUserModel
 from apps.user.models import AddressModel, RegionModel
@@ -27,8 +28,8 @@ class IndividualUserService:
             # for address_data in addresses_data:
             #     AddressModel.objects.create(user=user, **address_data)
             AddressModel.objects.create(user=user, **addresses_data)
-            message = 'Для подтверждения email, пожалуйста, перейдите по ссылке:'
-            subject = 'Подтверждение email'
+            message = _('Для подтверждения email, пожалуйста, перейдите по ссылке:')
+            subject = _('Подтверждение email')
             email_url = 'api/user/confirm-email'
             confirmation_email.apply_async(args=[
                 user.confirmation_token,

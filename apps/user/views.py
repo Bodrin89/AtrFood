@@ -5,6 +5,7 @@ from rest_framework.generics import CreateAPIView, UpdateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet, ReadOnlyModelViewSet
+from django.utils.translation import gettext_lazy as _
 
 from apps.company_user.models import CompanyUserModel
 from apps.company_user.serializers import CreateCompanySerializer, GetUpdateCompanySerializer
@@ -107,14 +108,14 @@ class ConfirmEmailView(APIView):
             return Response(
                 {
                     'status': 'Success',
-                    'message': 'Email успешно подтвержден.'
+                    'message': _('Email успешно подтвержден.')
                 },
                 status=status.HTTP_200_OK
             )
         return Response(
             {
                 'status': 'Error',
-                'message': 'Пользователь не найден.'
+                'message': _('Пользователь не найден.')
             },
             status=status.HTTP_400_BAD_REQUEST
         )
@@ -135,7 +136,7 @@ class EmailUrlView(APIView):
                 return Response(
                     {
                         'status': 'Error',
-                        'message': f'У вас уже указана данная почта.'
+                        'message': _('У вас уже указана данная почта.')
                     },
                     status=status.HTTP_200_OK
                 )
@@ -143,13 +144,13 @@ class EmailUrlView(APIView):
                 return Response(
                     {
                         'status': 'Error',
-                        'message': f'Данная электронная почта уже зарегистрирована.'
+                        'message': _('Данная электронная почта уже зарегистрирована.')
                     },
                     status=status.HTTP_400_BAD_REQUEST
                 )
             token = self.request.user.confirmation_token
-            message = 'Для подтверждения email, пожалуйста, перейдите по ссылке:'
-            subject = 'Подтверждение email'
+            message = _('Для подтверждения email, пожалуйста, перейдите по ссылке:')
+            subject = _('Подтверждение email')
             email_url = 'api/user/update-email'
             update_email.apply_async(args=[
                 token,
@@ -162,7 +163,7 @@ class EmailUrlView(APIView):
             return Response(
                 {
                     'status': 'Success',
-                    'message': f'Уведомление отправлено на новую электронную почту: {email}'
+                    'message': _(f'Уведомление отправлено на новую электронную почту:') + f'{email}'
                 },
                 status=status.HTTP_200_OK
             )
@@ -180,7 +181,7 @@ class UpdateEmailView(APIView):
             return Response(
                 {
                     'status': 'Error',
-                    'message': 'Токен и email обязательны.'
+                    'message': _('Токен и email обязательны.')
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
@@ -191,14 +192,14 @@ class UpdateEmailView(APIView):
             return Response(
                 {
                     'status': 'Success',
-                    'message': 'Email успешно изменен.'
+                    'message': _('Email успешно изменен.')
                 },
                 status=status.HTTP_200_OK
             )
         return Response(
             {
                 'status': 'Error',
-                'message': 'Неверный токен или email.'
+                'message': _('Неверный токен или email.')
             },
             status=status.HTTP_400_BAD_REQUEST
         )
@@ -217,8 +218,8 @@ class ForgotPasswordView(APIView):
             user = User.objects.filter(email=email).first()
             if user:
                 token = user.confirmation_token
-                message = 'Для восстановления пароля перейдите по ссылке: '
-                subject = 'Восстановление пароля'
+                message = _('Для восстановления пароля перейдите по ссылке: ')
+                subject = _('Восстановление пароля')
                 email_url = 'api/user/update-password'
                 confirmation_email.apply_async(args=[
                     token,
@@ -231,7 +232,7 @@ class ForgotPasswordView(APIView):
                 return Response(
                     {
                         'status': 'Success',
-                        'message': f'Уведомление отправлено на электронную почту. : {email}'
+                        'message': _(f'Уведомление отправлено на электронную почту:') + f'{email}'
                     },
                     status=status.HTTP_200_OK
                 )
@@ -239,7 +240,7 @@ class ForgotPasswordView(APIView):
         return Response(
             {
                 'status': 'Error',
-                'message': f'Пользователь с данной электронной почтой не найден'
+                'message': _('Пользователь с данной электронной почтой не найден')
             },
             status=status.HTTP_400_BAD_REQUEST
         )
@@ -256,7 +257,7 @@ class UpdatePasswordViewNotInProfile(APIView):
             return Response(
                 {
                     'status': 'Error',
-                    'message': f'Неверная ссылка.'
+                    'message': _('Неверная ссылка.')
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
@@ -265,7 +266,7 @@ class UpdatePasswordViewNotInProfile(APIView):
             return Response(
                 {
                     'status': 'Error',
-                    'message': f'Пользователь не найден.'
+                    'message': _('Пользователь не найден.')
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
@@ -276,7 +277,7 @@ class UpdatePasswordViewNotInProfile(APIView):
             return Response(
                 {
                     'status': 'Success',
-                    'message': f'Пароль изменен.'
+                    'message': _('Пароль изменен.')
                 },
                 status=status.HTTP_200_OK
             )
@@ -300,7 +301,7 @@ class UpdatePasswordViewInProfile(APIView):
             return Response(
                 {
                     'status': 'Success',
-                    'message': f'Пароль изменен.'
+                    'message': _('Пароль изменен.')
                 },
                 status=status.HTTP_200_OK
             )

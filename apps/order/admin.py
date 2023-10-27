@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from apps.order.models import Order, OrderItem
+from django.utils.translation import gettext_lazy as _
 
 
 class OrderItemInline(admin.TabularInline):
@@ -10,7 +11,7 @@ class OrderItemInline(admin.TabularInline):
 
     def get_product_price(self, obj):
         return obj.product.price
-    get_product_price.short_description = 'Цена за единицу товара'
+    get_product_price.short_description = _('Цена за единицу товара')
 
 
 @admin.register(Order)
