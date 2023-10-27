@@ -723,8 +723,6 @@ msgid "A user with that username already exists."
 msgstr "Бұл пайдаланушы аты бар пайдаланушы бұрыннан бар."
 
 #: apps/user/models.py:70
-#, fuzzy
-#| msgid "Номер телефона"
 msgid "номер телефона"
 msgstr "Телефон нөмірі"
 
