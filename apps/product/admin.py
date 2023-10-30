@@ -41,7 +41,7 @@ class DescriptionProductModelAdmin(admin.ModelAdmin):
 
 @admin.register(ProductModel)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'price', 'subcategory', 'reviewed')
+    list_display = ('id', 'name', 'price', 'subcategory', 'reviewed', 'is_active')
     search_fields = ('id', 'name', 'article')
     list_filter = ('subcategory', 'reviewed')
     readonly_fields = ('rating', )

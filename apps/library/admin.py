@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.library.models import City, Region, District, ManufacturingCompany, ManufacturingCountry
+from apps.library.models import City, Country, District, ManufacturingCompany, NameLevelLoyalty, PackageType
 
 
 @admin.register(City)
@@ -8,14 +8,19 @@ class CityAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(Region)
-class RegionAdmin(admin.ModelAdmin):
+@admin.register(PackageType)
+class PackageTypeAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Country)
+class CountryAdmin(admin.ModelAdmin):
     pass
 
 
 @admin.register(District)
 class DistrictAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('id', 'name')
 
 
 @admin.register(ManufacturingCompany)
@@ -23,6 +28,6 @@ class ManufacturingCompanyAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(ManufacturingCountry)
-class ManufacturingCountryAdmin(admin.ModelAdmin):
+@admin.register(NameLevelLoyalty)
+class NameLevelLoyaltyAdmin(admin.ModelAdmin):
     pass

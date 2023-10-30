@@ -25,7 +25,12 @@ class OrderInline(admin.StackedInline):
 
 class AddressInline(admin.TabularInline):
     model = AddressModel
-    max_num = 0
+    extra = 0
+
+
+class CompanyAddressInline(admin.TabularInline):
+    model = CompanyAddress
+    extra = 0
 
 
 @admin.register(ContactPersonModel)
@@ -33,14 +38,13 @@ class ContactPersonModelAdmin(TranslationAdmin):
     pass
 
 
-@admin.register(CompanyAddress)
-class CompanyAddressAdmin(admin.ModelAdmin):
-    pass
-
-
 @admin.register(CompanyUserModel)
 class CompanyUserAdmin(TranslationAdmin):
     list_display = ['email', 'phone_number', 'username', 'company_name']
-    inlines = [AddressInline, OrderInline]
+    inlines = [
+        AddressInline,
+        OrderInline,
+        CompanyAddressInline
+    ]
     exclude = ('groups', 'user_permissions', 'is_staff', 'is_superuser', 'user_type')
 

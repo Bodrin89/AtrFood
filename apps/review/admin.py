@@ -10,7 +10,7 @@ class ReviewImageInline(admin.TabularInline):
 @admin.register(ReviewProductModel)
 class ReviewAdmin(admin.ModelAdmin):
     list_display = ['id', 'product', 'user', 'count_stars', 'date_created']
-    readonly_fields = ('count_stars', 'review_text', 'product', 'user', 'date_created' )
+    # readonly_fields = ('count_stars', 'review_text', 'product', 'user', 'date_created' )
     search_fields = ('id', 'product', 'user')
     list_filter = ('count_stars', )
     inlines = [ReviewImageInline, ]

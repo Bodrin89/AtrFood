@@ -31,12 +31,8 @@ class OrderInline(admin.StackedInline):
 
 class AddressInline(admin.TabularInline):
     model = AddressModel
-    max_num = 0
-
-
-@admin.register(AddressModel)
-class AddressModelAdmin(admin.ModelAdmin):
-    pass
+    # max_num = 0
+    extra = 0
 
 
 @admin.register(ClientUserProxy)
