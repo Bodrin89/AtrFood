@@ -7,12 +7,12 @@ from apps.library.models import City, Country, District
 
 class ContactPersonModel(models.Model):
     class Meta:
-        verbose_name = 'Контактное лицо'
-        verbose_name_plural = 'Контактные лица'
+        verbose_name = _('Контактное лицо')
+        verbose_name_plural = _('Контактные лица')
 
-    surname = models.CharField(max_length=255, verbose_name='фамилия')
-    first_name = models.CharField(max_length=255, verbose_name='имя')
-    second_name = models.CharField(max_length=255, verbose_name='отчество')
+    surname = models.CharField(max_length=255, verbose_name=_('фамилия'))
+    first_name = models.CharField(max_length=255, verbose_name=_('имя'))
+    second_name = models.CharField(max_length=255, verbose_name=_('отчество'))
 
     def __str__(self):
         return f'{self.surname} {self.first_name} {self.second_name}'
@@ -20,32 +20,24 @@ class ContactPersonModel(models.Model):
 
 class CompanyUserModel(BaseUserModel):
     class Meta:
-        verbose_name = 'Юридическое лицо'
-        verbose_name_plural = 'Юридические лица'
+        verbose_name = _('Юридическое лицо')
+        verbose_name_plural = _('Юридические лица')
 
     class PaymentMethod(models.TextChoices):
         CASH = ('cash', _('Cache'))
         NON_CASH = ('non_cash', _('Non_cash'))
 
-    company_name = models.CharField(max_length=255, verbose_name='Название компании')
-    bin_iin = models.PositiveBigIntegerField(verbose_name='БИН/ИИН')
-    iik = models.CharField(max_length=255, verbose_name='ИИК')
-    bank = models.CharField(max_length=255, verbose_name='IBAN')
-    bik = models.CharField(max_length=255, verbose_name='БИК')
-    payment_method = models.CharField(
-        max_length=10,
-        choices=PaymentMethod.choices,
-        default=PaymentMethod.NON_CASH,
-        verbose_name='способ оплаты'
-    )
-    contact_person = models.ForeignKey(ContactPersonModel, on_delete=models.CASCADE, verbose_name='контактное лицо')
-    loyalty = models.ForeignKey(
-        LoyaltyModel,
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE,
-        verbose_name='Уровень системы лояльности'
-    )
+    company_name = models.CharField(max_length=255, verbose_name=_('название компании'))
+    bin_iin = models.PositiveBigIntegerField(verbose_name=_('БИН/ИИН'))
+    iik = models.CharField(max_length=255, verbose_name=_('ИИК'))
+    bank = models.CharField(max_length=255, verbose_name=_('IBAN'))
+    bik = models.CharField(max_length=255, verbose_name=_('БИК'))
+    payment_method = models.CharField(max_length=10, choices=PaymentMethod.choices, default=PaymentMethod.NON_CASH,
+                                      verbose_name=_('способ оплаты'))
+    contact_person = models.ForeignKey(ContactPersonModel, on_delete=models.CASCADE, verbose_name=_('контактное лицо'))
+    loyalty = models.ForeignKey(LoyaltyModel, null=True, blank=True,
+                                on_delete=models.SET_NULL,
+                                verbose_name=_('Уровень системы лояльности'))
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -55,21 +47,21 @@ class CompanyUserModel(BaseUserModel):
 
 class CompanyAddress(models.Model):
     class Meta:
-        verbose_name = 'Адрес Компании'
-        verbose_name_plural = 'Адреса компаний'
+        verbose_name = _('Адрес Компании')
+        verbose_name_plural = _('Адреса компаний')
 
-    country = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Страна')
-    city = models.ForeignKey(City, on_delete=models.CASCADE, verbose_name='Город')
-    district = models.ForeignKey(District, on_delete=models.CASCADE, verbose_name='Район', blank=True, null=True)
-    street = models.CharField(max_length=255, blank=True, null=True, verbose_name='Улица')
-    house_number = models.CharField(max_length=255, blank=True, null=True, verbose_name='Номер дома')
-    office_number = models.PositiveSmallIntegerField(verbose_name='Номер офиса')
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name=_('Страна'))
+    city = models.ForeignKey(City, on_delete=models.CASCADE, verbose_name=_('Город'))
+    district = models.ForeignKey(District, on_delete=models.CASCADE, verbose_name=_('Район'), blank=True, null=True)
+    street = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('Улица'))
+    house_number = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('Номер дома'))
+    office_number = models.PositiveSmallIntegerField(verbose_name=_('Номер офиса'))
     user = models.OneToOneField(
         BaseUserModel,
         on_delete=models.CASCADE,
         related_name='company_addresses',
         null=True,
-        verbose_name='пользователь'
+        verbose_name=_('Пользователи')
     )
 
     def __str__(self):

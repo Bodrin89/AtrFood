@@ -18,7 +18,6 @@ promotion = 'Новое сообщение'
 @app.task
 def send_email_promotion(promotion_name, emails):
     send_email_new_promotion(promotion_name, emails)
-    LOGGER.debug(f'Сообщения отправлены')
 
 
 def send_email_new_promotion(promotion, emails):

@@ -1,13 +1,13 @@
+import re
 from rest_framework.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
 
 def validate_phone_number(phone_number: str) -> ValidationError | str:
     """Валидатор номера телефона на соответствие формату Казахстана"""
 
-    phone_number.split()
-    list_number = ' '.join(phone_number).split()
-    if list_number[0:2] != ['+', '7']:
-        raise ValidationError('The country code must start with "+7"')
-    if not len(list_number[2::]) == 10:
-        raise ValidationError('The number must be in the format +7 (xxx) xxx-xx-xx, or 8 (xxx) xxx-xx-xx')
-    return phone_number
+    cleaned_phone_number = re.sub(r"[^\d+]", "", phone_number)
+    if re.match(r'^\+7\d{10}$', cleaned_phone_number):
+        return '+' + cleaned_phone_number[1:]
+    else:
+        raise ValidationError(_('Телефонный номер должен быть в формате +7 (xxx) xxx-xx-xx'))

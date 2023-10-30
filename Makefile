@@ -12,9 +12,9 @@ translations:
 	python3 manage.py update_translation_fields
 
 locale_file_ru:
-	python3 manage.py makemessages -l ru
+	python3 manage.py makemessages -l ru -i venv
 locale_file_kz:
-	python3 manage.py makemessages -l kz
+	python3 manage.py makemessages -l kz -i venv
 
 compilemessages:
 	python3 manage.py compilemessages --ignore=venv

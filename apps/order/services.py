@@ -1,6 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 from apps.order.models import Order, OrderItem
 from apps.product.models import ProductModel
 from config.settings import LOGGER
@@ -14,7 +15,7 @@ class ServiceOrder:
         session = validated_data['session']
 
         if not cart:
-            raise ValidationError({'error': 'Корзина пуста'}, code=status.HTTP_400_BAD_REQUEST)
+            raise ValidationError({'error': _('Корзина пуста')}, code=status.HTTP_400_BAD_REQUEST)
         order = Order.objects.create(
             user=user,
             payment_method=validated_data.get('payment_method'),
@@ -40,7 +41,7 @@ class ServiceOrder:
                 )
             except ObjectDoesNotExist:
                 raise ValidationError(
-                    {'error': f"Продукт с ID {item['product_id']} не найден"},
+                    {'error': _(f"Продукт с ID") + f" {item['product_id']} " + _("не найден")},
                     code=status.HTTP_400_BAD_REQUEST
                 )
 

@@ -1,4 +1,5 @@
 from django.core.mail import send_mail
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models, transaction
 from django.db.models import F, Q
 from django.db.models.signals import m2m_changed, post_delete, post_save, pre_delete, pre_save
@@ -13,46 +14,47 @@ class Gift(models.Model):
     """Модель подарков"""
 
     class Meta:
-        verbose_name = 'Подарок'
-        verbose_name_plural = 'Подарки'
+        verbose_name = _('Подарок')
+        verbose_name_plural = _('Подарки')
 
-    name = models.CharField(max_length=255, verbose_name='Название подарка')
-    description = models.TextField(blank=True, null=True, verbose_name='Описание подарка')
+    name = models.CharField(max_length=255, verbose_name=_('Название подарка'))
+    description = models.TextField(blank=True, null=True, verbose_name=_('Описание подарка'))
 
 
 class DiscountModel(models.Model):
     """Модель конструктора акций"""
 
     class Meta:
-        verbose_name = 'Акция'
-        verbose_name_plural = 'Акции'
+        verbose_name = _('Акция')
+        verbose_name_plural = _('Акции')
 
     ACTION_TYPE_CHOICES = [
         ('discount', _('Скидка')),
         ('gift', _('Подарок')),
     ]
 
-    name = models.CharField(max_length=255, verbose_name='Наименование акции')
-    image = models.ImageField(upload_to='media', null=True, blank=True, verbose_name='фото акции')
+    name = models.CharField(max_length=255, verbose_name=_('Наименование акции'))
+    image = models.ImageField(upload_to='media', null=True, blank=True, verbose_name=_('фото акции'))
     is_show = models.BooleanField(default=True, verbose_name='вывод на фронт')
     subcategory_product = models.ForeignKey(SubCategoryProductModel, null=True, blank=True, on_delete=models.CASCADE,
-                                            verbose_name='Скидка для всей подкатегории товара')
-    product = models.ManyToManyField(ProductModel, related_name='products', verbose_name='товары по акции')
-    use_limit_sum_product = models.BooleanField(default=True, verbose_name='Учитывать лимит по сумме товара в корзине')
-    limit_sum_product = models.FloatField(default=0, verbose_name='Сумма товара в корзине после которой действует '
-                                                                  'акция')
-    count_person = models.PositiveIntegerField(default=0, verbose_name='количество человек воспользовавшихся акцией')
-    count_product = models.PositiveIntegerField(default=0, verbose_name='количество купленных товаров по акции')
-    use_limit_person = models.BooleanField(default=True, verbose_name='Учитывать лимит по количеству человек')
-    limit_person = models.PositiveIntegerField(verbose_name='Ограничение по количеству человек')
-    use_limit_product = models.BooleanField(default=True, verbose_name='Учитывать лимит по количеству товара')
-    limit_product = models.PositiveIntegerField(verbose_name='Ограничение по количеству товара')
-    use_limit_loyalty = models.BooleanField(default=True, verbose_name='Учитывать систему лояльности')
-    date_end_discount = models.DateField(verbose_name='Дата окончания акции')
-    is_active = models.BooleanField(default=True, verbose_name='Действующая/архивная акция')
-    action_type = models.CharField(max_length=20, choices=ACTION_TYPE_CHOICES, verbose_name='Тип акции')
-    discount_amount = models.PositiveIntegerField(default=0, blank=True, null=True, verbose_name='Размер скидки')
-    gift = models.ForeignKey(ProductModel, on_delete=models.CASCADE, blank=True, null=True, verbose_name='Подарок')
+                                            verbose_name=_('Скидка для всей подкатегории товара'))
+    product = models.ManyToManyField(ProductModel, related_name='products', verbose_name=_('товары по акции'))
+    use_limit_sum_product = models.BooleanField(default=True,
+                                                verbose_name=_('Учитывать лимит по сумме товара в корзине'))
+    limit_sum_product = models.FloatField(default=0,
+                                          verbose_name=_('Сумма товара в корзине после которой действует акция'))
+    count_person = models.PositiveIntegerField(default=0, verbose_name=_('количество человек воспользовавшихся акцией'))
+    count_product = models.PositiveIntegerField(default=0, verbose_name=_('количество купленных товаров по акции'))
+    use_limit_person = models.BooleanField(default=True, verbose_name=_('Учитывать лимит по количеству человек'))
+    limit_person = models.PositiveIntegerField(verbose_name=_('Ограничение по количеству человек'))
+    use_limit_product = models.BooleanField(default=True, verbose_name=_('Учитывать лимит по количеству товара'))
+    limit_product = models.PositiveIntegerField(verbose_name=_('Ограничение по количеству товара'))
+    use_limit_loyalty = models.BooleanField(default=True, verbose_name=_('Учитывать систему лояльности'))
+    date_end_discount = models.DateField(verbose_name=_('Дата окончания акции'))
+    is_active = models.BooleanField(default=True, verbose_name=_('Действующая/архивная акция'))
+    action_type = models.CharField(max_length=20, choices=ACTION_TYPE_CHOICES, verbose_name=_('Тип акции'))
+    discount_amount = models.PositiveIntegerField(default=0, blank=True, null=True, verbose_name=_('Размер скидки'))
+    gift = models.ForeignKey(ProductModel, on_delete=models.CASCADE, blank=True, null=True, verbose_name=_('Подарок'))
 
     def save(self, created=False, *args, **kwargs):
         """При создании новой акции, отправляется письмо с названием акции"""
@@ -71,8 +73,8 @@ class LoyaltyModel(models.Model):
     """Модель системы лояльности"""
 
     class Meta:
-        verbose_name = 'Система лояльности'
-        verbose_name_plural = 'Системы лояльности'
+        verbose_name = _('Система лояльности')
+        verbose_name_plural = _('Системы лояльности')
 
     # LEVEL_LOYALTY = [
     #     ('bronze', _('бронза')),
@@ -80,10 +82,13 @@ class LoyaltyModel(models.Model):
     #     ('gold', _('золото')),
     #     ('platinum', _('платина')),
     # ]
-
-    level = models.ForeignKey(NameLevelLoyalty, on_delete=models.PROTECT, verbose_name='Уровень лояльности')
-    discount_percentage = models.PositiveSmallIntegerField(verbose_name='Процент скидки')
-    sum_step = models.PositiveIntegerField(verbose_name='Порог цены')
+    aa = 34
+    level = models.ForeignKey(NameLevelLoyalty, on_delete=models.PROTECT, verbose_name=_('Уровень лояльности'))
+    discount_percentage = models.PositiveSmallIntegerField(validators=[
+        MinValueValidator(0, message=_("Процент скидки не может быть меньше 0")),
+        MaxValueValidator(100, message=_("Процент скидки не может быть больше 100 "))
+    ], verbose_name=_('Процент скидки'))
+    sum_step = models.PositiveIntegerField(verbose_name=_('Порог цены'))
 
     def __str__(self):
         return f"{self.level}"
@@ -176,4 +181,3 @@ def get_sum_price_product(price, discount_amounts):
     """Расчет суммы товаров в корзине с учетом всех скидок"""
     # return price - (price * sum(discount_amounts)) / 100
     return price - (price * sum(filter(None, discount_amounts))) / 100
-

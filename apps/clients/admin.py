@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 from django.utils.html import format_html
 from apps.order.models import Order
@@ -10,8 +11,8 @@ class ClientUserProxy(BaseUserModel):
     class Meta:
         proxy = True
         app_label = 'clients'
-        verbose_name = 'Клиент'
-        verbose_name_plural = 'Клиенты'
+        verbose_name = _('Клиент')
+        verbose_name_plural = _('Клиенты')
 
 
 class OrderInline(admin.StackedInline):

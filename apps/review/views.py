@@ -3,6 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from django.utils.translation import gettext_lazy as _
 from apps.order.models import OrderItem
 from apps.review.models import ReviewProductModel
 from apps.review.serializers import ReviewCreateSerializer
@@ -35,7 +36,7 @@ class ReviewProductViewSet(ModelViewSet):
         product = request.data.get('product')
 
         if not OrderItem.objects.filter(order__user=user, product=product).exists():
-            return Response({'error': 'Вы не можете оставить отзыв на этот товар, так как не совершали его покупку.'},
+            return Response({'error': _('Вы не можете оставить отзыв на этот товар, так как не совершали его покупку.')},
                             status=status.HTTP_400_BAD_REQUEST)
 
         return super().create(request, *args, **kwargs)
@@ -44,7 +45,7 @@ class ReviewProductViewSet(ModelViewSet):
     def reviews_for_product(self, request, pk=None):
         if pk is None:
             return Response(
-                {'error': 'Необходимо указать ID продукта.'},
+                {'error': _('Необходимо указать ID продукта.')},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -53,6 +54,6 @@ class ReviewProductViewSet(ModelViewSet):
             serializer = self.get_serializer(queryset, many=True)
             return Response(serializer.data)
         return Response(
-            {'detail': 'Комментарии по данному продукту отсутствуют'},
+            {'detail': _('Комментарии по данному продукту отсутствуют')},
             status=status.HTTP_204_NO_CONTENT
         )

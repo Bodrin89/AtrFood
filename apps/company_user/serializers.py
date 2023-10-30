@@ -1,6 +1,6 @@
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
-
+from django.utils.translation import gettext_lazy as _
 from apps.company_user.models import CompanyAddress, CompanyUserModel, ContactPersonModel
 from apps.company_user.services import CompanyUserServices
 from apps.company_user.validators import bik_validator, bin_iin_validator, iban_validator
@@ -88,9 +88,9 @@ class GetUpdateCompanySerializer(serializers.ModelSerializer):
 
     def validate_addresses(self, value):
         if not value or len(value) == 0:
-            raise serializers.ValidationError('Необходимо предоставить хотя бы один адрес.')
+            raise serializers.ValidationError(_('Необходимо предоставить хотя бы один адрес.'))
         if len(value) > 3:
-            raise serializers.ValidationError('Можно добавить не более трех адресов.')
+            raise serializers.ValidationError(_('Можно добавить не более трех адресов.'))
         return value
 
     def update(self, instance, validated_data):
@@ -102,9 +102,7 @@ class GetUpdateCompanySerializer(serializers.ModelSerializer):
     #
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
-    #
-    #     # Обновляем вложенное поле region, если оно предоставлено
-    #
+
         # Обновляем вложенное поле contact_person, если оно предоставлено
         if contact_person is not None:
             contact_serializer = ContactPersonSerializer(instance.contact_person, data=contact_person, partial=True)

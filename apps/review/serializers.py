@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+from config.settings import LOGGER
 from apps.review.models import ReviewProductModel, ReviewImage
 
 User = get_user_model()
@@ -38,7 +40,7 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
         if user and user.is_authenticated:
             validated_data['user'] = user
         else:
-            raise ValidationError({'error': 'Только авторизованный пользователь может оставить отзыв'})
+            raise ValidationError({'error': _('Только авторизованный пользователь может оставить отзыв')})
         return super().create(validated_data)
 
     # def create(self, validated_data):

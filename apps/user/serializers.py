@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.password_validation import validate_password
+from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from apps.user.models import BaseUserModel
 from apps.clients.models import AddressModel
@@ -24,7 +25,7 @@ class LoginSerializer(serializers.ModelSerializer):
         email = data.get('email')
         user = User.objects.filter(email=email).first()
         if user is not None and not user.is_active:
-            raise serializers.ValidationError('Аккаунт необходимо подтвердить по электронной почте.')
+            raise serializers.ValidationError(_('Аккаунт необходимо подтвердить по электронной почте.'))
         return data
 
 
@@ -41,7 +42,7 @@ class AddressSerializer(serializers.ModelSerializer):
         user = request.user
         if user.is_authenticated and not self.instance:
             if AddressModel.objects.filter(user=user).count() >= 3 and request.method != 'PUT':
-                raise serializers.ValidationError('Вы не можете добавить более трех адресов.')
+                raise serializers.ValidationError(_('Вы не можете добавить более трех адресов.'))
         return attrs
 
     def create(self, validated_data):
@@ -90,7 +91,7 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         new_password = attrs.get('new_password')
         repeat_password = attrs.get('repeat_password')
         if new_password != repeat_password:
-            raise serializers.ValidationError({'repeat_password': 'Пароли не совпадают'})
+            raise serializers.ValidationError({'repeat_password': _('Пароли не совпадают')})
         return attrs
 
     def update(self, instance, validated_data):
