@@ -6,18 +6,6 @@ from django.utils.translation import gettext_lazy as _
 from apps.user.validators import validate_phone_number
 
 
-class RegionModel(models.Model):
-    class Meta:
-        verbose_name = 'Регион'
-        verbose_name_plural = 'Регионы'
-
-    region = models.CharField(max_length=255)
-    city = models.CharField(max_length=255)
-
-    def __str__(self):
-        return self.region
-
-
 class CustomUserManager(BaseUserManager):
     """Переопрделяем метод базового менеджера, чтобы поле username перестало быть required"""
     def create_superuser(self, email, password=None, **extra_fields):
@@ -69,13 +57,6 @@ class BaseUserModel(AbstractUser):
     confirmation_token = models.UUIDField(default=uuid.uuid4, editable=False)
     user_type = models.CharField(max_length=10, choices=USER_TYPES, default='individual', verbose_name='Тип пользователя')
     email = models.EmailField(unique=True, verbose_name='Электронная почта')
-    region = models.ForeignKey(
-        RegionModel,
-        on_delete=models.CASCADE,
-        verbose_name='место положения область/город',
-        null=True,
-        blank=True
-        )
 
     objects = CustomUserManager()
 

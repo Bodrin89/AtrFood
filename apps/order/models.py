@@ -42,7 +42,6 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Покупатель', null=True)
     payment_method = models.CharField(max_length=10, choices=PAYMENT_METHOD_CHOICES, verbose_name='Метод оплаты')
     date_created = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
-    # delivery_address = models.CharField(max_length=250, verbose_name='Адрес доставки')
     delivery_address = models.ForeignKey(AddressModel, on_delete=models.CASCADE, verbose_name='Адрес доставки')
     contact_phone = models.CharField(max_length=20, verbose_name='Номер телефона', validators=[validate_phone_number])
     status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, blank=True, null=True,
@@ -107,7 +106,7 @@ def update_stock_on_orderitem_create(sender, instance, created, **kwargs):
             raise ValidationError(f"Недостаточно товара {instance.product.name} на складе.")
 
         instance.product.quantity_stock = F('quantity_stock') - instance.quantity
-        instance.product.save(update_fields=['quantity_stock'])
+        instance.product.save(update_fields=['quantity_stock', ])
 
 
 @receiver(pre_save, sender=OrderItem)
@@ -161,12 +160,10 @@ def update_level_loyalty(sender, instance, **kwargs):
     user_instance = user_model.objects.get(baseusermodel_ptr_id=user.id)
     sum_total_price = Order.objects.filter(user_id=user_instance.id,
                                            status='completed').aggregate(Sum('total_price'))['total_price__sum'] or 0
-
     loyalty_levels = LoyaltyModel.objects.all().order_by('sum_step')
     for level in loyalty_levels:
         if level.sum_step > sum_total_price:
             break
         loyalty = level
-
     user_instance.loyalty = loyalty
     user_instance.save()

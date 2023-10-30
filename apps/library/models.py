@@ -10,18 +10,18 @@ class City(models.Model):
     name = models.CharField(max_length=255, verbose_name=_('Город'))
 
     def __str__(self):
-        return self.name
+        return f'{self.name}'
 
 
-class Region(models.Model):
+class Country(models.Model):
     class Meta:
-        verbose_name = _('Область')
-        verbose_name_plural = _('Области')
+        verbose_name = _('Страна')
+        verbose_name_plural = _('Страны')
 
-    name = models.CharField(max_length=255, verbose_name=_('Область'))
+    name = models.CharField(max_length=255, verbose_name=_('Страна'))
 
     def __str__(self):
-        return self.name
+        return f'{self.name}'
 
 
 class District(models.Model):
@@ -32,7 +32,7 @@ class District(models.Model):
     name = models.CharField(max_length=255, verbose_name=_('Район'))
 
     def __str__(self):
-        return self.name
+        return f'{self.name}'
 
 
 class ManufacturingCompany(models.Model):
@@ -43,18 +43,7 @@ class ManufacturingCompany(models.Model):
     name = models.CharField(max_length=255, verbose_name=_('Компания производитель'))
 
     def __str__(self):
-        return self.name
-
-
-class ManufacturingCountry(models.Model):
-    class Meta:
-        verbose_name = _('Страна производитель')
-        verbose_name_plural = _('Страны производители')
-
-    name = models.CharField(max_length=255, verbose_name=_('Страна производитель'))
-
-    def __str__(self):
-        return self.name
+        return f'{self.name}'
 
 
 class NameLevelLoyalty(models.Model):
@@ -62,14 +51,18 @@ class NameLevelLoyalty(models.Model):
         verbose_name = _('Наименование уровня лояльности')
         verbose_name_plural = _('Наименование уровней лояльности')
 
-    name = models.CharField(max_length=255, verbose_name=_('Страна производитель'))
+    name = models.CharField(max_length=255, verbose_name=_('Наименование уровня лояльности'))
 
     def __str__(self):
-        return self.name
+        return f'{self.name}'
 
 
+class PackageType(models.Model):
+    class Meta:
+        verbose_name = _('Тип упаковки')
+        verbose_name_plural = _('Тип упаковок')
 
+    name = models.CharField(max_length=255, verbose_name=_('Тип упаковки'))
 
-
-
-
+    def __str__(self):
+        return f'{self.name}'

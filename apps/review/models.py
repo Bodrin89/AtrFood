@@ -33,7 +33,8 @@ class ReviewProductModel(models.Model):
         super().save(force_insert=False, force_update=False, using=None, update_fields=None)
         avg_rating = ReviewProductModel.objects.filter(product=self.product).aggregate(Avg('count_stars'))['count_stars__avg']
         self.product.rating = avg_rating
-        self.product.save(update_fields=['rating'])
+        self.product.reviewed = True
+        self.product.save(update_fields=['rating', 'reviewed'])
 
 
 class ReviewImage(models.Model):

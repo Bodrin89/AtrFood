@@ -3,6 +3,7 @@ from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from apps.user.models import BaseUserModel
+from apps.library.models import City, Country, District
 
 
 class AddressModel(models.Model):
@@ -10,12 +11,14 @@ class AddressModel(models.Model):
         verbose_name = 'Адрес'
         verbose_name_plural = 'Адреса'
 
-    district = models.CharField(max_length=255, blank=True, null=True, verbose_name='район')
-    street = models.CharField(max_length=255, blank=True, null=True, verbose_name='улица')
-    house_number = models.CharField(max_length=255, blank=True, null=True, verbose_name='номер дома')
-    apartment_number = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='номер квартиры')
-    floor = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='этаж')
-    user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE, related_name='addresses', null=True, verbose_name='пользователь')
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Страна')
+    city = models.ForeignKey(City, on_delete=models.CASCADE, verbose_name='Город')
+    district = models.ForeignKey(District, on_delete=models.CASCADE, verbose_name='Район', blank=True, null=True)
+    street = models.CharField(max_length=255, blank=True, null=True, verbose_name='Улица')
+    house_number = models.CharField(max_length=255, blank=True, null=True, verbose_name='Номер дома')
+    apartment_number = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='Номер квартиры')
+    floor = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='Этаж')
+    user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE, related_name='addresses', null=True, verbose_name='Пользователь')
 
     def __str__(self):
         return f'{self.district}, {self.street}'

@@ -1,9 +1,8 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
 from apps.promotion.models import LoyaltyModel
 from apps.user.models import BaseUserModel
-from apps.clients.models import AddressModel
+from apps.library.models import City, Country, District
 
 
 class ContactPersonModel(models.Model):
@@ -19,28 +18,6 @@ class ContactPersonModel(models.Model):
         return f'{self.surname} {self.first_name} {self.second_name}'
 
 
-class CompanyAddress(models.Model):
-    class Meta:
-        verbose_name = 'Адрес Компании'
-        verbose_name_plural = 'Адреса компаний'
-
-    district = models.CharField(max_length=255, blank=True, null=True, verbose_name='район')
-    street = models.CharField(max_length=255, blank=True, null=True, verbose_name='улица')
-    house_number = models.CharField(max_length=255, blank=True, null=True, verbose_name='номер дома')
-    country = models.CharField(max_length=255, verbose_name='страна')
-    office_number = models.PositiveSmallIntegerField(verbose_name='номер офиса')
-    user = models.OneToOneField(
-        BaseUserModel,
-        on_delete=models.CASCADE,
-        related_name='company_addresses',
-        null=True,
-        verbose_name='пользователь'
-    )
-
-    def __str__(self):
-        return self.country
-
-
 class CompanyUserModel(BaseUserModel):
     class Meta:
         verbose_name = 'Юридическое лицо'
@@ -50,7 +27,7 @@ class CompanyUserModel(BaseUserModel):
         CASH = ('cash', _('Cache'))
         NON_CASH = ('non_cash', _('Non_cash'))
 
-    company_name = models.CharField(max_length=255, verbose_name='название компании')
+    company_name = models.CharField(max_length=255, verbose_name='Название компании')
     bin_iin = models.PositiveBigIntegerField(verbose_name='БИН/ИИН')
     iik = models.CharField(max_length=255, verbose_name='ИИК')
     bank = models.CharField(max_length=255, verbose_name='IBAN')
@@ -74,3 +51,26 @@ class CompanyUserModel(BaseUserModel):
         if not self.pk:
             self.user_type = 'company'
         super().save(*args, **kwargs)
+
+
+class CompanyAddress(models.Model):
+    class Meta:
+        verbose_name = 'Адрес Компании'
+        verbose_name_plural = 'Адреса компаний'
+
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Страна')
+    city = models.ForeignKey(City, on_delete=models.CASCADE, verbose_name='Город')
+    district = models.ForeignKey(District, on_delete=models.CASCADE, verbose_name='Район', blank=True, null=True)
+    street = models.CharField(max_length=255, blank=True, null=True, verbose_name='Улица')
+    house_number = models.CharField(max_length=255, blank=True, null=True, verbose_name='Номер дома')
+    office_number = models.PositiveSmallIntegerField(verbose_name='Номер офиса')
+    user = models.OneToOneField(
+        BaseUserModel,
+        on_delete=models.CASCADE,
+        related_name='company_addresses',
+        null=True,
+        verbose_name='пользователь'
+    )
+
+    def __str__(self):
+        return f'{self.country}'

@@ -6,6 +6,7 @@ from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 from apps.product.models import ProductModel, SubCategoryProductModel
 from config.settings import LOGGER
+from apps.library.models import NameLevelLoyalty
 
 
 class Gift(models.Model):
@@ -63,7 +64,7 @@ class DiscountModel(models.Model):
             pass
 
     def __str__(self):
-        return self.name
+        return f'{self.name}'
 
 
 class LoyaltyModel(models.Model):
@@ -73,19 +74,19 @@ class LoyaltyModel(models.Model):
         verbose_name = 'Система лояльности'
         verbose_name_plural = 'Системы лояльности'
 
-    LEVEL_LOYALTY = [
-        ('bronze', _('бронза')),
-        ('silver', _('серебро')),
-        ('gold', _('золото')),
-        ('platinum', _('платина')),
-    ]
+    # LEVEL_LOYALTY = [
+    #     ('bronze', _('бронза')),
+    #     ('silver', _('серебро')),
+    #     ('gold', _('золото')),
+    #     ('platinum', _('платина')),
+    # ]
 
-    level = models.CharField(max_length=10, choices=LEVEL_LOYALTY, verbose_name='Уровень лояльности')
+    level = models.ForeignKey(NameLevelLoyalty, on_delete=models.PROTECT, verbose_name='Уровень лояльности')
     discount_percentage = models.PositiveSmallIntegerField(verbose_name='Процент скидки')
     sum_step = models.PositiveIntegerField(verbose_name='Порог цены')
 
     def __str__(self):
-        return self.level
+        return f"{self.level}"
 
 
 @receiver(post_save, sender=DiscountModel)

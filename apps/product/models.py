@@ -1,4 +1,7 @@
 from django.db import models
+from apps.library.models import Country, ManufacturingCompany, PackageType
+from django.db.models.signals import pre_save, post_save
+from django.dispatch import receiver
 
 
 class CatalogModel(models.Model):
@@ -45,13 +48,13 @@ class DescriptionProductModel(models.Model):
         verbose_name = 'Описание товара'
         verbose_name_plural = 'Описания товаров'
 
-    manufacturer = models.CharField(max_length=255, verbose_name='Компания производитель')
-    made_in = models.CharField(max_length=255, verbose_name='Страна изготовитель')
+    manufacturer = models.ForeignKey(ManufacturingCompany, on_delete=models.PROTECT, verbose_name='Компания производитель')
+    made_in = models.ForeignKey(Country, on_delete=models.PROTECT, verbose_name='Страна изготовитель')
     description = models.TextField(verbose_name='Описание товара')
-    package = models.CharField(max_length=255, verbose_name='Формат упаковки')
+    package = models.ForeignKey(PackageType, on_delete=models.PROTECT, verbose_name='Формат упаковки')
 
     def __str__(self):
-        return self.manufacturer
+        return f'{self.manufacturer}'
 
 
 class ProductModel(models.Model):
@@ -114,3 +117,11 @@ class CompareProductModel(models.Model):
 
     def __str__(self):
         return self.product
+
+
+@receiver(pre_save, sender=ProductModel)
+def update_product_existence(sender, instance, **kwargs):
+    if instance.quantity_stock == 0:
+        instance.existence = False
+    else:
+        instance.existence = True
