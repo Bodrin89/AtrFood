@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from apps.library.models import City, Country, District, ManufacturingCompany, NameLevelLoyalty, PackageType
+from apps.library.models import City, Country, District, ManufacturingCompany, NameLevelLoyalty, PackageType, Region, \
+    AddressArtFood, ContactArtFood, OpenStore
 
 
 @admin.register(City)
@@ -10,6 +11,11 @@ class CityAdmin(admin.ModelAdmin):
 
 @admin.register(PackageType)
 class PackageTypeAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Region)
+class RegionAdmin(admin.ModelAdmin):
     pass
 
 
@@ -31,3 +37,18 @@ class ManufacturingCompanyAdmin(admin.ModelAdmin):
 @admin.register(NameLevelLoyalty)
 class NameLevelLoyaltyAdmin(admin.ModelAdmin):
     pass
+
+
+class ContactArtFoodInline(admin.TabularInline):
+    model = ContactArtFood
+    extra = 1
+
+
+class OpenStoreInline(admin.TabularInline):
+    model = OpenStore
+    extra = 1
+
+
+@admin.register(AddressArtFood)
+class AddressArtFoodAdmin(admin.ModelAdmin):
+    inlines = [OpenStoreInline, ContactArtFoodInline]

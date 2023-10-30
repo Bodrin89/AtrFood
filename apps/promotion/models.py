@@ -6,7 +6,6 @@ from django.db.models.signals import m2m_changed, post_delete, post_save, pre_de
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 from apps.product.models import ProductModel, SubCategoryProductModel
-from config.settings import LOGGER
 from apps.library.models import NameLevelLoyalty
 
 
@@ -53,7 +52,7 @@ class DiscountModel(models.Model):
     date_end_discount = models.DateField(verbose_name=_('Дата окончания акции'))
     is_active = models.BooleanField(default=True, verbose_name=_('Действующая/архивная акция'))
     action_type = models.CharField(max_length=20, choices=ACTION_TYPE_CHOICES, verbose_name=_('Тип акции'))
-    discount_amount = models.PositiveIntegerField(default=0, blank=True, null=True, verbose_name=_('Размер скидки'))
+    discount_amount = models.PositiveIntegerField(default=0, blank=True, null=True, verbose_name=_('Размер скидки в %'))
     gift = models.ForeignKey(ProductModel, on_delete=models.CASCADE, blank=True, null=True, verbose_name=_('Подарок'))
 
     def save(self, created=False, *args, **kwargs):
@@ -76,13 +75,6 @@ class LoyaltyModel(models.Model):
         verbose_name = _('Система лояльности')
         verbose_name_plural = _('Системы лояльности')
 
-    # LEVEL_LOYALTY = [
-    #     ('bronze', _('бронза')),
-    #     ('silver', _('серебро')),
-    #     ('gold', _('золото')),
-    #     ('platinum', _('платина')),
-    # ]
-    aa = 34
     level = models.ForeignKey(NameLevelLoyalty, on_delete=models.PROTECT, verbose_name=_('Уровень лояльности'))
     discount_percentage = models.PositiveSmallIntegerField(validators=[
         MinValueValidator(0, message=_("Процент скидки не может быть меньше 0")),
@@ -112,7 +104,6 @@ def update_discount_price(sender, instance, action, reverse, model, pk_set, **kw
     prod = DiscountModel.objects.all()
     all_products = change_discount_price(prod)
     if action == 'post_add':
-        # add_prod = instance.product.all()
         for item in all_products['all_products']:
             discounts = get_discount(item)
             discount_amounts = [discount.discount_amount for discount in discounts]
@@ -122,8 +113,7 @@ def update_discount_price(sender, instance, action, reverse, model, pk_set, **kw
         try:
             instance_prod = set().union(all_products['dict_products'].get(instance))
             instance.product.add(*instance_prod)
-        except Exception as e:
-            LOGGER.error(f'error{e}')
+        except AttributeError:
             pass
 
         removed_products = ProductModel.objects.filter(pk__in=pk_set)
@@ -164,8 +154,7 @@ def change_discount_price(prod):
             if subcategory_product := discount.subcategory_product.products.all():
                 products.append(subcategory_product)
                 dict_products[discount] = subcategory_product
-        except Exception as e:
-            LOGGER.error(f'error {e}')
+        except AttributeError:
             pass
     all_products = set().union(*products)
     return {'dict_products': dict_products, 'all_products': all_products}
@@ -179,5 +168,4 @@ def get_discount(product: ProductModel) -> list[DiscountModel]:
 
 def get_sum_price_product(price, discount_amounts):
     """Расчет суммы товаров в корзине с учетом всех скидок"""
-    # return price - (price * sum(discount_amounts)) / 100
     return price - (price * sum(filter(None, discount_amounts))) / 100

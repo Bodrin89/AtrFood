@@ -76,7 +76,7 @@ class ProductModel(models.Model):
     existence = models.BooleanField(null=True, blank=True, default=True, verbose_name=_('Наличие товара на складе'))
     date_create = models.DateField(auto_now_add=True, verbose_name=_("Дата создания товара"))
     product_data = models.ForeignKey(DescriptionProductModel, on_delete=models.CASCADE, verbose_name=_('Данные товара'))
-    is_active = models.BooleanField(default=True, verbose_name=_("Товар активный/скрытый"))
+    is_active = models.BooleanField(default=True, verbose_name=_("Товар активный"))
     reviewed = models.BooleanField(verbose_name=_('Наличие отзывов у продукта'), default=False)
     subcategory = models.ForeignKey(
         SubCategoryProductModel,
