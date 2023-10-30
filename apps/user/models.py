@@ -64,18 +64,3 @@ class BaseUserModel(AbstractUser):
     #     return reverse('')
 
 
-class AddressModel(models.Model):
-    class Meta:
-        verbose_name = _('Адрес')
-        verbose_name_plural = _('Адреса')
-
-    district = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('район'))
-    street = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('улица'))
-    house_number = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('номер дома'))
-    apartment_number = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name=_('номер квартиры'))
-    floor = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name=_('этаж'))
-    user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE, related_name='addresses', null=True,
-                             verbose_name=_('пользователь'))
-
-    def __str__(self):
-        return f'{self.district}, {self.street}'

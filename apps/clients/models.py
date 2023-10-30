@@ -4,21 +4,28 @@ from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from apps.user.models import BaseUserModel
 from apps.library.models import City, Country, District
+from django.utils.translation import gettext_lazy as _
 
 
 class AddressModel(models.Model):
     class Meta:
-        verbose_name = 'Адрес'
-        verbose_name_plural = 'Адреса'
+        verbose_name = _('Адрес')
+        verbose_name_plural = _('Адреса')
 
-    country = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Страна')
-    city = models.ForeignKey(City, on_delete=models.CASCADE, verbose_name='Город')
-    district = models.ForeignKey(District, on_delete=models.CASCADE, verbose_name='Район', blank=True, null=True)
-    street = models.CharField(max_length=255, blank=True, null=True, verbose_name='Улица')
-    house_number = models.CharField(max_length=255, blank=True, null=True, verbose_name='Номер дома')
-    apartment_number = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='Номер квартиры')
-    floor = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='Этаж')
-    user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE, related_name='addresses', null=True, verbose_name='Пользователь')
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name=_('Страна'))
+    city = models.ForeignKey(City, on_delete=models.CASCADE, verbose_name=_('Город'))
+    district = models.ForeignKey(District, on_delete=models.CASCADE, verbose_name=_('Район'), blank=True, null=True)
+    street = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('Улица'))
+    house_number = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('Номер дома'))
+    apartment_number = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name=_('Номер квартиры'))
+    floor = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name=_('Этаж'))
+    user = models.ForeignKey(
+        BaseUserModel,
+        on_delete=models.CASCADE,
+        related_name='addresses',
+        null=True,
+        verbose_name=_('Пользователь')
+    )
 
     def __str__(self):
         return f'{self.district}, {self.street}'
