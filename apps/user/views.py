@@ -14,7 +14,8 @@ from apps.user.serializers import (AddressSerializer,
                                    ChangePasswordSerializer,
                                    EmailSerializer,
                                    LoginSerializer,
-                                   RegionSerializer,)
+                                   GetAddressSerializer,
+                                   )
 from apps.user.services import UserServices
 from apps.user.tasks import confirmation_email, update_email
 
@@ -72,6 +73,11 @@ class AddressViewSet(ModelViewSet):
 
     def get_queryset(self):
         return AddressModel.objects.filter(user=self.request.user)
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return GetAddressSerializer
+        return self.serializer_class
 
 
 class ClientViewSet(mixins.RetrieveModelMixin,

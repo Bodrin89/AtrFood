@@ -14,8 +14,8 @@ class SingUpIndividualView(CreateAPIView):
         if response.status_code == status.HTTP_201_CREATED:
             return Response(
                 {
-                'status': 'Success',
-                'message': 'Подтверждение отправлено на ваш электронный адрес.'
+                    'status': 'Success',
+                    'message': 'Подтверждение отправлено на ваш электронный адрес.'
                 },
                 status=status.HTTP_201_CREATED
             )

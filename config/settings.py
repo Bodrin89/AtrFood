@@ -31,6 +31,7 @@ THIRD_PARTY_APPS = [
     'rest_framework',
     'django_filters',
     'corsheaders',
+    'drf_yasg',
 ]
 
 LOCAL_APPS = [

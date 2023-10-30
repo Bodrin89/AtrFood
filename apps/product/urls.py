@@ -12,7 +12,10 @@ from apps.product.views import (AddProductCompareView,
                                 ListProductView,
                                 PopularProductsView,
                                 SimilarProductsView,
-                                ViewedProductsView, NewProductView, )
+                                ViewedProductsView,
+                                NewProductView,
+                                ListSubcategoryView,
+                                )
 
 urlpatterns = [
     # path('products/create', CreateProductView.as_view(), name='create-product'),
@@ -32,4 +35,5 @@ urlpatterns = [
     path('viewed', ViewedProductsView.as_view(), name='viewed_products'),
     path('similar', SimilarProductsView.as_view(), name='similar_products'),
     path('new', NewProductView.as_view(), name='new_products'),
+    path('subcategory/<int:category_id>', ListSubcategoryView.as_view(), name='list_subcategories'),
 ]
