@@ -8,4 +8,12 @@ class ProductFilter(django_filters.FilterSet):
 
     class Meta:
         model = ProductModel
-        fields = ['subcategory__category__name', 'existence', 'article', 'name', 'product_data__manufacturer', 'price']
+        fields = [
+            'subcategory',
+            'existence',
+            'article',
+            'name',
+            'product_data__manufacturer',
+            'price',
+            'subcategory__category',
+        ]
