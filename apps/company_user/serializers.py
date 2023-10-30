@@ -30,7 +30,7 @@ class CompanyAddressSerializer(serializers.ModelSerializer):
 class GetCompanyAddressSerializer(serializers.ModelSerializer):
 
     country = CountrySerializer()
-    city = CountrySerializer()
+    city = CitySerializer()
     district = DistrictSerializer()
 
     class Meta:

@@ -54,7 +54,7 @@ class AddressSerializer(serializers.ModelSerializer):
 class GetAddressSerializer(serializers.ModelSerializer):
 
     country = CountrySerializer()
-    city = CountrySerializer()
+    city = CitySerializer()
     district = DistrictSerializer()
 
     class Meta:
