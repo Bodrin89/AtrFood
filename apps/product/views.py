@@ -13,13 +13,14 @@ from rest_framework.generics import (
 from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
 from apps.order.models import OrderItem
 from apps.product.filters import ProductFilter
-from apps.product.models import CatalogModel, CategoryProductModel, ProductModel
+from apps.product.models import CatalogModel, CategoryProductModel, ProductModel, SubCategoryProductModel
 from apps.product.serializers import (AddProductCompareSerializer,
                                       AddProductFavoriteSerializer,
                                       CategorySerializer,
                                       ListCatalogSerializer,
                                       ListProductSerializer,
-                                      RetrieveProductSerializer,)
+                                      RetrieveProductSerializer,
+                                      SubCategoryProductSerializer)
 from apps.product.services import ServiceProduct
 from config.settings import LOGGER
 
@@ -50,9 +51,18 @@ class ListProductView(ListAPIView):
     pagination_class = PageNumberPagination
     filter_backends = [SearchFilter, DjangoFilterBackend, OrderingFilter]
     filterset_class = ProductFilter
-    search_fields = ['name', 'product_data__manufacturer']
-    filterset_fields = ['subcategory__category__name', 'existence', 'article', 'name', 'product_data__manufacturer',
-                        'price']
+    search_fields = ['name', 'product_data__manufacturer__name']
+    ordering_fields = [
+        'id',
+        'name',
+        'article',
+        'price',
+        'discount_price',
+        'rating',
+        'date_create',
+        'product_data',
+        'subcategory'
+    ]
 
     def get(self, request, *args, **kwargs):
         """Получение параметров пагинации из query_params)"""
@@ -94,9 +104,18 @@ class ListCatalogView(ListAPIView):
     serializer_class = ListCatalogSerializer
 
 
+class ListSubcategoryView(ListAPIView):
+    """Получение всех подкатегорий категории"""
+    serializer_class = SubCategoryProductSerializer
+
+    def get_queryset(self):
+        category_id = self.kwargs.get('category_id')
+        return SubCategoryProductModel.objects.filter(category_id=category_id).all()
+
+
 class ListCategorySubcategoryView(ListAPIView):
     """Получение всех категорий каталога с подкатегориями категории"""
-    serializer_class = CategorySerializer
+    serializer_class = SubCategoryProductSerializer
 
     def get_queryset(self):
         catalog_id = self.kwargs.get('catalog_id')
