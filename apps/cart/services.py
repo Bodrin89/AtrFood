@@ -7,6 +7,7 @@ from apps.product.models import ProductModel
 from apps.promotion.models import DiscountModel, LoyaltyModel
 from apps.promotion.services import ServicePromotion
 from apps.user.models import BaseUserModel
+from config.settings import LOGGER
 
 
 class ServiceCart:

@@ -1,9 +1,7 @@
 from django.contrib.auth import login
 from django.contrib.auth.hashers import make_password
 from django.db import transaction
-
 from apps.company_user.models import CompanyAddress, CompanyUserModel, ContactPersonModel
-from apps.user.models import RegionModel
 from apps.user.tasks import confirmation_email
 from config.settings import LOGGER
 from apps.clients.models import AddressModel
@@ -21,28 +19,25 @@ class CompanyUserServices:
             bank = validated_data.pop('bank', None)
             bank_ = bank.replace(' ', '')
             contact_person_data = validated_data.pop('contact_person', None)
-            company_address_data = validated_data.pop('company_address', None)
+            company_address_data = validated_data.pop('company_addresses', None)
             addresses_data = validated_data.pop('addresses', [])
             contact_person = ContactPersonModel.objects.create(**contact_person_data)
-            region_data = validated_data.pop('region', None)
-            region, created = RegionModel.objects.get_or_create(**region_data)
-            company_address, created = CompanyAddress.objects.get_or_create(**company_address_data)
-            company_user = CompanyUserModel.objects.create(region=region, bank=bank_, company_address=company_address,
+            company_user = CompanyUserModel.objects.create(bank=bank_,
                                                            contact_person=contact_person,
                                                            # is_active=False,
                                                            **validated_data)
-            AddressModel.objects.create(user=company_user, **addresses_data)
-            # for address_data in addresses_data:
-            #     AddressModel.objects.create(user=company_user, **address_data)
+            CompanyAddress.objects.create(user=company_user, **company_address_data)
+            for address_data in addresses_data:
+                AddressModel.objects.create(user=company_user, **address_data)
             message = 'Для подтверждения email, пожалуйста, перейдите по ссылке:'
             subject = 'Подтверждение email'
             email_url = 'api/user/confirm-email'
-            confirmation_email.apply_async(args=[
-                company_user.confirmation_token,
-                company_user.email,
-                email_url,
-                message,
-                subject
-                ]
-            )
-        return company_user
+            # confirmation_email.apply_async(args=[
+            #     company_user.confirmation_token,
+            #     company_user.email,
+            #     email_url,
+            #     message,
+            #     subject
+            #     ]
+            # )
+            return company_user

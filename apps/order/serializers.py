@@ -3,7 +3,7 @@ from apps.order.models import Order, OrderItem
 from apps.order.services import ServiceOrder
 from apps.product.serializers import ProductInfoSerializer, GiftInfoSerializer
 from apps.clients.models import AddressModel
-from apps.user.serializers import AddressSerializer
+from apps.user.serializers import GetAddressSerializer
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
@@ -42,7 +42,11 @@ class GetOrderSerializer(serializers.ModelSerializer):
     """Сериализатор заказов пользователя"""
 
     items = OrderItemSerializer(many=True, read_only=True)
-    delivery_address = AddressSerializer(read_only=True)
+    delivery_address = GetAddressSerializer(read_only=True)
+    total_quantity = serializers.CharField(read_only=True)
+    total_price = serializers.CharField(read_only=True)
+    status = serializers.CharField(read_only=True)
+    payment_method = serializers.CharField(read_only=True)
 
     class Meta:
         model = Order

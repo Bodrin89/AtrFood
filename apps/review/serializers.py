@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from apps.review.models import ReviewProductModel
+from apps.review.models import ReviewProductModel, ReviewImage
 
 User = get_user_model()
 
@@ -15,13 +15,21 @@ class UserMailSerializer(serializers.ModelSerializer):
         read_only_files = ('id',)
 
 
+class ReviewImageSerializer(serializers.ModelSerializer):
+    """Сериализатор для создания фотографий к отзыву"""
+    class Meta:
+        model = ReviewImage
+        fields = ('image',)
+
+
 class ReviewCreateSerializer(serializers.ModelSerializer):
     """Для создания и просмотра отзывов"""
     user = UserMailSerializer(read_only=True)
+    images = ReviewImageSerializer(many=True)
 
     class Meta:
         model = ReviewProductModel
-        fields = ('id', 'count_stars', 'review_text', 'foto', 'user', 'product',)
+        fields = ('id', 'count_stars', 'review_text', 'user', 'product', 'images')
         read_only_files = ('id',)
 
     def create(self, validated_data):

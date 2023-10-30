@@ -1,8 +1,9 @@
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
-from apps.user.models import BaseUserModel, RegionModel
+from apps.user.models import BaseUserModel
 from apps.clients.models import AddressModel
+from apps.library.serializers import CitySerializer, CountrySerializer, DistrictSerializer
 
 User = get_user_model()
 
@@ -27,22 +28,13 @@ class LoginSerializer(serializers.ModelSerializer):
         return data
 
 
-class RegionSerializer(serializers.ModelSerializer):
-    """Сериализатор региона"""
-
-    class Meta:
-        model = RegionModel
-        fields = ('region', 'city')
-        # read_only_fields = ('id',)
-
-
 class AddressSerializer(serializers.ModelSerializer):
     """Сериализатор для создания адреса"""
 
     class Meta:
         model = AddressModel
-        fields = ('id', 'district', 'street', 'house_number', 'apartment_number', 'floor')
-        read_only_fields = ('id',)
+        fields = ('id', 'country', 'city', 'district', 'street', 'house_number', 'apartment_number', 'floor')
+        read_only_fields = ['id', ]
 
     def validate(self, attrs):
         request = self.context.get('request')
@@ -58,6 +50,18 @@ class AddressSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
+class GetAddressSerializer(serializers.ModelSerializer):
+
+    country = CountrySerializer()
+    city = CountrySerializer()
+    district = DistrictSerializer()
+
+    class Meta:
+        model = AddressModel
+        fields = ('id', 'country', 'city', 'district', 'street', 'house_number', 'apartment_number', 'floor')
+        read_only_fields = ['id', ]
+
+
 class EmailSerializer(serializers.Serializer):
     """Сериализатор для смены email"""
 
@@ -65,6 +69,7 @@ class EmailSerializer(serializers.Serializer):
 
 
 class ChangePasswordSerializer(serializers.ModelSerializer):
+    """Сериализатор для смены пароля"""
 
     new_password = serializers.CharField(
         validators=[validate_password],

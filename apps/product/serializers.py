@@ -5,23 +5,18 @@ from apps.product.models import (CatalogModel,
                                  DescriptionProductModel,
                                  FavoriteProductModel,
                                  ProductModel,
-                                 SubCategoryProductModel,)
+                                 SubCategoryProductModel,
+                                 ProductImage,)
 from apps.product.services import ServiceProduct
+from apps.library.serializers import ManufacturingCompanySerializer, CountrySerializer
 from config.settings import LOGGER
-
-
-class CatalogSerializer(serializers.ModelSerializer):
-    """Каталог"""
-    class Meta:
-        model = CatalogModel
-        fields = ('name',)
 
 
 class SubCategoryProductSerializer(serializers.ModelSerializer):
     """Подкатегория"""
     class Meta:
         model = SubCategoryProductModel
-        fields = ('name',)
+        fields = ('name', 'id')
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -30,14 +25,31 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CategoryProductModel
-        fields = ('name', 'subcategories',)
+        fields = ('name', 'subcategories', 'id')
+
+
+class CatalogSerializer(serializers.ModelSerializer):
+    """Каталог"""
+
+    class Meta:
+        model = CatalogModel
+        fields = ('name', 'id')
 
 
 class DescriptionProductSerializer(serializers.ModelSerializer):
     """Описание товара"""
+    manufacturer = ManufacturingCompanySerializer()
+    made_in = CountrySerializer()
+
     class Meta:
         model = DescriptionProductModel
-        fields = ('manufacturer', 'made_in', 'description', 'package')
+        fields = ('manufacturer', 'made_in', 'description')
+
+
+class ProductImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductImage
+        fields = ('image',)
 
 
 class ListProductSerializer(serializers.ModelSerializer):
@@ -45,6 +57,7 @@ class ListProductSerializer(serializers.ModelSerializer):
 
     product_data = DescriptionProductSerializer()
     subcategory = SubCategoryProductSerializer()
+    images = ProductImageSerializer(source='images.all', many=True)
 
     class Meta:
         model = ProductModel
@@ -67,14 +80,22 @@ class ListProductSerializer(serializers.ModelSerializer):
 #         return ServiceProduct.create_product(validated_data)
 
 class ListCatalogSerializer(serializers.ModelSerializer):
-    """Получение всех каталогов"""
+    """Получение всех каталогов с вложенными категориями/подкатегориями"""
+
+    catalogs = CategorySerializer(many=True)
+
     class Meta:
         model = CatalogModel
-        fields = ('name',)
+        fields = ('name', 'catalogs', 'id')
 
 
 class RetrieveProductSerializer(serializers.ModelSerializer):
     """Получение товара по id"""
+
+    product_data = DescriptionProductSerializer()
+    subcategory = SubCategoryProductSerializer()
+    images = ProductImageSerializer(source='images.all', many=True)
+
     class Meta:
         model = ProductModel
         fields = '__all__'
@@ -101,13 +122,12 @@ class AddProductCompareSerializer(serializers.ModelSerializer):
 
 
 class ProductInfoSerializer(serializers.ModelSerializer):
-    """Получение всех товаров"""
+    """Получение всех товаров в заказ"""
 
     class Meta:
         model = ProductModel
         fields = [
             'name',
-            'foto',
             'price',
             'article',
             'discount_price',
@@ -116,10 +136,11 @@ class ProductInfoSerializer(serializers.ModelSerializer):
 
 class GiftInfoSerializer(serializers.ModelSerializer):
     """Информация по подарку из акции"""
+    images = ProductImageSerializer(source='images.all', many=True)
 
     class Meta:
         model = ProductModel
-        fields = ['name', 'foto', 'article', ]
+        fields = ['name', 'images', 'article', ]
 
 # class AddProductCompareSerializer(serializers.ModelSerializer):
 #     """Добавление/удаление товара для сравнения"""

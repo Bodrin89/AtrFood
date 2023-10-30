@@ -6,6 +6,7 @@ from apps.promotion.models import DiscountModel
 class ListDiscountSerializer(serializers.ModelSerializer):
     """Список всех акций"""
     product = ListProductSerializer(many=True)
+
     class Meta:
         model = DiscountModel
         fields = '__all__'
