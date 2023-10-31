@@ -111,14 +111,26 @@ class ServiceCart:
 
         ServicePromotion.check_date_promotions()
 
+        # discounts = ServiceCart._get_discount(product, quantity_product, limit_sum_product)
+        # discount_amounts = [discount.discount_amount for discount in discounts]
+        #
+        # gifts = ServiceCart._get_gifts_product(discounts)
+        #
+        # if validated_data['user'].id and product.products.filter(use_limit_loyalty=True).exists():
+        #     user_id = validated_data['user'].id
+        #     ServiceCart.get_level_loyalty(user_id, discount_amounts)
+
+
         discounts = ServiceCart._get_discount(product, quantity_product, limit_sum_product)
         discount_amounts = [discount.discount_amount for discount in discounts]
 
         gifts = ServiceCart._get_gifts_product(discounts)
 
-        if validated_data['user'].id and product.products.filter(use_limit_loyalty=True).exists():
-            user_id = validated_data['user'].id
-            ServiceCart.get_level_loyalty(user_id, discount_amounts)
+        user_id = validated_data['user'].id
+        if user_id:
+            if product.products.filter(use_limit_loyalty=True).exists() or not product.products.exists():
+                ServiceCart.get_level_loyalty(user_id, discount_amounts)
+
 
         found = False
         for item in product_cart:

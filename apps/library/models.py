@@ -93,7 +93,7 @@ class AddressArtFood(models.Model):
     house_number = models.CharField(max_length=255, verbose_name=_("Номер дома"))
     office_number = models.PositiveSmallIntegerField(verbose_name=_("Номер офиса"), null=True, blank=True)
 
-    url = models.URLField(verbose_name=_("Поле для ссылки?????"))
+    url = models.URLField(verbose_name=_("Поле для ссылки"))
 
 
 class OpenStore(models.Model):

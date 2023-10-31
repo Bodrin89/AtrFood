@@ -149,23 +149,25 @@ def handle_returned_order(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Order)
 def update_level_loyalty(sender, instance, **kwargs):
-    user: BaseUserModel = User.objects.get(id=instance.user.id)
-    loyalty = None
 
-    if user.user_type == 'individual':
-        user_model = IndividualUserModel
-    elif user.user_type == 'company':
-        user_model = CompanyUserModel
-    else:
-        return
+    if instance.status == 'completed':
+        user: BaseUserModel = User.objects.get(id=instance.user.id)
+        loyalty = None
 
-    user_instance = user_model.objects.get(baseusermodel_ptr_id=user.id)
-    sum_total_price = Order.objects.filter(user_id=user_instance.id,
-                                           status='completed').aggregate(Sum('total_price'))['total_price__sum'] or 0
-    loyalty_levels = LoyaltyModel.objects.all().order_by('sum_step')
-    for level in loyalty_levels:
-        if level.sum_step > sum_total_price:
-            break
-        loyalty = level
-    user_instance.loyalty = loyalty
-    user_instance.save()
+        if user.user_type == 'individual':
+            user_model = IndividualUserModel
+        elif user.user_type == 'company':
+            user_model = CompanyUserModel
+        else:
+            return
+
+        user_instance = user_model.objects.get(baseusermodel_ptr_id=user.id)
+        sum_total_price = Order.objects.filter(user_id=user_instance.id,
+                                               status='completed').aggregate(Sum('total_price'))['total_price__sum'] or 0
+        loyalty_levels = LoyaltyModel.objects.all().order_by('sum_step')
+        for level in loyalty_levels:
+            if level.sum_step > sum_total_price:
+                break
+            loyalty = level
+        user_instance.loyalty = loyalty
+        user_instance.save()
