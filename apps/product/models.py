@@ -1,3 +1,5 @@
+from functools import partial
+
 from django.db import models
 from apps.library.models import Country, ManufacturingCompany, PackageType
 from django.db.models.signals import pre_save
@@ -43,7 +45,7 @@ class SubCategoryProductModel(models.Model):
     name = models.CharField(max_length=255)
     category = models.ForeignKey(CategoryProductModel, on_delete=models.CASCADE, related_name='subcategories')
     file_subcategory = models.FileField(
-        upload_to=lambda instance, filename: upload_to_folder_path(instance, filename, 'subcategory'),
+        upload_to=partial(upload_to_folder_path, folder_name='subcategory'),
         null=True, blank=True, verbose_name=_('Файл с товарами подкатегории'))
 
     def __str__(self):
