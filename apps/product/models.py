@@ -1,8 +1,10 @@
 from django.db import models
 from apps.library.models import Country, ManufacturingCompany, PackageType
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
+
+from config.utils import upload_to_folder_path
 from apps.user.models import BaseUserModel
 
 
@@ -33,12 +35,16 @@ class CategoryProductModel(models.Model):
 
 class SubCategoryProductModel(models.Model):
     """Модель подкатегории товара"""
+
     class Meta:
         verbose_name = _('Подкатегория товара')
         verbose_name_plural = _('Подкатегории товаров')
 
     name = models.CharField(max_length=255)
     category = models.ForeignKey(CategoryProductModel, on_delete=models.CASCADE, related_name='subcategories')
+    file_subcategory = models.FileField(
+        upload_to=lambda instance, filename: upload_to_folder_path(instance, filename, 'subcategory'),
+        null=True, blank=True, verbose_name=_('Файл с товарами подкатегории'))
 
     def __str__(self):
         return self.name

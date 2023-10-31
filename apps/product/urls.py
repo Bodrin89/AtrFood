@@ -14,7 +14,7 @@ from apps.product.views import (AddProductCompareView,
                                 SimilarProductsView,
                                 ViewedProductsView,
                                 NewProductView,
-                                ListSubcategoryView,
+                                ListSubcategoryView, SubcategoryDownloadView,
                                 )
 
 urlpatterns = [
@@ -36,4 +36,5 @@ urlpatterns = [
     path('similar', SimilarProductsView.as_view(), name='similar_products'),
     path('new', NewProductView.as_view(), name='new_products'),
     path('subcategory/<int:category_id>', ListSubcategoryView.as_view(), name='list_subcategories'),
+    path('subcategory/<int:subcategory_id>/download', SubcategoryDownloadView.as_view(), name='download_subcategories'),
 ]

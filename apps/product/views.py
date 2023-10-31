@@ -1,6 +1,9 @@
 from datetime import timedelta
 
+from django.utils.translation import gettext_lazy as _
+
 from django.db.models import Sum
+from django.http import HttpResponse, HttpResponseNotFound
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
@@ -11,6 +14,8 @@ from rest_framework.generics import (
     get_object_or_404,
 )
 from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
+from rest_framework.views import APIView
+
 from apps.order.models import OrderItem
 from apps.product.filters import ProductFilter
 from apps.product.models import CatalogModel, CategoryProductModel, ProductModel, SubCategoryProductModel
@@ -120,6 +125,19 @@ class ListCategorySubcategoryView(ListAPIView):
     def get_queryset(self):
         catalog_id = self.kwargs.get('catalog_id')
         return CategoryProductModel.objects.filter(catalog_id=catalog_id).all()
+
+
+class SubcategoryDownloadView(APIView):
+    """Скачивание файла со всеми товарами из подкатегории по id"""
+
+    def get(self, request, subcategory_id):
+        document = get_object_or_404(SubCategoryProductModel, pk=subcategory_id)
+        try:
+            response = HttpResponse(document.file_subcategory, content_type='application/octet-stream')
+            response['Content-Disposition'] = f'attachment; filename="{document.file_subcategory}"'
+            return response
+        except FileNotFoundError:
+            return HttpResponseNotFound(_('Файл не найден'))
 
 
 class AddProductFavoriteView(CreateAPIView):
