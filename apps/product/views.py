@@ -1,5 +1,7 @@
+import os
 from datetime import timedelta
 
+from django.utils.encoding import escape_uri_path
 from django.utils.translation import gettext_lazy as _
 
 from django.db.models import Sum
@@ -14,6 +16,7 @@ from rest_framework.generics import (
     get_object_or_404,
 )
 from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
+from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.order.models import OrderItem
@@ -134,10 +137,12 @@ class SubcategoryDownloadView(APIView):
         document = get_object_or_404(SubCategoryProductModel, pk=subcategory_id)
         try:
             response = HttpResponse(document.file_subcategory, content_type='application/octet-stream')
-            response['Content-Disposition'] = f'attachment; filename="{document.file_subcategory}"'
+            filename = os.path.basename(document.file_subcategory.name)
+            encoded_filename = escape_uri_path(filename)
+            response['Content-Disposition'] = f'attachment; filename="{encoded_filename}"'
             return response
         except FileNotFoundError:
-            return HttpResponseNotFound(_('Файл не найден'))
+            return Response(_('Файл не найден'))
 
 
 class AddProductFavoriteView(CreateAPIView):
