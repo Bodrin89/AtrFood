@@ -125,3 +125,12 @@ class ContactArtFood(models.Model):
                                      verbose_name=_('Номер телефона'))
     address = models.ForeignKey(AddressArtFood, on_delete=models.CASCADE, verbose_name=_("Адрес магазина"), null=True)
 
+
+class SocialNetwork(models.Model):
+    class Meta:
+        verbose_name = _('Социальная сеть')
+        verbose_name_plural = _('Социальные сети')
+
+    name = models.CharField(max_length=255, verbose_name=_("Название социальной сети"))
+    url_network = models.URLField(verbose_name=_("Ссылка на социальную сеть"))
+

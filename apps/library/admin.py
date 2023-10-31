@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from apps.library.models import City, Country, District, ManufacturingCompany, NameLevelLoyalty, PackageType, Region, \
-    AddressArtFood, ContactArtFood, OpenStore
+    AddressArtFood, ContactArtFood, OpenStore, SocialNetwork
 
 
 @admin.register(City)
@@ -52,3 +52,8 @@ class OpenStoreInline(admin.TabularInline):
 @admin.register(AddressArtFood)
 class AddressArtFoodAdmin(admin.ModelAdmin):
     inlines = [OpenStoreInline, ContactArtFoodInline]
+
+
+@admin.register(SocialNetwork)
+class SocialNetworkAdmin(admin.ModelAdmin):
+    pass
