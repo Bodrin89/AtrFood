@@ -15,7 +15,7 @@ class OrderInline(admin.StackedInline):
     exclude = ('total_quantity', )
 
     def edit_link(self, instance):
-        url = reverse('admin:%s_%s_change' % (instance._meta.app_label,  instance._meta.model_name),  args=[instance.id] )
+        url = reverse('admin:%s_%s_change' % (instance._meta.app_label,  instance._meta.model_name),  args=[instance.id])
         return format_html('<a href="{}">Просмотр заказа</a>', url)
 
     edit_link.short_description = 'Действие'

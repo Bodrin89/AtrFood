@@ -6,9 +6,10 @@ from apps.product.models import (CatalogModel,
                                  FavoriteProductModel,
                                  ProductModel,
                                  SubCategoryProductModel,
-                                 ProductImage,)
+                                 ProductImage,
+                                 )
 from apps.product.services import ServiceProduct
-from apps.library.serializers import ManufacturingCompanySerializer, CountrySerializer
+from apps.library.serializers import ManufacturingCompanySerializer, CountrySerializer, PackageTypeSerializer
 from config.settings import LOGGER
 
 
@@ -40,10 +41,11 @@ class DescriptionProductSerializer(serializers.ModelSerializer):
     """Описание товара"""
     manufacturer = ManufacturingCompanySerializer()
     made_in = CountrySerializer()
+    package = PackageTypeSerializer()
 
     class Meta:
         model = DescriptionProductModel
-        fields = ('manufacturer', 'made_in', 'description')
+        fields = ('manufacturer', 'made_in', 'description', 'package')
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
@@ -82,11 +84,11 @@ class ListProductSerializer(serializers.ModelSerializer):
 class ListCatalogSerializer(serializers.ModelSerializer):
     """Получение всех каталогов с вложенными категориями/подкатегориями"""
 
-    catalogs = CategorySerializer(many=True)
+    categories = CategorySerializer(many=True)
 
     class Meta:
         model = CatalogModel
-        fields = ('name', 'catalogs', 'id')
+        fields = ('name', 'categories', 'id')
 
 
 class RetrieveProductSerializer(serializers.ModelSerializer):

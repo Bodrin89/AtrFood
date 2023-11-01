@@ -1,6 +1,13 @@
 from django.contrib import admin
-from apps.order.models import Order, OrderItem
+from apps.order.models import Order, OrderItem, DeliveryAddress
 from django.utils.translation import gettext_lazy as _
+
+
+class DeliveryAddressInline(admin.StackedInline):
+    model = DeliveryAddress
+    # extra = 1
+    # max_num = 1
+    # readonly_fields = ('get_product_price', 'product', 'quantity', 'price')
 
 
 class OrderItemInline(admin.TabularInline):
@@ -17,7 +24,7 @@ class OrderItemInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    inlines = [OrderItemInline]
+    inlines = [OrderItemInline, DeliveryAddressInline]
     list_display = ['id', 'status', 'date_created']
     readonly_fields = ('returned', )
     list_editable = ('status',)

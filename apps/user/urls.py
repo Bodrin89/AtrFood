@@ -16,7 +16,7 @@ from apps.user.views import (AddressViewSet,
 router = DefaultRouter()
 
 router.register(r'profile', ClientViewSet, basename='profile')
-router.register(r'full_profile_info', ProfileViewSet, basename='full_profile_info')
+# router.register(r'full_profile_info', ProfileViewSet, basename='full_profile_info')
 router.register(r'address', AddressViewSet, basename='address')
 
 urlpatterns = [

@@ -1,11 +1,9 @@
 from functools import partial
-
 from django.db import models
-from apps.library.models import Country, ManufacturingCompany, PackageType
-from django.db.models.signals import pre_save
+from apps.library.models import CountryManufacturer, ManufacturingCompany, PackageType
+from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
-
 from config.utils import upload_to_folder_path
 from apps.user.models import BaseUserModel
 
@@ -29,7 +27,7 @@ class CategoryProductModel(models.Model):
         verbose_name_plural = _('Категории товаров')
 
     name = models.CharField(max_length=255)
-    catalog = models.ForeignKey(CatalogModel, on_delete=models.CASCADE, related_name='catalogs')
+    catalog = models.ForeignKey(CatalogModel, on_delete=models.CASCADE, related_name='categories')
 
     def __str__(self):
         return self.name
@@ -52,21 +50,6 @@ class SubCategoryProductModel(models.Model):
         return self.name
 
 
-class DescriptionProductModel(models.Model):
-    """Модель описания товара"""
-    class Meta:
-        verbose_name = _('Описание товара')
-        verbose_name_plural = _('Описания товаров')
-
-    manufacturer = models.ForeignKey(ManufacturingCompany, on_delete=models.PROTECT, verbose_name=_('Компания производитель'))
-    made_in = models.ForeignKey(Country, on_delete=models.PROTECT, verbose_name=_('Страна изготовитель'))
-    description = models.TextField(verbose_name=_('Описание товара'))
-    package = models.ForeignKey(PackageType, on_delete=models.PROTECT, verbose_name=_('Формат упаковки'))
-
-    def __str__(self):
-        return f'{self.manufacturer}'
-
-
 class ProductModel(models.Model):
     """Модель товара"""
     class Meta:
@@ -83,8 +66,7 @@ class ProductModel(models.Model):
     opt_price = models.FloatField(null=True, blank=True, verbose_name=_("ОПТовая цена за единицу товара"))
     existence = models.BooleanField(null=True, blank=True, default=True, verbose_name=_('Наличие товара на складе'))
     date_create = models.DateField(auto_now_add=True, verbose_name=_("Дата создания товара"))
-    product_data = models.ForeignKey(DescriptionProductModel, on_delete=models.CASCADE, verbose_name=_('Данные товара'))
-    is_active = models.BooleanField(default=True, verbose_name=_("Товар активный"))
+    is_active = models.BooleanField(default=True, verbose_name=_("Товар активный/скрытый"))
     reviewed = models.BooleanField(verbose_name=_('Наличие отзывов у продукта'), default=False)
     subcategory = models.ForeignKey(
         SubCategoryProductModel,
@@ -95,6 +77,33 @@ class ProductModel(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class DescriptionProductModel(models.Model):
+    """Модель описания товара"""
+
+    class Meta:
+        verbose_name = _('Описание товара')
+        verbose_name_plural = _('Описания товаров')
+
+    manufacturer = models.ForeignKey(
+        ManufacturingCompany,
+        on_delete=models.PROTECT,
+        verbose_name=_('Компания производитель')
+    )
+    made_in = models.ForeignKey(CountryManufacturer, on_delete=models.PROTECT, verbose_name=_('Страна изготовитель'))
+    description = models.TextField(verbose_name=_('Описание товара'))
+    package = models.ForeignKey(PackageType, on_delete=models.PROTECT, verbose_name=_('Формат упаковки'))
+    product = models.OneToOneField(
+        ProductModel,
+        on_delete=models.CASCADE,
+        related_name='product_data',
+        null=True,
+        verbose_name=_('Данные товара')
+    )
+
+    def __str__(self):
+        return f'{self.manufacturer}'
 
 
 class ProductImage(models.Model):

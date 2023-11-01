@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model, login, logout
 from django.db.models import QuerySet
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import mixins, permissions, status
 from rest_framework.generics import CreateAPIView, UpdateAPIView
 from rest_framework.response import Response
@@ -29,7 +31,21 @@ class LoginView(CreateAPIView):
     serializer_class = LoginSerializer
     permission_classes = [~ permissions.IsAuthenticated]
 
-    def create(self, request, *args, **kwargs):
+    @swagger_auto_schema(
+        request_body=LoginSerializer,
+        responses={200: openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'id': openapi.Schema(type=openapi.TYPE_INTEGER),
+                'email': openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_EMAIL),
+            },
+            example={
+                'id': 1,
+                'email': 'example@example.com',
+            },
+        )},
+    )
+    def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = UserServices.login_user(request, serializer)

@@ -6,6 +6,7 @@ from django.conf.urls.static import static
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
+from stats import stats_view
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -20,6 +21,18 @@ schema_view = get_schema_view(
     permission_classes=[permissions.AllowAny, ],
 )
 
+
+def get_admin_urls(urls):
+    def get_urls():
+        my_urls = [
+            path('stats/', admin.site.admin_view(stats_view), name='stats')
+        ]
+        return my_urls + urls
+    return get_urls
+
+
+admin.site.get_urls = get_admin_urls(admin.site.get_urls())
+
 urlpatterns = [
 
               ] + i18n_patterns(
@@ -33,6 +46,8 @@ urlpatterns = [
     path('api/cart/', include(('apps.cart.urls', 'apps.cart'))),
     path('api/order/', include(('apps.order.urls', 'apps.order'))),
     path('api/discounts/', include(('apps.promotion.urls', 'apps.promotion'))),
+    path('api/blog/', include(('apps.blog.urls', 'apps.blog'))),
+    path('api/library/', include(('apps.library.urls', 'apps.library'))),
     path('api/documents/', include(('apps.document.urls', 'apps.document'))),
 
     prefix_default_language=True,

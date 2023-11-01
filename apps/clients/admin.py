@@ -1,10 +1,12 @@
 from django.contrib import admin
+from django.http import HttpResponse
 from django.utils.translation import gettext_lazy as _
-from django.urls import reverse
+from django.urls import reverse, path
 from django.utils.html import format_html
 from apps.order.models import Order
 from apps.clients.models import AddressModel
 from apps.user.models import BaseUserModel
+from apps.product.models import ProductModel
 
 
 class ClientUserProxy(BaseUserModel):
@@ -23,7 +25,7 @@ class OrderInline(admin.StackedInline):
     exclude = ('total_quantity', )
 
     def edit_link(self, instance):
-        url = reverse('admin:%s_%s_change' % (instance._meta.app_label,  instance._meta.model_name),  args=[instance.id] )
+        url = reverse('admin:%s_%s_change' % (instance._meta.app_label,  instance._meta.model_name),  args=[instance.id])
         return format_html('<a href="{}">Просмотр заказа</a>', url)
 
     edit_link.short_description = 'Действие'

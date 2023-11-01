@@ -9,4 +9,5 @@ class ContactPersonTranslationOptions(TranslationOptions):
 
 @register(CompanyUserModel)
 class CompanyUserTranslationOptions(TranslationOptions):
-    fields = ('contact_person', )
+    # fields = ('contact_person', )
+    pass

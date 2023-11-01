@@ -9,9 +9,15 @@ from apps.product.models import (
 )
 
 
-class ProductImageInline(admin.TabularInline):
+class ProductImageInline(admin.StackedInline):
     model = ProductImage
     extra = 1
+
+
+class DescriptionProductInline(admin.StackedInline):
+    model = DescriptionProductModel
+    extra = 1
+    exclude = ('logo',)
 
 
 @admin.register(CatalogModel)
@@ -34,16 +40,19 @@ class SubCategoryProductAdmin(admin.ModelAdmin):
     list_filter = ('category',)
 
 
-@admin.register(DescriptionProductModel)
-class DescriptionProductModelAdmin(admin.ModelAdmin):
-    pass
-
-
 @admin.register(ProductModel)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'price', 'subcategory', 'reviewed', 'is_active')
     search_fields = ('id', 'name', 'article')
     list_filter = ('subcategory', 'reviewed')
     readonly_fields = ('rating', )
-    inlines = (ProductImageInline,)
-
+    inlines = (ProductImageInline, DescriptionProductInline)
+    # fieldsets = (
+    #     ('Основная информация', {
+    #         'fields': ('id', 'name', 'price'),
+    #     }),
+    #     ('Описание', {
+    #         'fields': ('description_field',),
+    #         'description': 'Здесь вы можете добавить дополнительное описание.'
+    #     }),
+    # )

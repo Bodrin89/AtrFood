@@ -1,8 +1,28 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from apps.library.models import City, Country, District, ManufacturingCompany, NameLevelLoyalty, PackageType, Region, \
-    AddressArtFood, ContactArtFood, OpenStore, SocialNetwork
+from apps.library.models import (
+    City,
+    CountryManufacturer,
+    District,
+    ManufacturingCompany,
+    NameLevelLoyalty,
+    PackageType,
+    ReturnPolicy,
+    PrivacyPolicy,
+    AboutCompany,
+    Region,
+    AddressArtFood,
+    ContactArtFood,
+    OpenStore,
+    SocialNetwork,
+
+)
+
+
+@admin.register(AboutCompany)
+class AboutCompanyAdmin(admin.ModelAdmin):
+    pass
 
 
 @admin.register(City)
@@ -20,7 +40,7 @@ class RegionAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(Country)
+@admin.register(CountryManufacturer)
 class CountryAdmin(admin.ModelAdmin):
     pass
 
@@ -37,6 +57,16 @@ class ManufacturingCompanyAdmin(admin.ModelAdmin):
 
 @admin.register(NameLevelLoyalty)
 class NameLevelLoyaltyAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(ReturnPolicy)
+class ReturnPolicyAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(PrivacyPolicy)
+class PrivacyPolicyAdmin(admin.ModelAdmin):
     pass
 
 
