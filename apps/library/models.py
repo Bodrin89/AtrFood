@@ -42,7 +42,7 @@ class District(models.Model):
         verbose_name_plural = _('Районы')
 
     name = models.CharField(max_length=255, verbose_name=_('Район'))
-    city = models.ForeignKey(City, on_delete=models.PROTECT, related_name='district', null=True)
+    city = models.ForeignKey(City, on_delete=models.PROTECT, related_name='district', null=True, verbose_name=_('Город') )
 
     def __str__(self):
         return f'{self.name}'
