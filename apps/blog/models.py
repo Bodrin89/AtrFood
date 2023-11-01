@@ -16,6 +16,10 @@ class Blog(models.Model):
 
 
 class BlogImage(models.Model):
+    class Meta:
+        verbose_name = _('Изображение')
+        verbose_name_plural = _('Изображения')
+
     blog = models.ForeignKey(Blog, related_name='images', on_delete=models.CASCADE, verbose_name='Медиа')
     image = models.ImageField(upload_to='blog/', verbose_name='Изображение', blank=True, null=True)
 
