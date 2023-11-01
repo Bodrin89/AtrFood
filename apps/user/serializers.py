@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from apps.user.models import BaseUserModel
 from apps.clients.models import AddressModel
-from apps.library.serializers import CitySerializer, CountrySerializer, DistrictSerializer
+from apps.library.serializers import CitySerializer, DistrictSerializer
 
 User = get_user_model()
 
@@ -34,7 +34,7 @@ class AddressSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AddressModel
-        fields = ('id', 'country', 'city', 'district', 'street', 'house_number', 'apartment_number', 'floor')
+        fields = ('id', 'city', 'district', 'street', 'house_number', 'apartment_number', 'floor')
         read_only_fields = ['id', ]
 
     def validate(self, attrs):
@@ -53,13 +53,12 @@ class AddressSerializer(serializers.ModelSerializer):
 
 class GetAddressSerializer(serializers.ModelSerializer):
 
-    country = CountrySerializer()
     city = CitySerializer()
     district = DistrictSerializer()
 
     class Meta:
         model = AddressModel
-        fields = ('id', 'country', 'city', 'district', 'street', 'house_number', 'apartment_number', 'floor')
+        fields = ('id', 'city', 'district', 'street', 'house_number', 'apartment_number', 'floor')
         read_only_fields = ['id', ]
 
 

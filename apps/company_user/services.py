@@ -20,13 +20,12 @@ class CompanyUserServices:
             bank = validated_data.pop('bank', None)
             bank_ = bank.replace(' ', '')
             contact_person_data = validated_data.pop('contact_person', None)
-            company_address_data = validated_data.pop('company_addresses', None)
+            company_address_data = validated_data.pop('company_address', None)
             addresses_data = validated_data.pop('addresses', [])
-            contact_person = ContactPersonModel.objects.create(**contact_person_data)
             company_user = CompanyUserModel.objects.create(bank=bank_,
-                                                           contact_person=contact_person,
                                                            # is_active=False,
                                                            **validated_data)
+            ContactPersonModel.objects.create(user=company_user, **contact_person_data)
             CompanyAddress.objects.create(user=company_user, **company_address_data)
             for address_data in addresses_data:
                 AddressModel.objects.create(user=company_user, **address_data)

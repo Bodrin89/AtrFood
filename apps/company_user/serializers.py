@@ -4,7 +4,6 @@ from django.utils.translation import gettext_lazy as _
 from apps.company_user.models import CompanyAddress, CompanyUserModel, ContactPersonModel
 from apps.company_user.services import CompanyUserServices
 from apps.company_user.validators import bik_validator, bin_iin_validator, iban_validator
-from apps.clients.models import AddressModel
 from apps.user.serializers import AddressSerializer, GetAddressSerializer
 from apps.user.services import UserServices
 from apps.library.serializers import CitySerializer, CountrySerializer, DistrictSerializer
@@ -23,19 +22,18 @@ class CompanyAddressSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CompanyAddress
-        fields = ('id', 'country', 'city', 'district', 'street', 'house_number', 'office_number')
+        fields = ('id', 'city', 'district', 'street', 'house_number', 'office_number')
         read_only_fields = ['id', ]
 
 
 class GetCompanyAddressSerializer(serializers.ModelSerializer):
 
-    country = CountrySerializer()
     city = CitySerializer()
     district = DistrictSerializer()
 
     class Meta:
         model = CompanyAddress
-        fields = ('id', 'country', 'city', 'district', 'street', 'house_number', 'office_number')
+        fields = ('id', 'city', 'district', 'street', 'house_number', 'office_number')
         read_only_fields = ['id', ]
 
 
@@ -48,7 +46,7 @@ class CreateCompanySerializer(serializers.ModelSerializer):
     bin_iin = serializers.IntegerField(validators=[bin_iin_validator])
     bik = serializers.IntegerField(validators=[bik_validator])
     bank = serializers.CharField(validators=[iban_validator])
-    company_addresses = CompanyAddressSerializer(required=True)
+    company_address = CompanyAddressSerializer(required=True)
     contact_person = ContactPersonSerializer()
     addresses = AddressSerializer(many=True, required=True)
     user_type = serializers.CharField(read_only=True)
@@ -56,7 +54,7 @@ class CreateCompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = CompanyUserModel
         fields = ('id', 'username', 'email', 'phone_number', 'company_name', 'bin_iin', 'iik',
-                  'bank', 'bik', 'company_addresses', 'payment_method', 'contact_person', 'addresses', 'password', 'password_repeat', 'user_type')
+                  'bank', 'bik', 'company_address', 'payment_method', 'contact_person', 'addresses', 'password', 'password_repeat', 'user_type')
 
     def validate(self, attrs: dict) -> dict:
         return UserServices.validate(attrs)
@@ -74,14 +72,14 @@ class GetUpdateCompanySerializer(serializers.ModelSerializer):
     bin_iin = serializers.IntegerField(validators=[bin_iin_validator])
     bik = serializers.IntegerField(validators=[bik_validator])
     bank = serializers.CharField(validators=[iban_validator])
-    company_addresses = GetCompanyAddressSerializer(read_only=True)
+    company_address = GetCompanyAddressSerializer(read_only=True)
     contact_person = ContactPersonSerializer(required=True)
     addresses = GetAddressSerializer(many=True, read_only=True)
     user_type = serializers.CharField(read_only=True)
 
     class Meta:
         model = CompanyUserModel
-        fields = ('id', 'username', 'email', 'phone_number', 'company_name', 'company_addresses', 'bin_iin', 'iik',
+        fields = ('id', 'username', 'email', 'phone_number', 'company_name', 'company_address', 'bin_iin', 'iik',
                   'bank', 'bik', 'payment_method', 'contact_person', 'addresses', 'user_type')
 
         read_only_fields = ('id',)

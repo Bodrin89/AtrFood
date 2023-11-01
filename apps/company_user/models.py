@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from apps.promotion.models import LoyaltyModel
 from apps.user.models import BaseUserModel
-from apps.library.models import City, Country, District
+from apps.library.models import City, CountryManufacturer, District
 
 
 class ContactPersonModel(models.Model):
@@ -13,6 +13,13 @@ class ContactPersonModel(models.Model):
     surname = models.CharField(max_length=255, verbose_name=_('фамилия'))
     first_name = models.CharField(max_length=255, verbose_name=_('имя'))
     second_name = models.CharField(max_length=255, verbose_name=_('отчество'))
+    user = models.OneToOneField(
+        BaseUserModel,
+        on_delete=models.CASCADE,
+        related_name='contact_person',
+        null=True,
+        verbose_name=_('Контактное лицо')
+    )
 
     def __str__(self):
         return f'{self.surname} {self.first_name} {self.second_name}'
@@ -34,7 +41,6 @@ class CompanyUserModel(BaseUserModel):
     bik = models.CharField(max_length=255, verbose_name=_('БИК'))
     payment_method = models.CharField(max_length=10, choices=PaymentMethod.choices, default=PaymentMethod.NON_CASH,
                                       verbose_name=_('способ оплаты'))
-    contact_person = models.ForeignKey(ContactPersonModel, on_delete=models.CASCADE, verbose_name=_('контактное лицо'))
     loyalty = models.ForeignKey(LoyaltyModel, null=True, blank=True,
                                 on_delete=models.SET_NULL,
                                 verbose_name=_('Уровень системы лояльности'))
@@ -50,7 +56,6 @@ class CompanyAddress(models.Model):
         verbose_name = _('Адрес Компании')
         verbose_name_plural = _('Адреса компаний')
 
-    country = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name=_('Страна'))
     city = models.ForeignKey(City, on_delete=models.CASCADE, verbose_name=_('Город'))
     district = models.ForeignKey(District, on_delete=models.CASCADE, verbose_name=_('Район'), blank=True, null=True)
     street = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('Улица'))
@@ -59,10 +64,10 @@ class CompanyAddress(models.Model):
     user = models.OneToOneField(
         BaseUserModel,
         on_delete=models.CASCADE,
-        related_name='company_addresses',
+        related_name='company_address',
         null=True,
         verbose_name=_('Пользователи')
     )
 
     def __str__(self):
-        return f'{self.country}'
+        return f'{self.city}'

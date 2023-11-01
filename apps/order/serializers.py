@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from apps.order.models import Order, OrderItem
+from apps.order.models import Order, OrderItem, DeliveryAddress
 from apps.order.services import ServiceOrder
 from apps.product.serializers import ProductInfoSerializer, GiftInfoSerializer
 from apps.clients.models import AddressModel
-from apps.user.serializers import GetAddressSerializer
+from apps.library.serializers import CitySerializer, DistrictSerializer
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
@@ -16,12 +16,23 @@ class OrderItemSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class DeliveryAddressSerializer(serializers.ModelSerializer):
+
+    city = CitySerializer()
+    district = DistrictSerializer()
+
+    class Meta:
+        model = DeliveryAddress
+        fields = ('id', 'city', 'district', 'street', 'house_number', 'apartment_number', 'floor')
+        read_only_fields = ['id', ]
+
+
 class CreateOrderSerializer(serializers.ModelSerializer):
     """Сериализатор создания заказа"""
 
     delivery_address = serializers.PrimaryKeyRelatedField(
         queryset=AddressModel.objects.none(),
-        many=False
+        required=True
     )
 
     class Meta:
@@ -42,7 +53,7 @@ class GetOrderSerializer(serializers.ModelSerializer):
     """Сериализатор заказов пользователя"""
 
     items = OrderItemSerializer(many=True, read_only=True)
-    delivery_address = GetAddressSerializer(read_only=True)
+    delivery_address = DeliveryAddressSerializer(read_only=True)
     total_quantity = serializers.CharField(read_only=True)
     total_price = serializers.CharField(read_only=True)
     status = serializers.CharField(read_only=True)
@@ -51,6 +62,7 @@ class GetOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = [
+            'id',
             'payment_method',
             'date_created',
             'delivery_address',
@@ -60,3 +72,4 @@ class GetOrderSerializer(serializers.ModelSerializer):
             'total_price',
             'items',
             ]
+

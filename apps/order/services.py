@@ -2,7 +2,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-from apps.order.models import Order, OrderItem
+from apps.order.models import Order, OrderItem, DeliveryAddress
+from apps.clients.models import AddressModel
 from apps.product.models import ProductModel
 from config.settings import LOGGER
 
@@ -19,8 +20,18 @@ class ServiceOrder:
         order = Order.objects.create(
             user=user,
             payment_method=validated_data.get('payment_method'),
-            delivery_address=validated_data.get('delivery_address'),
             contact_phone=validated_data.get('contact_phone'),
+        )
+        selected_address = validated_data.get('delivery_address')
+        delivery_data = AddressModel.objects.get(id=selected_address.id)
+        DeliveryAddress.objects.create(
+            city=delivery_data.city,
+            district=delivery_data.district,
+            street=delivery_data.street,
+            house_number=delivery_data.house_number,
+            apartment_number=delivery_data.apartment_number,
+            floor=delivery_data.floor,
+            order=order
         )
 
         for item in cart:

@@ -13,12 +13,12 @@ class City(models.Model):
         return f'{self.name}'
 
 
-class Country(models.Model):
+class CountryManufacturer(models.Model):
     class Meta:
-        verbose_name = _('Страна')
-        verbose_name_plural = _('Страны')
+        verbose_name = _('Страна производства')
+        verbose_name_plural = _('Страны производства')
 
-    name = models.CharField(max_length=255, verbose_name=_('Страна'))
+    name = models.CharField(max_length=255, verbose_name=_('Страна производства'))
 
     def __str__(self):
         return f'{self.name}'
@@ -41,6 +41,7 @@ class ManufacturingCompany(models.Model):
         verbose_name_plural = _('Компании производители')
 
     name = models.CharField(max_length=255, verbose_name=_('Компания производитель'))
+    logo = models.ImageField(upload_to='logo/', verbose_name=_('Логотип'), blank=True, null=True)
 
     def __str__(self):
         return f'{self.name}'
@@ -66,3 +67,36 @@ class PackageType(models.Model):
 
     def __str__(self):
         return f'{self.name}'
+
+
+class ReturnPolicy(models.Model):
+    class Meta:
+        verbose_name = _('Условие возврата')
+        verbose_name_plural = _('Условия возврата')
+
+    name = models.TextField(verbose_name=_('Условие возврата'))
+
+    def __str__(self):
+        return f'{self.id}'
+
+
+class PrivacyPolicy(models.Model):
+    class Meta:
+        verbose_name = _('Политика конфиденциальности')
+        verbose_name_plural = _('Политика конфиденциальности')
+
+    name = models.TextField(verbose_name=_('политика конфиденциальности'))
+
+    def __str__(self):
+        return f'{self.id}'
+
+
+class AboutCompany(models.Model):
+    class Meta:
+        verbose_name = _('О комании')
+        verbose_name_plural = _('О комании')
+
+    name = models.TextField(verbose_name=_('О комании'))
+
+    def __str__(self):
+        return f'{self.id}'

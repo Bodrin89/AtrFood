@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Статистика</title>
+</head>
+<body>
+
+<h1>Статистика пользователей и продаж</h1>
+
+<section id="users-stats" style="border-bottom: 1px solid #ccc; padding: 0 20px 20px;">
+    <h2>Пользователи</h2>
+    <table>
+        <tr>
+            <th>Показатель</th>
+            <th>Значение</th>
+        </tr>
+        <tr>
+            <td>Всего клиентов:</td>
+            <td style="text-align: center;">{{ all_clients_count }}</td>
+        </tr>
+        <tr>
+            <td>Физические лица:</td>
+            <td style="text-align: center;">{{ individual_users_count }}</td>
+        </tr>
+        <tr>
+            <td>Юридические лица:</td>
+            <td style="text-align: center;">{{ company_users_count }}</td>
+        </tr>
+    </table>
+</section>
+
+<section id="sales-stats" style="border-bottom: 1px solid #ccc; padding: 0 20px 20px;">
+    <h2>Продажи</h2>
+    <h3>Фильтр по дате</h3>
+    <form method="GET" action="">
+             <label for="start-date">Начальная дата:</label>
+             <input type="date" id="start-date" name="start_date">
+             <br>
+             <br>
+             <label for="end-date">Конечная дата:</label>
+             <input type="date" id="end-date" name="end_date">
+             <br>
+             <br>
+             <input type="submit" value="Применить">
+    </form>
+    <br>
+    <table>
+        <tr>
+            <th>Показатель</th>
+            <th>Значение</th>
+        </tr>
+        <tr>
+            <td>Продано товаров (шт):</td>
+            <td style="text-align: center;">{{ sold_items_count }}</td>
+        </tr>
+        <tr>
+            <td>Общий объем продаж:</td>
+            <td style="text-align: center;">{{ sales }}</td>
+        </tr>
+    </table>
+</section>
+
+<section id="products-stats" style="border-bottom: 1px solid #ccc; padding: 0 20px 20px;">
+    <h2>Товары</h2>
+    <table>
+        <tr>
+            <th>Показатель</th>
+            <th>Значение</th>
+        </tr>
+        <tr>
+            <td>Активных товаров:</td>
+            <td style="text-align: center;">{{ active_products_count }}</td>
+        </tr>
+        <tr>
+            <td>Неактивных товаров:</td>
+            <td style="text-align: center;">{{ inactive_products_count }}</td>
+        </tr>
+        <tr>
+            <td>Всего карточек товаров:</td>
+            <td style="text-align: center;">{{ total_product_cards }}</td>
+        </tr>
+    </table>
+</section>
+
+<section id="orders-stats" style="border-bottom: 1px solid #ccc; padding: 0 20px 20px;">
+    <h2>Заказы</h2>
+    <table>
+        <tr>
+            <th>Статус</th>
+            <th>Количество</th>
+        </tr>
+        {% for status, count in orders_stats.items %}
+            <tr>
+                <td>{{ status }}</td>
+                <td style="text-align: center;">{{ count }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</section>
+
+</body>
+</html>
+

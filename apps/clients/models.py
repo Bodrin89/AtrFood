@@ -3,7 +3,7 @@ from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from apps.user.models import BaseUserModel
-from apps.library.models import City, Country, District
+from apps.library.models import City, CountryManufacturer, District
 from django.utils.translation import gettext_lazy as _
 
 
@@ -12,7 +12,6 @@ class AddressModel(models.Model):
         verbose_name = _('Адрес')
         verbose_name_plural = _('Адреса')
 
-    country = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name=_('Страна'))
     city = models.ForeignKey(City, on_delete=models.CASCADE, verbose_name=_('Город'))
     district = models.ForeignKey(District, on_delete=models.CASCADE, verbose_name=_('Район'), blank=True, null=True)
     street = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('Улица'))

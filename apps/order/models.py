@@ -13,6 +13,7 @@ from apps.user.models import BaseUserModel
 from apps.clients.models import AddressModel
 from apps.user.validators import validate_phone_number
 from config.settings import LOGGER
+from apps.library.models import City, District
 
 User = get_user_model()
 
@@ -42,7 +43,6 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name=_('Покупатель'), null=True)
     payment_method = models.CharField(max_length=10, choices=PAYMENT_METHOD_CHOICES, verbose_name=_('Метод оплаты'))
     date_created = models.DateTimeField(auto_now_add=True, verbose_name=_('Дата создания'))
-    delivery_address = models.ForeignKey(AddressModel, on_delete=models.CASCADE, verbose_name=_('Адрес доставки'))
     contact_phone = models.CharField(max_length=20, verbose_name=_('Номер телефона'),
                                      validators=[validate_phone_number])
     status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, blank=True, null=True,
@@ -70,6 +70,28 @@ class Order(models.Model):
             else:
                 self.status = 'new_unpaid'
         super(Order, self).save(*args, **kwargs)
+
+
+class DeliveryAddress(models.Model):
+    class Meta:
+        verbose_name = _('Адрес доставки')
+        verbose_name_plural = _('Адреса доставки')
+
+    city = models.ForeignKey(City, on_delete=models.CASCADE, verbose_name=_('Город'))
+    district = models.ForeignKey(District, on_delete=models.CASCADE, verbose_name=_('Район'), blank=True, null=True)
+    street = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('Улица'))
+    house_number = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('Номер дома'))
+    apartment_number = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name=_('Номер квартиры'))
+    floor = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name=_('Этаж'))
+    order = models.OneToOneField(
+        Order,
+        on_delete=models.CASCADE,
+        related_name='delivery_address',
+        verbose_name=_('Заказ')
+    )
+
+    def __str__(self):
+        return f'{self.city}'
 
 
 class OrderItem(models.Model):

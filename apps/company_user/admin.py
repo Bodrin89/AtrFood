@@ -16,7 +16,7 @@ class OrderInline(admin.StackedInline):
     exclude = ('total_quantity', )
 
     def edit_link(self, instance):
-        url = reverse('admin:%s_%s_change' % (instance._meta.app_label,  instance._meta.model_name),  args=[instance.id] )
+        url = reverse('admin:%s_%s_change' % (instance._meta.app_label,  instance._meta.model_name),  args=[instance.id])
         return format_html('<a href="{}">Просмотр заказа</a>', url)
 
     edit_link.short_description = 'Действие'
@@ -33,9 +33,9 @@ class CompanyAddressInline(admin.TabularInline):
     extra = 0
 
 
-@admin.register(ContactPersonModel)
-class ContactPersonModelAdmin(TranslationAdmin):
-    pass
+class ContactPersonInline(admin.TabularInline):
+    model = ContactPersonModel
+    extra = 0
 
 
 @admin.register(CompanyUserModel)
@@ -43,8 +43,9 @@ class CompanyUserAdmin(TranslationAdmin):
     list_display = ['email', 'phone_number', 'username', 'company_name']
     inlines = [
         AddressInline,
+        CompanyAddressInline,
+        ContactPersonInline,
         OrderInline,
-        CompanyAddressInline
     ]
     exclude = ('groups', 'user_permissions', 'is_staff', 'is_superuser', 'user_type')
 
