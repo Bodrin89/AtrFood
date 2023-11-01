@@ -5,6 +5,7 @@ from modeltranslation.admin import TranslationAdmin
 
 from apps.company_user.models import CompanyUserModel, ContactPersonModel, CompanyAddress
 from apps.clients.models import AddressModel
+from apps.document.admin import DocumentInline
 from apps.order.models import Order
 
 
@@ -44,7 +45,8 @@ class CompanyUserAdmin(TranslationAdmin):
     inlines = [
         AddressInline,
         OrderInline,
-        CompanyAddressInline
+        CompanyAddressInline,
+        DocumentInline
     ]
     exclude = ('groups', 'user_permissions', 'is_staff', 'is_superuser', 'user_type')
 

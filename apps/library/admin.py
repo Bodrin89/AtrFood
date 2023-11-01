@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import format_html
 
 from apps.library.models import City, Country, District, ManufacturingCompany, NameLevelLoyalty, PackageType, Region, \
     AddressArtFood, ContactArtFood, OpenStore, SocialNetwork

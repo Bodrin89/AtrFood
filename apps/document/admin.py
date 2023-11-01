@@ -3,6 +3,10 @@ from django.contrib import admin
 from apps.document.models import DocumentModel
 
 
-@admin.register(DocumentModel)
-class DocumentAdmin(admin.ModelAdmin):
-    pass
+class DocumentInline(admin.TabularInline):
+    model = DocumentModel
+    extra = 1
+
+# @admin.register(DocumentModel)
+# class DocumentAdmin(admin.ModelAdmin):
+#     pass
