@@ -247,3 +247,4 @@ cython_debug/
 /media/
 /identifier.sqlite
 /static/
+**/migrations/

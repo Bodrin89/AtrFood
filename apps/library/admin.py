@@ -10,6 +10,11 @@ from apps.library.models import (
     ReturnPolicy,
     PrivacyPolicy,
     AboutCompany,
+    Region,
+    AddressArtFood,
+    ContactArtFood,
+    OpenStore,
+    SocialNetwork,
 
 )
 
@@ -26,6 +31,11 @@ class CityAdmin(admin.ModelAdmin):
 
 @admin.register(PackageType)
 class PackageTypeAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Region)
+class RegionAdmin(admin.ModelAdmin):
     pass
 
 
@@ -56,4 +66,24 @@ class ReturnPolicyAdmin(admin.ModelAdmin):
 
 @admin.register(PrivacyPolicy)
 class PrivacyPolicyAdmin(admin.ModelAdmin):
+    pass
+
+
+class ContactArtFoodInline(admin.TabularInline):
+    model = ContactArtFood
+    extra = 1
+
+
+class OpenStoreInline(admin.TabularInline):
+    model = OpenStore
+    extra = 1
+
+
+@admin.register(AddressArtFood)
+class AddressArtFoodAdmin(admin.ModelAdmin):
+    inlines = [OpenStoreInline, ContactArtFoodInline]
+
+
+@admin.register(SocialNetwork)
+class SocialNetworkAdmin(admin.ModelAdmin):
     pass
