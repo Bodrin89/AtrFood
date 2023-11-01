@@ -135,14 +135,14 @@ class SubcategoryDownloadView(APIView):
 
     def get(self, request, subcategory_id):
         document = get_object_or_404(SubCategoryProductModel, pk=subcategory_id)
-        try:
+        if document.file_subcategory:
             response = HttpResponse(document.file_subcategory, content_type='application/octet-stream')
             filename = os.path.basename(document.file_subcategory.name)
             encoded_filename = escape_uri_path(filename)
             response['Content-Disposition'] = f'attachment; filename="{encoded_filename}"'
             return response
-        except FileNotFoundError:
-            return Response(_('Файл не найден'))
+        else:
+            return Response(_('Файл не существует'))
 
 
 class AddProductFavoriteView(CreateAPIView):
