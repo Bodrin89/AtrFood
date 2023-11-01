@@ -6,6 +6,7 @@ from modeltranslation.admin import TranslationAdmin
 from apps.company_user.models import CompanyUserModel, ContactPersonModel, CompanyAddress
 from apps.clients.models import AddressModel
 from apps.document.admin import DocumentInline
+from apps.library.forms import AddressForm
 from apps.order.models import Order
 
 
@@ -30,6 +31,7 @@ class AddressInline(admin.TabularInline):
 
 
 class CompanyAddressInline(admin.TabularInline):
+    form = AddressForm
     model = CompanyAddress
     extra = 0
 

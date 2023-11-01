@@ -1,5 +1,6 @@
+from dal import autocomplete
 from rest_framework.generics import ListAPIView
-from apps.library.models import PrivacyPolicy, ReturnPolicy, AboutCompany
+from apps.library.models import PrivacyPolicy, ReturnPolicy, AboutCompany, City, District
 from apps.library.serializers import ReturnPolicySerializer, PrivacyPolicySerializer, AboutCompanySerializer
 
 
@@ -16,3 +17,32 @@ class ReturnPolicyView(ListAPIView):
 class AboutCompanyView(ListAPIView):
     serializer_class = AboutCompanySerializer
     queryset = AboutCompany.objects.all()
+
+
+class CityAutocomplete(autocomplete.Select2QuerySetView):
+    """Для получения данных из формы с выбором города"""
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return City.objects.none()
+
+        qs = City.objects.all()
+
+        if self.q:
+            qs = qs.filter(name__istartswith=self.q)
+
+        return qs
+
+
+class DistrictAutocomplete(autocomplete.Select2QuerySetView):
+    """Для получения данных из формы районов в зависимости от выбора города"""
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return District.objects.none()
+
+        city_id = self.forwarded.get('city', None)
+        qs = District.objects.filter(city_id=city_id)
+
+        if self.q:
+            qs = qs.filter(name__istartswith=self.q)
+
+        return qs

@@ -1,8 +1,10 @@
+from dal import autocomplete
 from rest_framework import status
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from django.utils.translation import gettext_lazy as _
 from apps.individual_user.serializers import CreateIndividualSerializer
+from apps.library.models import District, City
 
 
 class SingUpIndividualView(CreateAPIView):

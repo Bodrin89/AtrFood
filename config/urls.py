@@ -6,6 +6,8 @@ from django.conf.urls.static import static
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
+
+from apps.library.views import CityAutocomplete, DistrictAutocomplete
 from stats import stats_view
 
 schema_view = get_schema_view(
@@ -28,6 +30,7 @@ def get_admin_urls(urls):
             path('stats/', admin.site.admin_view(stats_view), name='stats')
         ]
         return my_urls + urls
+
     return get_urls
 
 
@@ -57,4 +60,8 @@ urlpatterns += [
     path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+
+    path('city-autocomplete/', CityAutocomplete.as_view(), name='city-autocomplete'),
+    path('district-autocomplete/', DistrictAutocomplete.as_view(), name='district-autocomplete'),
+
 ]

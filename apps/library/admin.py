@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
+from apps.library.forms import AddressForm
 from apps.library.models import (
     City,
     CountryManufacturer,
@@ -83,6 +84,7 @@ class OpenStoreInline(admin.TabularInline):
 @admin.register(AddressArtFood)
 class AddressArtFoodAdmin(admin.ModelAdmin):
     inlines = [OpenStoreInline, ContactArtFoodInline]
+    form = AddressForm
 
 
 @admin.register(SocialNetwork)

@@ -19,6 +19,7 @@ pillow = "^10.0.1"
 django-filter = "^23.3"
 celery = {extras = ["redis"], version = "^5.3.4"}
 drf-yasg = "^1.21.7"
+django-autocomplete-light = "^3.9.7"
 
 
 [tool.poetry.group.dev.dependencies]
