@@ -32,5 +32,5 @@ class AddressInline(admin.TabularInline):
 class IndividualUserAdmin(TranslationAdmin):
     list_display = ['email', 'phone_number', 'username']
     inlines = [AddressInline, OrderInline]
-    exclude = ('groups', 'user_permissions', 'is_staff', 'is_superuser', 'user_type')
+    exclude = ('groups', 'user_permissions', 'is_staff', 'is_superuser', 'user_type', 'password')
 

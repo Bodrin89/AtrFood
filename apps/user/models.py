@@ -8,6 +8,19 @@ from apps.user.validators import validate_phone_number
 
 class CustomUserManager(BaseUserManager):
     """Переопрделяем метод базового менеджера, чтобы поле username перестало быть required"""
+
+    def create_user(self, email, password=None):
+        if not email:
+            raise ValueError('Users must have an email address')
+
+        user = self.model(
+            email=self.normalize_email(email),
+        )
+
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
     def create_superuser(self, email, password=None, **extra_fields):
         if not email:
             raise ValueError('The Email field must be set')
