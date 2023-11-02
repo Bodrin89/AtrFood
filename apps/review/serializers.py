@@ -27,7 +27,7 @@ class ReviewImageSerializer(serializers.ModelSerializer):
 class ReviewCreateSerializer(serializers.ModelSerializer):
     """Для создания и просмотра отзывов"""
     user = UserMailSerializer(read_only=True)
-    images = ReviewImageSerializer(many=True)
+    images = ReviewImageSerializer(many=True, required=False)
 
     class Meta:
         model = ReviewProductModel

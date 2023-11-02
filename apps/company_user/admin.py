@@ -26,6 +26,7 @@ class OrderInline(admin.StackedInline):
 
 
 class AddressInline(admin.TabularInline):
+    form = AddressForm
     model = AddressModel
     extra = 0
 
