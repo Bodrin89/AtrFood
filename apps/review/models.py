@@ -39,6 +39,10 @@ class ReviewProductModel(models.Model):
 
 
 class ReviewImage(models.Model):
+    class Meta:
+        verbose_name = _('Изображение товара')
+        verbose_name_plural = _('Изображения товара')
+
     review = models.ForeignKey(ReviewProductModel, related_name='images', on_delete=models.CASCADE, verbose_name='Продукт')
     image = models.ImageField(upload_to='review/', verbose_name='Изображение', blank=True, null=True)
 

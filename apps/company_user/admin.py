@@ -51,5 +51,5 @@ class CompanyUserAdmin(TranslationAdmin):
         OrderInline,
         DocumentInline
     ]
-    exclude = ('groups', 'user_permissions', 'is_staff', 'is_superuser', 'user_type')
+    exclude = ('groups', 'user_permissions', 'is_staff', 'is_superuser', 'user_type', 'password')
 

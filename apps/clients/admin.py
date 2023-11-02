@@ -50,5 +50,5 @@ class ClientUserAdmin(admin.ModelAdmin):
         return False
 
     inlines = [AddressInline, OrderInline]
-    exclude = ('groups', 'user_permissions', 'is_staff', 'is_superuser')
+    exclude = ('groups', 'user_permissions', 'is_staff', 'is_superuser', 'password')
     readonly_fields = ('user_type', )

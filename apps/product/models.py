@@ -107,6 +107,10 @@ class DescriptionProductModel(models.Model):
 
 
 class ProductImage(models.Model):
+    class Meta:
+        verbose_name = _('Изображение товара')
+        verbose_name_plural = _('Изображения товара')
+
     product = models.ForeignKey(ProductModel, related_name='images', on_delete=models.CASCADE, verbose_name='Продукт')
     image = models.ImageField(upload_to='product/', verbose_name='Изображение', blank=True, null=True)
 
