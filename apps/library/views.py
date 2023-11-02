@@ -1,7 +1,8 @@
 from dal import autocomplete
 from rest_framework.generics import ListAPIView
-from apps.library.models import PrivacyPolicy, ReturnPolicy, AboutCompany, City, District
-from apps.library.serializers import ReturnPolicySerializer, PrivacyPolicySerializer, AboutCompanySerializer
+from apps.library.models import PrivacyPolicy, ReturnPolicy, AboutCompany, City, District, AddressArtFood, SocialNetwork
+from apps.library.serializers import ReturnPolicySerializer, PrivacyPolicySerializer, AboutCompanySerializer, \
+    AddressArtFoodSerializer, SocialNetworkSerializer
 
 
 class PrivacyPolicyView(ListAPIView):
@@ -46,3 +47,17 @@ class DistrictAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.filter(name__istartswith=self.q)
 
         return qs
+
+
+class AddressArtFoodView(ListAPIView):
+    """Получение всех адресов магазинов ArtFood"""
+    queryset = AddressArtFood.objects.all()
+    serializer_class = AddressArtFoodSerializer
+
+
+class SocialNetworkView(ListAPIView):
+    """Получение всех социальных сетей магазинов ArtFood"""
+    queryset = SocialNetwork.objects.all()
+    serializer_class = SocialNetworkSerializer
+
+
