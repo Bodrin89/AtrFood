@@ -49,7 +49,7 @@ class CompanyUserAdmin(TranslationAdmin):
         CompanyAddressInline,
         ContactPersonInline,
         OrderInline,
-        DocumentInline
+        DocumentInline,
     ]
     exclude = ('groups', 'user_permissions', 'is_staff', 'is_superuser', 'user_type', 'password')
 
