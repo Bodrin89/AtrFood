@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
+from apps.library.forms import AddressForm
 from apps.library.models import (
     City,
     CountryManufacturer,
@@ -126,6 +127,7 @@ class OpenStoreInline(admin.TabularInline):
 @admin.register(AddressArtFood)
 class AddressArtFoodAdmin(admin.ModelAdmin):
     inlines = [OpenStoreInline, ContactArtFoodInline]
+    form = AddressForm
 
     def changelist_view(self, request, extra_context=None):
         extra_context = extra_context or {}

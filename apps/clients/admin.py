@@ -3,6 +3,8 @@ from django.http import HttpResponse
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse, path
 from django.utils.html import format_html
+
+from apps.library.forms import AddressForm
 from apps.order.models import Order
 from apps.clients.models import AddressModel
 from apps.user.models import BaseUserModel
@@ -33,6 +35,7 @@ class OrderInline(admin.StackedInline):
 
 
 class AddressInline(admin.TabularInline):
+    form = AddressForm
     model = AddressModel
     # max_num = 0
     extra = 0

@@ -1,4 +1,6 @@
 from django.contrib import admin
+
+from apps.document.admin import AvrFileModelInline
 from apps.order.models import Order, OrderItem, DeliveryAddress
 from django.utils.translation import gettext_lazy as _
 
@@ -19,7 +21,7 @@ class OrderItemInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    inlines = [OrderItemInline, DeliveryAddressInline]
+    inlines = [OrderItemInline, DeliveryAddressInline, AvrFileModelInline]
     list_display = ['id', 'status', 'date_created']
     readonly_fields = ('returned', )
     list_editable = ('status',)

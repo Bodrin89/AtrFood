@@ -18,6 +18,8 @@ DEBUG = os.getenv('DEBUG') == 'True'
 ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS'), '*']
 
 DJANGO_APPS = [
+    'dal',
+    'dal_select2',
     'modeltranslation',
     'django.contrib.admin',
     'django.contrib.auth',

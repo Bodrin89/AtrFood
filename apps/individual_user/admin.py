@@ -2,7 +2,9 @@ from django.contrib import admin
 from modeltranslation.admin import TranslationAdmin
 from django.urls import reverse
 from django.utils.html import format_html
+
 from apps.individual_user.models import IndividualUserModel
+from apps.library.forms import AddressForm
 from apps.order.models import Order
 from apps.clients.models import AddressModel
 from django.utils.translation import gettext_lazy as _
@@ -24,6 +26,7 @@ class OrderInline(admin.StackedInline):
 
 
 class AddressInline(admin.TabularInline):
+    form = AddressForm
     model = AddressModel
     # max_num = 0
     extra = 1

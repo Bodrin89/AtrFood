@@ -135,18 +135,20 @@ class OpenStore(models.Model):
         verbose_name_plural = _('Режимы работы магазинов')
 
     class DayWeek(models.TextChoices):
-        MONDAY = (1, _("Понедельник"))
-        TUESDAY = (2, _("Вторник"))
-        WEDNESDAY = (3, _("Среда"))
-        THURSDAY = (4, _("Четверг"))
-        FRIDAY = (5, _("Пятница"))
-        SATURDAY = (6, _("Суббота"))
-        SUNDAY = (7, _("Воскресенье"))
+        MONDAY = ("Понедельник", _("Понедельник"))
+        TUESDAY = ("Вторник", _("Вторник"))
+        WEDNESDAY = ("Среда", _("Среда"))
+        THURSDAY = ("Четверг", _("Четверг"))
+        FRIDAY = ("Пятница", _("Пятница"))
+        SATURDAY = ("Суббота", _("Суббота"))
+        SUNDAY = ("Воскресенье", _("Воскресенье"))
 
-    day = models.CharField(max_length=1, choices=DayWeek.choices, default=DayWeek.MONDAY, verbose_name=_("День недели"))
+    day = models.CharField(max_length=11, choices=DayWeek.choices, default=DayWeek.MONDAY,
+                           verbose_name=_("День недели"))
     time_open = models.TimeField(verbose_name=_("Время открытия"), null=True)
     time_close = models.TimeField(verbose_name=_("Время закрытия"), null=True)
-    address = models.ForeignKey(AddressArtFood, on_delete=models.CASCADE, verbose_name=_("Адрес магазина"))
+    address = models.ForeignKey(AddressArtFood, related_name='open_store', on_delete=models.CASCADE,
+                                verbose_name=_("Адрес магазина"))
 
 
 class ContactArtFood(models.Model):
@@ -156,7 +158,8 @@ class ContactArtFood(models.Model):
 
     phone_numbers = models.CharField(max_length=20, validators=[validate_phone_number],
                                      verbose_name=_('Номер телефона'))
-    address = models.ForeignKey(AddressArtFood, on_delete=models.CASCADE, verbose_name=_("Адрес магазина"), null=True)
+    address = models.ForeignKey(AddressArtFood, on_delete=models.CASCADE, related_name='contact_store',
+                                verbose_name=_("Адрес магазина"), blank=True, null=True)
 
 
 class SocialNetwork(models.Model):

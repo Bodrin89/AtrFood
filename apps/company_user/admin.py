@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from apps.company_user.models import CompanyUserModel, ContactPersonModel, CompanyAddress
 from apps.clients.models import AddressModel
 from apps.document.admin import DocumentInline
+from apps.library.forms import AddressForm
 from apps.order.models import Order
 
 
@@ -25,11 +26,13 @@ class OrderInline(admin.StackedInline):
 
 
 class AddressInline(admin.TabularInline):
+    form = AddressForm
     model = AddressModel
     extra = 0
 
 
 class CompanyAddressInline(admin.TabularInline):
+    form = AddressForm
     model = CompanyAddress
     extra = 0
 
@@ -47,7 +50,7 @@ class CompanyUserAdmin(TranslationAdmin):
         CompanyAddressInline,
         ContactPersonInline,
         OrderInline,
-        DocumentInline
+        DocumentInline,
     ]
     exclude = ('groups', 'user_permissions', 'is_staff', 'is_superuser', 'user_type', 'password')
 
