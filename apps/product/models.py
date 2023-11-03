@@ -142,9 +142,9 @@ class CompareProductModel(models.Model):
         return self.product
 
 
-@receiver(pre_save, sender=ProductModel)
-def update_product_existence(sender, instance, **kwargs):
-    if instance.quantity_stock == 0:
-        instance.existence = False
-    else:
-        instance.existence = True
+# @receiver(pre_save, sender=ProductModel)
+# def update_product_existence(sender, instance, **kwargs):
+#     if instance.quantity_stock == 0:
+#         instance.existence = False
+#     else:
+#         instance.existence = True

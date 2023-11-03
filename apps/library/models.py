@@ -128,6 +128,9 @@ class AddressArtFood(models.Model):
 
     url = models.URLField(null=True, blank=True, verbose_name=_("Поле для ссылки"))
 
+    def __str__(self):
+        return f'Город: {self.city}, район: {self.district}'
+
 
 class OpenStore(models.Model):
     class Meta:
@@ -150,6 +153,9 @@ class OpenStore(models.Model):
     address = models.ForeignKey(AddressArtFood, related_name='open_store', on_delete=models.CASCADE,
                                 verbose_name=_("Адрес магазина"))
 
+    def __str__(self):
+        return f'Режим работы магазина'
+
 
 class ContactArtFood(models.Model):
     class Meta:
@@ -161,6 +167,9 @@ class ContactArtFood(models.Model):
     address = models.ForeignKey(AddressArtFood, on_delete=models.CASCADE, related_name='contact_store',
                                 verbose_name=_("Адрес магазина"), blank=True, null=True)
 
+    def __str__(self):
+        return f'{self.phone_numbers}'
+
 
 class SocialNetwork(models.Model):
     class Meta:
@@ -169,4 +178,7 @@ class SocialNetwork(models.Model):
 
     name = models.CharField(max_length=255, verbose_name=_("Название социальной сети"))
     url_network = models.URLField(verbose_name=_("Ссылка на социальную сеть"))
+
+    def __str__(self):
+        return f'{self.name}'
 
