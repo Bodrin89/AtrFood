@@ -14,7 +14,7 @@ translations:
 locale_file_ru:
 	python3 manage.py makemessages -l ru -i venv
 locale_file_kz:
-	python3 manage.py makemessages -l kz -i venv
+	python3 manage.py makemessages -l kk -i venv
 
 compilemessages:
 	python3 manage.py compilemessages --ignore=venv

@@ -12,11 +12,11 @@ class ReviewProductModel(models.Model):
         verbose_name_plural = _('Отзывы на товары')
 
     class Stars(models.IntegerChoices):
-        ONE_STAR = 1, 'One Star'
-        TWO_STAR = 2, 'Two Star'
-        THREE_STAR = 3, 'Three Star'
-        FOUR_STAR = 4, 'Four Star'
-        FIVE_STAR = 5, 'Five Star'
+        ONE_STAR = 1, _('Одна звезда')
+        TWO_STAR = 2, _('Две звезды')
+        THREE_STAR = 3, _('Три звезды')
+        FOUR_STAR = 4, _('Четыре звезды')
+        FIVE_STAR = 5, _('Пять звезд')
 
     # count_stars = models.I(max_length=1, choices=Stars.choices, default=None, verbose_name='количество звезд')
     count_stars = models.PositiveIntegerField(choices=Stars.choices, default=0, verbose_name=_('Количество звезд'))
@@ -43,8 +43,9 @@ class ReviewImage(models.Model):
         verbose_name = _('Изображение товара')
         verbose_name_plural = _('Изображения товара')
 
-    review = models.ForeignKey(ReviewProductModel, related_name='images', on_delete=models.CASCADE, verbose_name='Продукт')
-    image = models.ImageField(upload_to='review/', verbose_name='Изображение', blank=True, null=True)
+    review = models.ForeignKey(ReviewProductModel, related_name='images', on_delete=models.CASCADE,
+                               verbose_name=_('Товар'))
+    image = models.ImageField(upload_to='review/', verbose_name=_('Изображение'), blank=True, null=True)
 
     def __str__(self):
         return f'Изображение {self.image}'

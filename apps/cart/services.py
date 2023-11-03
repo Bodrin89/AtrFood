@@ -212,4 +212,4 @@ class ServiceCart:
                 total_sum.append(item.get('sum_products'))
             else:
                 not_existence.append(product.id)
-        return Response({'total_sum': sum(total_sum), _('Товары не в наличии'): not_existence})
+        return Response({'total_sum': sum(total_sum), 'Товары не в наличии': not_existence})

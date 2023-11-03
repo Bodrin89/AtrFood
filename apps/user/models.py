@@ -68,7 +68,8 @@ class BaseUserModel(AbstractUser):
         verbose_name=_('номер телефона')
         )
     confirmation_token = models.UUIDField(default=uuid.uuid4, editable=False)
-    user_type = models.CharField(max_length=10, choices=USER_TYPES, default='individual', verbose_name=_('Тип пользователя'))
+    user_type = models.CharField(max_length=10, choices=USER_TYPES, default='individual',
+                                 verbose_name=_('Тип пользователя'))
     email = models.EmailField(unique=True, verbose_name=_('Электронная почта'))
 
     objects = CustomUserManager()

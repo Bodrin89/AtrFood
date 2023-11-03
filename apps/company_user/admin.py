@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
-from modeltranslation.admin import TranslationAdmin
 
 from apps.company_user.models import CompanyUserModel, ContactPersonModel, CompanyAddress
 from apps.clients.models import AddressModel
@@ -43,7 +42,7 @@ class ContactPersonInline(admin.TabularInline):
 
 
 @admin.register(CompanyUserModel)
-class CompanyUserAdmin(TranslationAdmin):
+class CompanyUserAdmin(admin.ModelAdmin):
     list_display = ['email', 'phone_number', 'username', 'company_name']
     inlines = [
         AddressInline,

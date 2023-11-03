@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
+from modeltranslation.admin import TranslationAdmin
+
 from apps.library.forms import AddressForm
 from apps.library.models import (
     City,
@@ -22,7 +24,7 @@ from apps.library.models import (
 
 
 @admin.register(AboutCompany)
-class AboutCompanyAdmin(admin.ModelAdmin):
+class AboutCompanyAdmin(TranslationAdmin):
     pass
 
 
@@ -62,12 +64,12 @@ class NameLevelLoyaltyAdmin(admin.ModelAdmin):
 
 
 @admin.register(ReturnPolicy)
-class ReturnPolicyAdmin(admin.ModelAdmin):
+class ReturnPolicyAdmin(TranslationAdmin):
     pass
 
 
 @admin.register(PrivacyPolicy)
-class PrivacyPolicyAdmin(admin.ModelAdmin):
+class PrivacyPolicyAdmin(TranslationAdmin):
     pass
 
 
