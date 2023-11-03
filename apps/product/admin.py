@@ -7,6 +7,7 @@ from apps.product.models import (
     SubCategoryProductModel,
     ProductImage,
 )
+from django.utils.translation import gettext_lazy as _
 
 
 class ProductImageInline(admin.StackedInline):
@@ -25,6 +26,12 @@ class CatalogAdmin(admin.ModelAdmin):
     list_display = ('id', 'name',)
     search_fields = ('id', 'name')
 
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        model_name = _(self.model._meta.verbose_name_plural)
+        extra_context['model_name'] = model_name
+        return super().changelist_view(request, extra_context=extra_context)
+
 
 @admin.register(CategoryProductModel)
 class CategoryProductAdmin(admin.ModelAdmin):
@@ -32,12 +39,24 @@ class CategoryProductAdmin(admin.ModelAdmin):
     search_fields = ('id', 'name')
     list_filter = ('catalog',)
 
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        model_name = _(self.model._meta.verbose_name_plural)
+        extra_context['model_name'] = model_name
+        return super().changelist_view(request, extra_context=extra_context)
+
 
 @admin.register(SubCategoryProductModel)
 class SubCategoryProductAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'category',)
     search_fields = ('id', 'name')
     list_filter = ('category',)
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        model_name = _(self.model._meta.verbose_name_plural)
+        extra_context['model_name'] = model_name
+        return super().changelist_view(request, extra_context=extra_context)
 
 
 @admin.register(ProductModel)
@@ -47,12 +66,9 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ('subcategory', 'reviewed')
     readonly_fields = ('rating', )
     inlines = (ProductImageInline, DescriptionProductInline)
-    # fieldsets = (
-    #     ('Основная информация', {
-    #         'fields': ('id', 'name', 'price'),
-    #     }),
-    #     ('Описание', {
-    #         'fields': ('description_field',),
-    #         'description': 'Здесь вы можете добавить дополнительное описание.'
-    #     }),
-    # )
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        model_name = _(self.model._meta.verbose_name_plural)
+        extra_context['model_name'] = model_name
+        return super().changelist_view(request, extra_context=extra_context)

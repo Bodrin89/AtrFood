@@ -5,6 +5,7 @@ from django.utils.html import format_html
 from apps.individual_user.models import IndividualUserModel
 from apps.order.models import Order
 from apps.clients.models import AddressModel
+from django.utils.translation import gettext_lazy as _
 
 
 class OrderInline(admin.StackedInline):
@@ -33,4 +34,11 @@ class IndividualUserAdmin(TranslationAdmin):
     list_display = ['email', 'phone_number', 'username']
     inlines = [AddressInline, OrderInline]
     exclude = ('groups', 'user_permissions', 'is_staff', 'is_superuser', 'user_type', 'password')
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        model_name = _(self.model._meta.verbose_name_plural)
+        extra_context['model_name'] = model_name
+        return super().changelist_view(request, extra_context=extra_context)
+
 

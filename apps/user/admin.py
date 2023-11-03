@@ -3,22 +3,23 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from apps.user.models import BaseUserModel
 from django.contrib.auth.models import Group
+from django.utils.translation import gettext_lazy as _
 
 
 class UserCreationForm(forms.ModelForm):
 
-    password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput)
+    password1 = forms.CharField(label='Пароль', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Подтвердите пароль', widget=forms.PasswordInput)
 
     class Meta:
         model = BaseUserModel
-        fields = ('email',)
+        fields = '__all__'
 
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
         if password1 and password2 and password1 != password2:
-            raise forms.ValidationError("Passwords don't match")
+            raise forms.ValidationError("Пароли не совпадают")
         return password2
 
     def save(self, commit=True):
@@ -56,6 +57,12 @@ class BaseUserAdmin(admin.ModelAdmin):
         qs = super(BaseUserAdmin, self).get_queryset(request)
         return qs.filter(is_staff=True)
     exclude = ('user_type', 'groups', 'is_staff', 'password', 'permission_cart')
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        model_name = _(self.model._meta.verbose_name_plural)
+        extra_context['model_name'] = model_name
+        return super().changelist_view(request, extra_context=extra_context)
 
 
 admin.site.unregister(Group)

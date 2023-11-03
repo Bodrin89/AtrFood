@@ -9,5 +9,6 @@
 {% endif %}
 {% endblock %}
 {% block nav-global %}
-    <a href="{% url 'admin:stats' %}" style="font-size: 140%;">Статистика</a>
+     <a href="{% url 'admin:stats' %}" style="font-size: 120%; position: absolute; right: 220px;">Статистика</a>
+    <a href="{% url 'admin:download_pdf' %}" style="font-size: 120%;">Скачать статистику</a>
 {% endblock %}

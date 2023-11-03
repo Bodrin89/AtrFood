@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
 from modeltranslation.admin import TranslationAdmin
-
+from django.utils.translation import gettext_lazy as _
 from apps.company_user.models import CompanyUserModel, ContactPersonModel, CompanyAddress
 from apps.clients.models import AddressModel
 from apps.document.admin import DocumentInline
@@ -50,4 +50,10 @@ class CompanyUserAdmin(TranslationAdmin):
         DocumentInline
     ]
     exclude = ('groups', 'user_permissions', 'is_staff', 'is_superuser', 'user_type', 'password')
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        model_name = _(self.model._meta.verbose_name_plural)
+        extra_context['model_name'] = model_name
+        return super().changelist_view(request, extra_context=extra_context)
 

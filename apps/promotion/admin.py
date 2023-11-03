@@ -25,7 +25,19 @@ class DiscountModelAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'is_show', 'is_active')
     actions = [resend_promotion_email]
 
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        model_name = _(self.model._meta.verbose_name_plural)
+        extra_context['model_name'] = model_name
+        return super().changelist_view(request, extra_context=extra_context)
+
 
 @admin.register(LoyaltyModel)
 class LoyaltyAdmin(admin.ModelAdmin):
     list_display = ('level', 'discount_percentage', 'sum_step')
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        model_name = _(self.model._meta.verbose_name_plural)
+        extra_context['model_name'] = model_name
+        return super().changelist_view(request, extra_context=extra_context)

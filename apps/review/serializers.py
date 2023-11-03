@@ -27,7 +27,7 @@ class ReviewImageSerializer(serializers.ModelSerializer):
 class ReviewCreateSerializer(serializers.ModelSerializer):
     """Для создания и просмотра отзывов"""
     user = UserMailSerializer(read_only=True)
-    images = ReviewImageSerializer(many=True)
+    images = ReviewImageSerializer(many=True, required=False, allow_empty=True)
 
     class Meta:
         model = ReviewProductModel
@@ -35,13 +35,17 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
         read_only_files = ('id',)
 
     def create(self, validated_data):
+        images_data = validated_data.pop('images', [])
         request = self.context.get('request')
         user = request.user if request and hasattr(request, 'user') else None
         if user and user.is_authenticated:
             validated_data['user'] = user
         else:
             raise ValidationError({'error': _('Только авторизованный пользователь может оставить отзыв')})
-        return super().create(validated_data)
+        review = ReviewProductModel.objects.create(**validated_data)
+        for image_data in images_data:
+            ReviewImage.objects.create(review=review, **image_data)
+        return review
 
     # def create(self, validated_data):
     #     return ServiceReview.create_review(validated_data)

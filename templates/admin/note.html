@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% block content %}
+<h2>{{ note }}</h2>
+<!--
+<style>
+    /* Этот код не отображается */
+    #notes {
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 250px;
+        margin-top: 450px;
+        margin-right: 10px;
+        padding: 20px;
+        box-sizing: border-box;
+        overflow-wrap: break-word;
+        z-index: 1;
+        background-color: #f9f9f9;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+    }
+
+    #notes h2 {
+        font-size: 1.2em;
+        color: #333;
+        margin-bottom: 10px;
+    }
+</style>
+<div id="notes">
+    <h2>{{ note }}</h2>
+</div>
+-->
+{% endblock %}
+</body>
+</html>

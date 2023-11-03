@@ -22,7 +22,7 @@ class ManufacturingCompanySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ManufacturingCompany
-        fields = ['name', ]
+        fields = ['name', 'logo']
 
 
 class CitySerializer(serializers.ModelSerializer):

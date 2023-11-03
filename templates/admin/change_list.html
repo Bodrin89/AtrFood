@@ -1,0 +1,11 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls static %}
+
+{% block extrahead %}
+    {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    {{ block.super }}
+    <a href="{% url 'admin:note_view' model_name=model_name  %}" style="color: #777; position: absolute; font-size: 120%; top: 105px; right: 410px;">Посмотреть заметки</a>
+{% endblock %}

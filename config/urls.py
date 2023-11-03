@@ -6,7 +6,9 @@ from django.conf.urls.static import static
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
-from stats import stats_view
+from apps.notes.views import note_view
+from stats import stats_view, create_pdf
+
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -25,7 +27,9 @@ schema_view = get_schema_view(
 def get_admin_urls(urls):
     def get_urls():
         my_urls = [
-            path('stats/', admin.site.admin_view(stats_view), name='stats')
+            path('stats/', admin.site.admin_view(stats_view), name='stats'),
+            path('note/<str:model_name>/', admin.site.admin_view(note_view), name='note_view'),
+            path('download_pdf/', admin.site.admin_view(create_pdf), name='download_pdf')
         ]
         return my_urls + urls
     return get_urls

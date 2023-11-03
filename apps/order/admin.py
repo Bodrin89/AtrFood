@@ -5,16 +5,11 @@ from django.utils.translation import gettext_lazy as _
 
 class DeliveryAddressInline(admin.StackedInline):
     model = DeliveryAddress
-    # extra = 1
-    # max_num = 1
-    # readonly_fields = ('get_product_price', 'product', 'quantity', 'price')
 
 
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
     extra = 1
-    # max_num = 1
-    # readonly_fields = ('get_product_price', 'product', 'quantity', 'price')
     readonly_fields = ('get_product_price', )
 
     def get_product_price(self, obj):
@@ -30,3 +25,9 @@ class OrderAdmin(admin.ModelAdmin):
     list_editable = ('status',)
     search_fields = ('id',)
     list_filter = ('status', )
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        model_name = _(self.model._meta.verbose_name_plural)
+        extra_context['model_name'] = model_name
+        return super().changelist_view(request, extra_context=extra_context)
