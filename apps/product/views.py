@@ -181,7 +181,7 @@ class ListCompareProductView(ListAPIView):
     def get_queryset(self):
         compare_product_ids = self.request.session.get('compare', [])
         if len(compare_product_ids) <= 1:
-            raise ValueError('Необходимо два товара для сравнения')
+            raise ValueError(_('Необходимо два товара для сравнения'))
         return ProductModel.objects.filter(id__in=compare_product_ids)
 
 

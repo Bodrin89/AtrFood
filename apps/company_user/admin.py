@@ -76,7 +76,7 @@ class UserChangeForm(forms.ModelForm):
 
 
 @admin.register(CompanyUserModel)
-class CompanyUserAdmin(TranslationAdmin):
+class CompanyUserAdmin(admin.ModelAdmin):
     list_display = ['email', 'phone_number', 'username', 'company_name']
     inlines = [
         AddressInline,

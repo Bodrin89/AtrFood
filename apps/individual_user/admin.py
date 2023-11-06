@@ -1,5 +1,4 @@
 from django.contrib import admin
-from modeltranslation.admin import TranslationAdmin
 from django.urls import reverse
 from django.utils.html import format_html
 from apps.individual_user.models import IndividualUserModel
@@ -65,7 +64,7 @@ class UserChangeForm(forms.ModelForm):
 
 
 @admin.register(IndividualUserModel)
-class IndividualUserAdmin(TranslationAdmin):
+class IndividualUserAdmin(admin.ModelAdmin):
     list_display = ['email', 'phone_number', 'username']
     inlines = [AddressInline, OrderInline]
     exclude = ('groups', 'user_permissions', 'is_staff', 'is_superuser', 'user_type', 'password')

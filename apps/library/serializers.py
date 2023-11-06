@@ -68,6 +68,7 @@ class AboutCompanySerializer(serializers.ModelSerializer):
         model = AboutCompany
         fields = ['name', ]
 
+
 class OpenStoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = OpenStore

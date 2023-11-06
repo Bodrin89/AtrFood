@@ -1,6 +1,7 @@
 from django.contrib import admin
 from apps.blog.models import Blog, BlogImage
 from django.utils.translation import gettext_lazy as _
+from modeltranslation.admin import TranslationAdmin
 
 
 class BlogImageInline(admin.StackedInline):
@@ -9,7 +10,7 @@ class BlogImageInline(admin.StackedInline):
 
 
 @admin.register(Blog)
-class BlogAdmin(admin.ModelAdmin):
+class BlogAdmin(TranslationAdmin):
     list_display = ['id', 'theme']
     inlines = [BlogImageInline, ]
 

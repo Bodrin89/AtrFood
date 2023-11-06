@@ -126,7 +126,6 @@ def update_stock_on_orderitem_create(sender, instance, created, **kwargs):
     """Обновляем количество товара на складе после создания OrderItem."""
     if created:
         if instance.product.quantity_stock < instance.quantity:
-            # TODO протестировать перевод
             raise ValidationError(_(f"Недостаточно товара ") + f' {instance.product.name} ' + _(" на складе."))
 
         instance.product.quantity_stock = F('quantity_stock') - instance.quantity

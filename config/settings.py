@@ -165,13 +165,13 @@ MODELTRANSLATION_DEFAULT_LANGUAGE = 'ru'
 # }
 
 LANGUAGES = [
-    ('kk', _('Kazakh')),
     ('ru', _('Russian')),
+    ('kk', _('Kazakh')),
 ]
 
-# LOCALE_PATHS = [
-#     os.path.join(BASE_DIR, 'apps/locale'),
-# ]
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'apps/locale'),
+]
 
 
 TIME_ZONE = 'UTC'
@@ -187,7 +187,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
+from modeltranslation.admin import TranslationAdmin
 
 from apps.library.forms import AddressForm
 from apps.library.models import (
@@ -23,7 +24,7 @@ from apps.library.models import (
 
 
 @admin.register(AboutCompany)
-class AboutCompanyAdmin(admin.ModelAdmin):
+class AboutCompanyAdmin(TranslationAdmin):
     def changelist_view(self, request, extra_context=None):
         extra_context = extra_context or {}
         model_name = _(self.model._meta.verbose_name_plural)
@@ -97,7 +98,7 @@ class NameLevelLoyaltyAdmin(admin.ModelAdmin):
 
 
 @admin.register(ReturnPolicy)
-class ReturnPolicyAdmin(admin.ModelAdmin):
+class ReturnPolicyAdmin(TranslationAdmin):
     def changelist_view(self, request, extra_context=None):
         extra_context = extra_context or {}
         model_name = _(self.model._meta.verbose_name_plural)
@@ -106,7 +107,7 @@ class ReturnPolicyAdmin(admin.ModelAdmin):
 
 
 @admin.register(PrivacyPolicy)
-class PrivacyPolicyAdmin(admin.ModelAdmin):
+class PrivacyPolicyAdmin(TranslationAdmin):
     def changelist_view(self, request, extra_context=None):
         extra_context = extra_context or {}
         model_name = _(self.model._meta.verbose_name_plural)
