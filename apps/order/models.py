@@ -170,6 +170,7 @@ def handle_returned_order(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Order)
 def update_level_loyalty(sender, instance, **kwargs):
+    """Пересчитывается уровень лояльности пользователя"""
 
     if instance.status == 'completed':
         user: BaseUserModel = User.objects.get(id=instance.user.id)

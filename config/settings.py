@@ -50,6 +50,7 @@ LOCAL_APPS = [
     'apps.blog',
     'apps.document',
     'apps.notes',
+    'apps.tg_bot',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -240,3 +241,5 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
+
+BOT_TOKEN = os.getenv('BOT_TOKEN')

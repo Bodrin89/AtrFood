@@ -247,4 +247,7 @@ cython_debug/
 /media/
 /identifier.sqlite
 /static/
-**/migrations/
+
+#migrations
+**/migrations/**
+!**/migrations/__init__.py
