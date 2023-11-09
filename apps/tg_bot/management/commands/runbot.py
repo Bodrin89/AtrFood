@@ -8,4 +8,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Запуск telegram-бота"""
-        bot.infinity_polling()
+        bot.polling(non_stop=True)

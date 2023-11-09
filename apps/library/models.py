@@ -18,8 +18,15 @@ class City(models.Model):
         verbose_name = _('Город')
         verbose_name_plural = _('Города')
 
+    class TimeZone(models.TextChoices):
+        Almaty = ('Asia/Almaty', 'Asia/Almaty')
+        Aqtobe = ('Asia/Aqtobe', 'Asia/Aqtobe')
+
     name = models.CharField(max_length=255, verbose_name=_('Город'))
-    region = models.ForeignKey(Region, on_delete=models.PROTECT, related_name='city', null=True, verbose_name=_('Область'))
+    region = models.ForeignKey(Region, on_delete=models.PROTECT, related_name='city',
+                               null=True, verbose_name=_('Область'))
+    timezone = models.CharField(max_length=50, choices=TimeZone.choices, default=TimeZone.Almaty,
+                                verbose_name=_('Часовой пояс города'))
 
     def __str__(self):
         return f'{self.name}'

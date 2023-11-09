@@ -3,6 +3,8 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+from apps.order.models import Order
 from apps.user.validators import validate_phone_number
 
 
@@ -44,29 +46,31 @@ class BaseUserModel(AbstractUser):
     )
 
     username = models.CharField(
-        _('username'),
         max_length=150,
         unique=False,
-        help_text=_(
-            'Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'
-        ),
-        validators=[AbstractUser.username_validator],
-        error_messages={
-            'unique': _('A user with that username already exists.'),
-        },
-        blank=True,
-        null=True,
+        # help_text=_(
+        #     'Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'
+        # ),
+        # validators=[AbstractUser.username_validator],
+        # error_messages={
+        #     'unique': _('A user with that username already exists.'),
+        # },
+        # blank=True,
+        # null=True,
+        verbose_name=_('Имя')
     )
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-    last_name = None
+    last_name = models.CharField(max_length=150, null=True, blank=True, verbose_name=_('Фамилия'))
+    second_name = models.CharField(max_length=150, null=True, blank=True, verbose_name=_('Отчество'))
     first_name = None
     phone_number = models.CharField(
         max_length=20,
         validators=[validate_phone_number],
         verbose_name=_('номер телефона')
         )
+    different_whatsapp = models.BooleanField(default=False, verbose_name=_('Отличается номер телефона от WhatsApp'))
     confirmation_token = models.UUIDField(default=uuid.uuid4, editable=False)
     user_type = models.CharField(max_length=10, choices=USER_TYPES, default='individual',
                                  verbose_name=_('Тип пользователя'))
@@ -78,3 +82,14 @@ class BaseUserModel(AbstractUser):
     #     return reverse('')
 
 
+# class ManagerModel(BaseUserModel):
+#     class Meta:
+#         verbose_name = _('Менеджер')
+#         verbose_name_plural = _('Менеджеры')
+#
+#     class Role(models.TextChoices):
+#         MAIN_MANAGER = ('1', _('Главный менеджер'))
+#         DISTRICT_MANAGER = ('2', _('Региональный менеджер'))
+#
+#     role = models.CharField(max_length=1, choices=Role.choices, default=Role.MAIN_MANAGER, verbose_name=_('Роль'))
+#     order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True, related_name='manager')
