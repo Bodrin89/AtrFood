@@ -10,6 +10,7 @@ class Blog(models.Model):
 
     theme = models.CharField(max_length=100, null=True, blank=True, verbose_name=_('Тематика'))
     text = models.TextField(null=True, blank=True, verbose_name=_('Текст'))
+    date_created = models.DateField(auto_created=True, auto_now=True, verbose_name=_('Дата создания блога'))
 
     def __str__(self):
         return f'{self.theme}'

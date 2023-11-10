@@ -68,7 +68,7 @@ def show_main_menu(message: Message) -> None:
     markup.row(but1, but2)
     bot.send_message(message.chat.id, 'Выберите действие:', reply_markup=markup)
 
-
+######
 def check_email(message: Message) -> None:
     """Функция принимает email от пользователя и проверяет есть ли такой пользователь"""
     if message.content_type != 'text':
@@ -98,9 +98,44 @@ def check_email(message: Message) -> None:
         show_registration_menu(message)
     except BaseUserModel.MultipleObjectsReturned:
         bot.send_message(message.chat.id, 'Произошла ошибка. Обратитесь к администратору.')
+######
+
+
+# TODO рабочий функционал где манаджер это все суперпользаватели
+# def check_email(message: Message) -> None:
+#     """Функция принимает email от пользователя и проверяет есть ли такой пользователь"""
+#     if message.content_type != 'text':
+#         bot.send_message(message.chat.id, 'Не корректный тип данных')
+#         return show_registration_menu(message)
+#     if message.text.lower() == 'cancel':
+#         bot.send_message(message.chat.id, 'До свидания')
+#         return None
+#     if message.text.lower() in ['start', '/start']:
+#         return show_registration_menu(message)
+#
+#     email = message.text
+#     try:
+#         user = BaseUserModel.objects.get(email=email, is_active=True)
+#         is_manager = user.is_superuser
+#         if is_manager:
+#             BotModel.objects.get_or_create(chat_id=message.chat.id, user=user)
+#             bot.send_message(message.chat.id,
+#                              f'Спасибо {user.username}, аккаунт подтвержден, вы вошли в чат менеджеров')
+#         else:
+#             BotModel.objects.get_or_create(chat_id=message.chat.id, user=user)
+#             bot.send_message(message.chat.id, f'Спасибо {user.username}  , аккаунт подтвержден')
+#             show_main_menu(message)
+#             get_menu(message)
+#     except BaseUserModel.DoesNotExist:
+#         bot.send_message(message.chat.id, 'Пользователя с таким email не существует')
+#         show_registration_menu(message)
+#     except BaseUserModel.MultipleObjectsReturned:
+#         bot.send_message(message.chat.id, 'Произошла ошибка. Обратитесь к администратору.')
+
+
 
     # try:
-    #     # TODO Улучшить условия поиска по пользователю
+    #     # TODO можно будет удалить после тестов
     #     # Для физ и юр лиц
     #     # user = BaseUserModel.objects.filter(is_active=True, is_superuser=False).get(email=email)
     #     if user := BaseUserModel.objects.filter(is_active=True, is_superuser=False).get(email=email):

@@ -17,7 +17,7 @@ class SubCategoryProductSerializer(serializers.ModelSerializer):
     """Подкатегория"""
     class Meta:
         model = SubCategoryProductModel
-        fields = ('name', 'id')
+        fields = ('name', 'image', 'id')
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -26,7 +26,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CategoryProductModel
-        fields = ('name', 'subcategories', 'id')
+        fields = ('name', 'image', 'subcategories', 'id')
 
 
 class CatalogSerializer(serializers.ModelSerializer):
@@ -143,14 +143,3 @@ class GiftInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductModel
         fields = ['name', 'images', 'article', ]
-
-# class AddProductCompareSerializer(serializers.ModelSerializer):
-#     """Добавление/удаление товара для сравнения"""
-#     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-#
-#     class Meta:
-#         model = CompareProductModel
-#         fields = ('id', 'user')
-#
-#     def create(self, validated_data):
-#         return ServiceProduct.add_delete_product_compare(validated_data)

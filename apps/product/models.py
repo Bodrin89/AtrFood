@@ -27,6 +27,7 @@ class CategoryProductModel(models.Model):
         verbose_name_plural = _('Категории товаров')
 
     name = models.CharField(max_length=255)
+    image = models.ImageField(upload_to='category/', null=True, blank=True, verbose_name=_('Изображение'))
     catalog = models.ForeignKey(CatalogModel, on_delete=models.CASCADE, related_name='categories')
 
     def __str__(self):
@@ -42,6 +43,7 @@ class SubCategoryProductModel(models.Model):
 
     name = models.CharField(max_length=255)
     category = models.ForeignKey(CategoryProductModel, on_delete=models.CASCADE, related_name='subcategories')
+    image = models.ImageField(upload_to='subcategory/', null=True, blank=True, verbose_name=_('Изображение'))
     file_subcategory = models.FileField(
         upload_to=partial(upload_to_folder_path, folder_name='subcategory'),
         null=True, blank=True, verbose_name=_('Файл с товарами подкатегории'))

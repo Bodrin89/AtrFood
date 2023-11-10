@@ -123,7 +123,7 @@ class ListSubcategoryView(ListAPIView):
 
 class ListCategorySubcategoryView(ListAPIView):
     """Получение всех категорий каталога с подкатегориями категории"""
-    serializer_class = SubCategoryProductSerializer
+    serializer_class = CategorySerializer
 
     def get_queryset(self):
         catalog_id = self.kwargs.get('catalog_id')
