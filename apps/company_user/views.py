@@ -11,17 +11,17 @@ class SingUpCompanyView(CreateAPIView):
     """Регистрация нового юридического пользователя"""
     serializer_class = CreateCompanySerializer
 
-    # def create(self, request, *args, **kwargs):
-    #     response = super().create(request, *args, **kwargs)
-    #     if response.status_code == status.HTTP_201_CREATED:
-    #         return Response(
-    #             {
-    #                 'status': 'Success',
-    #                 'message': _('Подтверждение отправлено на ваш электронный адрес.')
-    #             },
-    #             status=status.HTTP_201_CREATED
-    #         )
-    #     return response
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        if response.status_code == status.HTTP_201_CREATED:
+            return Response(
+                {
+                    'status': 'Success',
+                    'message': _('Подтверждение отправлено на ваш электронный адрес.')
+                },
+                status=status.HTTP_201_CREATED
+            )
+        return response
 
 
 class CompanyAddressViewSet(ModelViewSet):
