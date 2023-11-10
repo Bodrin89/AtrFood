@@ -31,7 +31,7 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ReviewProductModel
-        fields = ('id', 'count_stars', 'review_text', 'user', 'product', 'images')
+        fields = ('id', 'count_stars', 'review_text', 'user', 'product', 'images', 'date_created')
         read_only_files = ('id',)
 
     def create(self, validated_data):
