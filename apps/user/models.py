@@ -4,7 +4,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from apps.order.models import Order
 from apps.user.validators import validate_phone_number
 
 
@@ -80,16 +79,3 @@ class BaseUserModel(AbstractUser):
 
     # def get_absolute_url(self):
     #     return reverse('')
-
-
-# class ManagerModel(BaseUserModel):
-#     class Meta:
-#         verbose_name = _('Менеджер')
-#         verbose_name_plural = _('Менеджеры')
-#
-#     class Role(models.TextChoices):
-#         MAIN_MANAGER = ('1', _('Главный менеджер'))
-#         DISTRICT_MANAGER = ('2', _('Региональный менеджер'))
-#
-#     role = models.CharField(max_length=1, choices=Role.choices, default=Role.MAIN_MANAGER, verbose_name=_('Роль'))
-#     order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True, related_name='manager')

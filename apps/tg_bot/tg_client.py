@@ -1,9 +1,7 @@
 import json
-import sys
 
 import telebot
 from telebot.apihelper import ApiTelegramException
-
 from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 
 from apps.library.models import AddressArtFood
@@ -287,17 +285,24 @@ def check_order(message: Message):
 
 @bot.callback_query_handler(func=lambda call: json.loads(call.data)['b'] == '1')
 def take_order(call):
+    """Если менеджер взял заказ в работу, статус заказа меняется на in_progress"""
     call_data = json.loads(call.data)
     order_id = call_data['o']
     order = Order.objects.select_related('user').get(id=order_id)
+    if order.status not in ['new_paid', 'new_unpaid']:
+        empty_markup = InlineKeyboardMarkup()
+        bot.edit_message_reply_markup(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                                      reply_markup=empty_markup)
+        return bot.send_message(call.message.chat.id, text='Заказ взят в работу другим менеджером')
     bot_model_user = BotModel.objects.get(user_id=order.user_id)
     manager_model_bot = BotModel.objects.select_related('user').get(chat_id=call.message.chat.id)
-
+    order.status = 'in_progress'
+    order.save()
     ##### Удаление кнопоу после их нажатия
     empty_markup = InlineKeyboardMarkup()
     bot.edit_message_reply_markup(chat_id=call.message.chat.id, message_id=call.message.message_id,
                                   reply_markup=empty_markup)
-    bot.send_message(chat_id=bot_model_user.chat_id, text=f'Здравствуйте ,{order.user.username}, я ваш менеджер меня '
+    bot.send_message(chat_id=bot_model_user.chat_id, text=f'Здравствуйте, {order.user.username}, я ваш менеджер меня '
                                                           f'зовут {manager_model_bot.user.username} скоро я с вами '
                                                           f'свяжусь для уточнения заказа')
     return bot.send_message(call.message.chat.id, f'Вы взяли в работу заказ с номером {order_id}')
@@ -305,17 +310,7 @@ def take_order(call):
 
 @bot.callback_query_handler(func=lambda call: json.loads(call.data)['b'] == '2')
 def refuse_order(call):
+    """Если менеджер отказался от заказа"""
     empty_markup = InlineKeyboardMarkup()
     bot.edit_message_reply_markup(chat_id=call.message.chat.id, message_id=call.message.message_id,
                                   reply_markup=empty_markup)
-
-
-
-    manage_id = 1
-    # user_id = call_data['user']
-    # chat_id_user = call_data['chat_id_user']
-    # chat_id = call.message.chat.id
-    # bot.send_message(chat_id_user, text=f'Здравствуйте, {call_data["username"]}, меня зовут '
-    #                                     f'{call_data["manager_name"]}, я ваш менеджер, скоро я с вами свяжусь')
-    # LOGGER.debug(call_data['user'])
-    # LOGGER.debug(call.message.chat.id)

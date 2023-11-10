@@ -51,6 +51,7 @@ LOCAL_APPS = [
     'apps.document',
     'apps.notes',
     'apps.tg_bot',
+    'apps.administrative_staff'
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
