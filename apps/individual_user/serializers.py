@@ -1,4 +1,3 @@
-
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from django.utils.translation import gettext_lazy as _
@@ -20,11 +19,12 @@ class CreateIndividualSerializer(serializers.ModelSerializer):
     second_phone_number = serializers.CharField(max_length=50, required=False, allow_blank=True)
     addresses = AddressSerializer(required=True, many=True)
     user_type = serializers.CharField(read_only=True)
+    last_name = serializers.CharField(max_length=150, required=True)
 
     class Meta:
         model = IndividualUserModel
-        fields = ('id', 'username', 'email', 'phone_number', 'second_phone_number', 'addresses', 'password',
-                  'password_repeat', 'user_type')
+        fields = ('id', 'username', 'last_name', 'second_name', 'email', 'phone_number', 'second_phone_number',
+                  'different_whatsapp', 'addresses', 'password', 'password_repeat', 'user_type')
 
     def validate(self, attrs: dict) -> dict:
         return UserServices.validate(attrs)

@@ -50,11 +50,13 @@ class CreateCompanySerializer(serializers.ModelSerializer):
     contact_person = ContactPersonSerializer()
     addresses = AddressSerializer(many=True, required=True)
     user_type = serializers.CharField(read_only=True)
+    last_name = serializers.CharField(max_length=150, required=True)
 
     class Meta:
         model = CompanyUserModel
-        fields = ('id', 'username', 'email', 'phone_number', 'company_name', 'bin_iin', 'iik',
-                  'bank', 'bik', 'company_address', 'payment_method', 'contact_person', 'addresses', 'password', 'password_repeat', 'user_type')
+        fields = ('id', 'username', 'last_name', 'second_name', 'email', 'phone_number', 'company_name', 'bin_iin',
+                  'iik', 'bank', 'bik', 'company_address', 'payment_method', 'contact_person', 'addresses',
+                  'password', 'password_repeat', 'user_type')
 
     def validate(self, attrs: dict) -> dict:
         return UserServices.validate(attrs)
