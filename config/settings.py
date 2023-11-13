@@ -2,6 +2,7 @@ import logging
 import os
 from pathlib import Path
 
+from django.core.cache import cache
 from django.utils.translation import gettext_lazy as _
 from dotenv import load_dotenv
 
@@ -175,7 +176,6 @@ LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'apps/locale'),
 ]
 
-
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
@@ -228,6 +228,16 @@ LOGGING = {
 
 LOGGER = logging.getLogger('main')
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/0',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.getenv('SMTP_HOST')
 EMAIL_PORT = int(os.getenv('SMTP_PORT'))
@@ -245,3 +255,13 @@ CELERY_TIMEZONE = 'UTC'
 
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 
+TIME_CACHE_TG_BOT_MESSAGE = 60 * 60  # Время хранения кэша сообщений телеграм бота
+
+DEFAULT_MASSAGE_BOT = {
+    'introductory_message': 'добро пожаловать в магазин ArtFood',
+    'message_after_hours': 'Магазин закрыт, обратитесь в рабочее время',
+    'message_order_not_site': 'для того чтобы воспользоваться доставкой вам требуется приобрести товар на нашем сайте',
+    'introductory_message_anonymous': 'Добро пожаловать в магазин ArtFood Если вы не зарегистрированы, пройдите '
+                                      'регистрацию на сайте Если вы зарегистрированы, введите ваш email Для отмены '
+                                      'нажмите "cancel"',
+}

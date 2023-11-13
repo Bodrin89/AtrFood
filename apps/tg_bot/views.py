@@ -18,6 +18,6 @@ class TelegramWebhookView(APIView):
         return JsonResponse({'status': 'ok'})
 
 
-# #TODO запуск телеграм бота с webhook, не забыть поменять url!!!
-# bot.remove_webhook()
-# bot.set_webhook(url=f'https://bc07-94-43-3-29.ngrok-free.app/4c3fd19b/')
+#TODO запуск телеграм бота с webhook, не забыть поменять url!!!
+bot.remove_webhook()
+bot.set_webhook(url=f'https://92b6-94-43-3-29.ngrok-free.app/4c3fd19b/')

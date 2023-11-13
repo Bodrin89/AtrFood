@@ -1,9 +1,11 @@
 from datetime import datetime
 
 import pytz
+from django.core.cache import cache
 
 from apps.library.models import AddressArtFood
-from config.settings import LOGGER
+from apps.tg_bot.models import BotMessage
+from config.settings import LOGGER, DEFAULT_MASSAGE_BOT, TIME_CACHE_TG_BOT_MESSAGE
 
 
 def is_within_time_range(start_time, end_time, tz):
@@ -68,3 +70,16 @@ def get_store_not_city_user(cities_store, title):
             response_text += "\n".join([f"{store_detail}: {value}" for store_detail, value in store_info.items()])
             response_text += "\n\n"
     return response_text
+
+
+def get_bot_message_cache(cached_key):
+    """Получение сообщения из кэша, БД или дефолтное"""
+    if not (cached_value := cache.get(cached_key)):
+        if bot_mes_obj := BotMessage.objects.first():
+            value = getattr(bot_mes_obj, cached_key, None)
+            cached_value = value or DEFAULT_MASSAGE_BOT[cached_key]
+            cache.set(cached_key, cached_value, TIME_CACHE_TG_BOT_MESSAGE)
+        else:
+            cached_value = DEFAULT_MASSAGE_BOT[cached_key]
+            cache.set(cached_key, cached_value, TIME_CACHE_TG_BOT_MESSAGE)
+    return cached_value
