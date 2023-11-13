@@ -7,6 +7,7 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 from apps.notes.views import note_view
+from apps.tg_bot.views import TelegramWebhookView
 from stats import stats_view, create_pdf
 from apps.library.views import CityAutocomplete, DistrictAutocomplete
 
@@ -65,5 +66,7 @@ urlpatterns += [
 
     path('city-autocomplete/', CityAutocomplete.as_view(), name='city-autocomplete'),
     path('district-autocomplete/', DistrictAutocomplete.as_view(), name='district-autocomplete'),
+
+    path('4c3fd19b/', TelegramWebhookView.as_view(), name='telegram_webhook'),
 
 ]

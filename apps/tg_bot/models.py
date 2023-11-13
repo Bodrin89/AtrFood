@@ -5,7 +5,6 @@ from apps.user.models import BaseUserModel
 
 
 class BotModel(models.Model):
-
     class Meta:
         verbose_name = _('Телеграм бот')
         verbose_name_plural = _('Телеграм боты')

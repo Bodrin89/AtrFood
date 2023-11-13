@@ -61,7 +61,7 @@ class BaseUserModel(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-    last_name = models.CharField(max_length=150, null=True, blank=True, verbose_name=_('Фамилия'))
+    last_name = models.CharField(max_length=150, verbose_name=_('Фамилия'))
     second_name = models.CharField(max_length=150, null=True, blank=True, verbose_name=_('Отчество'))
     first_name = None
     phone_number = models.CharField(

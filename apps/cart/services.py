@@ -174,6 +174,11 @@ class ServiceCart:
                 'product': {
                     'id': product.id,
                     'name': product.name,
+                    'article': product.article,
+                    'rating': product.rating,
+                    'existence': product.existence,
+                    'discount_price': product.discount_price,
+                    'opt_price': product.opt_price,
                     'price': product.price,
                 }
             }

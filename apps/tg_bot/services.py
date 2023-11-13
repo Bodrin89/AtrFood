@@ -2,6 +2,7 @@ from datetime import datetime
 
 import pytz
 
+from apps.library.models import AddressArtFood
 from config.settings import LOGGER
 
 
@@ -14,7 +15,7 @@ def is_within_time_range(start_time, end_time, tz):
 
 
 def get_week_day():
-    """Функция, которая получает текущий день недели"""
+    """Функция получает текущий день недели"""
     current_time = datetime.now()
     day_of_week = current_time.weekday()
     days_of_week = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
@@ -22,8 +23,23 @@ def get_week_day():
     return formatted_day_of_week
 
 
+def check_open_store(user, formatted_day_of_week):
+    """Функция проверяет открыт ли магазин в данное время"""
+    user_addresses = user.addresses.all()
+    if user_addresses:
+        cities_user = [item.city.name for item in user_addresses]
+        cities_store = AddressArtFood.objects.filter(city__name__in=cities_user).prefetch_related('open_store').first()
+
+        timezone = cities_store.city.timezone
+        open_store = cities_store.open_store.all()
+        res = {i.day: {'open': i.time_open.strftime("%H:%M:%S"), 'close': i.time_close.strftime("%H:%M:%S")} for i in
+               open_store}
+        work_time = res.get(formatted_day_of_week, {})
+        return {'work_time': work_time, 'timezone': timezone}
+
+
 def get_store_not_city_user(cities_store, title):
-    """Функция, которая получает все адреса и режимы работы магазинов не в городе пользователя"""
+    """Функция получает все адреса и режимы работы магазинов не в городе пользователя"""
     store_open_store = {}
 
     for item in cities_store:

@@ -4,10 +4,11 @@ import telebot
 from telebot.apihelper import ApiTelegramException
 from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 
+from apps.administrative_staff.models import AdministrativeStaffModel
 from apps.library.models import AddressArtFood
 from apps.order.models import Order
 from apps.tg_bot.models import BotModel
-from apps.tg_bot.services import is_within_time_range, get_week_day, get_store_not_city_user
+from apps.tg_bot.services import is_within_time_range, get_week_day, get_store_not_city_user, check_open_store
 from apps.user.models import BaseUserModel
 from config.settings import BOT_TOKEN, LOGGER
 
@@ -19,16 +20,37 @@ def verify_user(message: Message):
     """Проверка зарегистрирован пользователь или нет и является ли он менеджером"""
     try:
         user_bot = BotModel.objects.select_related('user').filter(chat_id=message.chat.id).first()
-        if user_bot and user_bot.user.is_superuser:
-            bot.send_message(message.chat.id, f'{user_bot.user.username} вы вошли в аккаунт менеджера')
-        elif user_bot:
-            bot.send_message(message.chat.id, f'{user_bot.user.username} добро пожаловать в магазин ArtFood')
-            show_main_menu(message)
-            get_menu(message)
+        if user_bot:
+            # TODO добавить доп фильтры
+            is_manager = AdministrativeStaffModel.objects.filter(baseusermodel_ptr_id=user_bot.user.id).first()
+            if is_manager:
+                bot.send_message(message.chat.id, f'{user_bot.user.username} вы вошли в аккаунт менеджера')
+            elif user_bot:
+                bot.send_message(message.chat.id, f'{user_bot.user.username} добро пожаловать в магазин ArtFood')
+                show_main_menu(message)
+                get_menu(message)
         else:
             show_registration_menu(message)
     except BotModel.DoesNotExist:
         pass
+
+
+# # TODO рабочий функционал где манаджер это все суперпользаватели
+# @bot.message_handler(commands=['start'])
+# def verify_user(message: Message):
+#     """Проверка зарегистрирован пользователь или нет и является ли он менеджером"""
+#     try:
+#         user_bot = BotModel.objects.select_related('user').filter(chat_id=message.chat.id).first()
+#         if user_bot and user_bot.user.is_superuser:
+#             bot.send_message(message.chat.id, f'{user_bot.user.username} вы вошли в аккаунт менеджера')
+#         elif user_bot:
+#             bot.send_message(message.chat.id, f'{user_bot.user.username} добро пожаловать в магазин ArtFood')
+#             show_main_menu(message)
+#             get_menu(message)
+#         else:
+#             show_registration_menu(message)
+#     except BotModel.DoesNotExist:
+#         pass
 
 
 @bot.message_handler(content_types=['text'])
@@ -39,11 +61,12 @@ def get_button_menu(message: Message):
 
 
 def get_menu(message):
+    """Кнопка Меню для вывода основного меню"""
     markup = ReplyKeyboardMarkup(resize_keyboard=True)
     but1 = KeyboardButton('Меню')
     markup.add(but1)
-    bot.send_message(message.chat.id, 'Меню:', reply_markup=markup)
-    bot.register_next_step_handler(message, show_main_menu)
+    bot.send_message(message.chat.id, 'Меню', reply_markup=markup)
+    # bot.register_next_step_handler(message, get_button_menu)
 
 
 def show_registration_menu(message: Message) -> None:
@@ -68,6 +91,7 @@ def show_main_menu(message: Message) -> None:
     markup.row(but1, but2)
     bot.send_message(message.chat.id, 'Выберите действие:', reply_markup=markup)
 
+
 ######
 def check_email(message: Message) -> None:
     """Функция принимает email от пользователя и проверяет есть ли такой пользователь"""
@@ -81,9 +105,10 @@ def check_email(message: Message) -> None:
         return show_registration_menu(message)
 
     email = message.text
+
     try:
         user = BaseUserModel.objects.get(email=email, is_active=True)
-        is_manager = user.is_superuser
+        is_manager = AdministrativeStaffModel.objects.filter(baseusermodel_ptr_id=user.id).first()
         if is_manager:
             BotModel.objects.get_or_create(chat_id=message.chat.id, user=user)
             bot.send_message(message.chat.id,
@@ -98,10 +123,12 @@ def check_email(message: Message) -> None:
         show_registration_menu(message)
     except BaseUserModel.MultipleObjectsReturned:
         bot.send_message(message.chat.id, 'Произошла ошибка. Обратитесь к администратору.')
+
+
 ######
 
 
-# TODO рабочий функционал где манаджер это все суперпользаватели
+# # TODO рабочий функционал где манаджер это все суперпользаватели
 # def check_email(message: Message) -> None:
 #     """Функция принимает email от пользователя и проверяет есть ли такой пользователь"""
 #     if message.content_type != 'text':
@@ -133,27 +160,26 @@ def check_email(message: Message) -> None:
 #         bot.send_message(message.chat.id, 'Произошла ошибка. Обратитесь к администратору.')
 
 
-
-    # try:
-    #     # TODO можно будет удалить после тестов
-    #     # Для физ и юр лиц
-    #     # user = BaseUserModel.objects.filter(is_active=True, is_superuser=False).get(email=email)
-    #     if user := BaseUserModel.objects.filter(is_active=True, is_superuser=False).get(email=email):
-    #         BotModel.objects.get_or_create(chat_id=message.chat.id, user=user)
-    #         bot.send_message(message.chat.id, f'Спасибо {user.username}  , аккаунт подтвержден')
-    #         show_main_menu(message)
-    #     else:
-    #         # Для менеджеров
-    #         LOGGER.debug('ff')
-    #         user = BaseUserModel.objects.filter(is_active=True, is_superuser=True).get(email=email)
-    #         user_manager_cat_id = BotModel.objects.select_related('user').filter(user__is_superuser=True)
-    #         LOGGER.debug(f'**{user_manager_cat_id}')
-    #         BotModel.objects.get_or_create(chat_id=message.chat.id, user=user)
-    #         bot.send_message(message.chat.id, f'Спасибо {user.username}  , аккаунт подтвержден')
-    #
-    # except BaseUserModel.DoesNotExist:
-    #     bot.send_message(message.chat.id, 'Пользователя с таким email не существует')
-    #     show_registration_menu(message)
+# try:
+#     # TODO можно будет удалить после тестов
+#     # Для физ и юр лиц
+#     # user = BaseUserModel.objects.filter(is_active=True, is_superuser=False).get(email=email)
+#     if user := BaseUserModel.objects.filter(is_active=True, is_superuser=False).get(email=email):
+#         BotModel.objects.get_or_create(chat_id=message.chat.id, user=user)
+#         bot.send_message(message.chat.id, f'Спасибо {user.username}  , аккаунт подтвержден')
+#         show_main_menu(message)
+#     else:
+#         # Для менеджеров
+#         LOGGER.debug('ff')
+#         user = BaseUserModel.objects.filter(is_active=True, is_superuser=True).get(email=email)
+#         user_manager_cat_id = BotModel.objects.select_related('user').filter(user__is_superuser=True)
+#         LOGGER.debug(f'**{user_manager_cat_id}')
+#         BotModel.objects.get_or_create(chat_id=message.chat.id, user=user)
+#         bot.send_message(message.chat.id, f'Спасибо {user.username}  , аккаунт подтвержден')
+#
+# except BaseUserModel.DoesNotExist:
+#     bot.send_message(message.chat.id, 'Пользователя с таким email не существует')
+#     show_registration_menu(message)
 
 
 @bot.callback_query_handler(func=lambda call: call.data == 'cancel')
@@ -272,31 +298,29 @@ def check_order(message: Message):
         bot.send_message(message.chat.id, text='Номер заказа  должен быть числом\n'
                                                'Попробовать снова?', reply_markup=markup)
         return
-    user = BotModel.objects.filter(chat_id=message.chat.id).first().user
-    order = Order.objects.get(user_id=user.id, id=order_number)
-
+    user_bot = BotModel.objects.filter(chat_id=message.chat.id).first()
+    if not user_bot:
+        bot.send_message(chat_id=message.chat.id, text='Вы не подтвердили свой email')
+        return show_registration_menu(message)
+    user = user_bot.user
+    order = Order.objects.filter(user_id=user.id, id=order_number).first()
     if not order:
         bot.send_message(message.chat.id, text='Номер заказа не найден\n'
                                                'Попробовать снова?', reply_markup=markup)
         return
 
     formatted_day_of_week = get_week_day()
-    user_addresses = user.addresses.all()
-    cities_user = [item.city.name for item in user_addresses]
-    cities_store = AddressArtFood.objects.filter(city__name__in=cities_user).prefetch_related('open_store').first()
+    get_work_time = check_open_store(user, formatted_day_of_week)
 
-    timezone = cities_store.city.timezone
-    open_store = cities_store.open_store.all()
-    res = {i.day: {'open': i.time_open.strftime("%H:%M:%S"), 'close': i.time_close.strftime("%H:%M:%S")} for i in
-           open_store}
+    if not get_work_time:
+        return bot.send_message(message.chat.id, text='У вас не зарегистрирован ни один адрес доставки')
+    if not get_work_time['work_time'] or not is_within_time_range(get_work_time['work_time'].get('open'),
+                                                                  get_work_time['work_time'].get('close'),
+                                                                  tz=get_work_time.get('timezone')):
+        return bot.send_message(message.chat.id, text='Магазин закрыт, обратитесь в рабочее время')
 
-    work_time = res.get(formatted_day_of_week, {})
-
-    if not work_time or not is_within_time_range(work_time.get('open'), work_time.get('close'), tz=timezone):
-        bot.send_message(message.chat.id, text='Магазин закрыт, обратитесь в рабочее время')
-        return
-
-    chat_id_managers = BotModel.objects.select_related('user').filter(user__is_superuser=True)
+    managers = AdministrativeStaffModel.objects.filter(role__in=['content_manager'])
+    chat_id_managers = BotModel.objects.select_related('user').filter(user_id__in=managers)
 
     for item in chat_id_managers:
         chat_id = item.chat_id
@@ -329,17 +353,24 @@ def take_order(call):
         bot.edit_message_reply_markup(chat_id=call.message.chat.id, message_id=call.message.message_id,
                                       reply_markup=empty_markup)
         return bot.send_message(call.message.chat.id, text='Заказ взят в работу другим менеджером')
+
     bot_model_user = BotModel.objects.get(user_id=order.user_id)
     manager_model_bot = BotModel.objects.select_related('user').get(chat_id=call.message.chat.id)
+    manager = AdministrativeStaffModel.objects.get(baseusermodel_ptr_id=manager_model_bot.user.id)
+
+    manager.order_in_work_id = order_id
     order.status = 'in_progress'
+    manager.save()
     order.save()
+
     ##### Удаление кнопоу после их нажатия
     empty_markup = InlineKeyboardMarkup()
     bot.edit_message_reply_markup(chat_id=call.message.chat.id, message_id=call.message.message_id,
                                   reply_markup=empty_markup)
     bot.send_message(chat_id=bot_model_user.chat_id, text=f'Здравствуйте, {order.user.username}, я ваш менеджер меня '
                                                           f'зовут {manager_model_bot.user.username} скоро я с вами '
-                                                          f'свяжусь для уточнения заказа')
+                                                          f'свяжусь для уточнения деталей заказа')
+
     return bot.send_message(call.message.chat.id, f'Вы взяли в работу заказ с номером {order_id}')
 
 
