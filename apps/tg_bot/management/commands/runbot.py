@@ -7,6 +7,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Запуск telegram-бота"""
+        bot.remove_webhook()
         bot.polling(non_stop=True)
     #
     # bot.remove_webhook()

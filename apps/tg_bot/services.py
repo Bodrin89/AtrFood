@@ -1,4 +1,5 @@
 import json
+import re
 from datetime import datetime
 
 import pytz
@@ -212,8 +213,8 @@ def check_order(message: Message):
         but2_data = {'b': '2', 'o': order_number}
         try:
             markup_managers = InlineKeyboardMarkup()
-            but1 = InlineKeyboardButton('Взять в работу', callback_data=json.dumps(but1_data))
-            but2 = InlineKeyboardButton('Отказаться', callback_data=json.dumps(but2_data))
+            but1 = InlineKeyboardButton('Взять в работу', callback_data='Взять в работу')
+            but2 = InlineKeyboardButton('Отказаться', callback_data='Отказаться')
             markup_managers.row(but1, but2)
             bot.send_message(chat_id=chat_id, text=f'Обработайте заказ номер: {order_number}',
                              reply_markup=markup_managers)
@@ -222,3 +223,34 @@ def check_order(message: Message):
             LOGGER.error(f'{e}, order_number: {but1_data.get("o")}')
     bot.send_message(message.chat.id, text=f'Ваш заказ обрабатывается')
     show_main_menu(message)
+
+
+def get_order_from_text(text):
+    """Получение номера заказа из сообщения"""
+    match = re.search(r'номер: (\d+)', text)
+    if match:
+        order_number = match.group(1)
+        return order_number
+
+
+def check_status_order(order_id, chat_id, message_id):
+    """Проверка статуса заказа"""
+    order = Order.objects.select_related('user').get(id=order_id)
+    if order.status not in ['new_paid', 'new_unpaid']:
+        empty_markup = InlineKeyboardMarkup()
+        bot.edit_message_reply_markup(chat_id=chat_id, message_id=message_id,
+                                      reply_markup=empty_markup)
+        bot.send_message(chat_id, text='Заказ взят в работу другим менеджером')
+        return None
+    return order
+
+
+def change_status_order(order, chat_id, order_id):
+    """Изменение статуса после того как менеджер взял его в работу"""
+    manager_model_bot = BotModel.objects.select_related('user').get(chat_id=chat_id)
+    manager = AdministrativeStaffModel.objects.get(baseusermodel_ptr_id=manager_model_bot.user.id)
+    manager.order_in_work_id = order_id
+    order.status = 'in_progress'
+    manager.save()
+    order.save()
+    return {'manager_name': manager_model_bot.user.username}
