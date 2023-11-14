@@ -100,10 +100,12 @@ def show_manager_menu(message: Message) -> None:
     but2 = InlineKeyboardButton('адреса компании', callback_data='адреса компании')
     but3 = InlineKeyboardButton('изменить время работы', callback_data='изменить время работы')
     but4 = InlineKeyboardButton('заявки от клиентов', callback_data='заявки от клиентов')
+    but5 = InlineKeyboardButton('заказы назначенные мне', callback_data='заказы назначенные мне')
     markup.add(but1)
     markup.add(but2)
     markup.add(but3)
     markup.add(but4)
+    markup.add(but5)
     return bot.send_message(message.chat.id, 'Выберите действие:', reply_markup=markup)
 
 
@@ -245,12 +247,19 @@ def check_status_order(order_id, chat_id, message_id):
     return order
 
 
-def change_status_order(order, chat_id, order_id):
+def change_status_order(order, chat_id, tag):
     """Изменение статуса после того как менеджер взял его в работу"""
     manager_model_bot = BotModel.objects.select_related('user').get(chat_id=chat_id)
     manager = AdministrativeStaffModel.objects.get(baseusermodel_ptr_id=manager_model_bot.user.id)
-    manager.order_in_work_id = order_id
-    order.status = 'in_progress'
-    manager.save()
-    order.save()
-    return {'manager_name': manager_model_bot.user.username}
+    if tag == 'in_progress':
+        manager.order_in_work.add(order)
+        order.status = 'in_progress'
+        manager.save()
+        order.save()
+        return {'manager_name': manager_model_bot.user.username}
+    if tag == 'completed':
+        manager.order_in_work.remove(order)
+        order.status = 'completed'
+        manager.save()
+        order.save()
+        return {'manager_name': manager_model_bot.user.username}

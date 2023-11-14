@@ -1,4 +1,3 @@
-
 from django.core.cache import cache
 from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 
@@ -127,12 +126,11 @@ def take_order(call):
     if not order:
         return None
     bot_model_user = BotModel.objects.get(user_id=order.user_id)
-    change_status_get_manager_name = change_status_order(order=order, chat_id=call.message.chat.id, order_id=order_id)
+    change_status_get_manager_name = change_status_order(order=order, chat_id=call.message.chat.id, tag='in_progress')
     empty_markup = InlineKeyboardMarkup()
     bot.edit_message_reply_markup(chat_id=call.message.chat.id, message_id=call.message.message_id,
                                   reply_markup=empty_markup)
     manager_name = change_status_get_manager_name.get('manager_name')
-    LOGGER.debug(manager_name)
     bot.send_message(chat_id=bot_model_user.chat_id, text=f'Здравствуйте, {order.user.username}, я ваш менеджер меня '
                                                           f'зовут {manager_name} скоро я с вами '
                                                           f'свяжусь для уточнения деталей заказа')
@@ -171,7 +169,7 @@ def take_order_manager(call):
     order = check_status_order(order_id=order_id, chat_id=call.message.chat.id, message_id=call.message.message_id)
     if not order:
         return None
-    change_status_order(order=order, chat_id=call.message.chat.id, order_id=order_id)
+    change_status_order(order=order, chat_id=call.message.chat.id, tag='in_progress')
     empty_markup = InlineKeyboardMarkup()
     bot.edit_message_reply_markup(chat_id=call.message.chat.id, message_id=call.message.message_id,
                                   reply_markup=empty_markup)
@@ -180,3 +178,31 @@ def take_order_manager(call):
     #                                                       f'свяжусь для уточнения деталей заказа')
 
     return bot.send_message(call.message.chat.id, f'Вы взяли в работу заказ с номером {order_id}')
+
+
+@bot.callback_query_handler(func=lambda call: call.data == 'заказы назначенные мне')
+def get_orders_assigned_me(call):
+    """Получение заказов закрепленных менеджером"""
+    manager_model_bot = BotModel.objects.select_related('user').get(chat_id=call.message.chat.id)
+    manager = AdministrativeStaffModel.objects.prefetch_related('order_in_work').get(
+        baseusermodel_ptr_id=manager_model_bot.user.id)
+    all_assigned_me_orders = manager.order_in_work.all()
+
+    for item in all_assigned_me_orders:
+        order_number = item.id
+        markup_managers = InlineKeyboardMarkup()
+        but1 = InlineKeyboardButton('Отметить как выполненный', callback_data='Отметить как выполненный')
+        markup_managers.row(but1)
+        bot.send_message(call.message.chat.id, f'Заказ номер: {order_number}',
+                         reply_markup=markup_managers)
+
+
+@bot.callback_query_handler(func=lambda call: call.data == 'Отметить как выполненный')
+def change_order_status(call):
+    order_id = get_order_from_text(call.message.text)
+    # order = check_status_order(order_id=order_id, chat_id=call.message.chat.id, message_id=call.message.message_id)
+    if not order_id:
+        return None
+    order = Order.objects.get(id=order_id)
+    change_status_order(order=order, chat_id=call.message.chat.id, tag='completed')
+    bot.send_message(chat_id=call.message.chat.id, text=f'Вы завершили заказ {order_id}')

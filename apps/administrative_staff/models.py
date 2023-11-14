@@ -19,5 +19,7 @@ class AdministrativeStaffModel(BaseUserModel):
 
     role = models.CharField(max_length=25, choices=Role.choices, default=Role.CONTENT_MANAGER,
                             verbose_name=_('Роль'))
-    order_in_work = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True,
-                                      related_name='administrative_staff')
+    order_in_work = models.ManyToManyField(Order, blank=True, related_name='administrative_staff',
+                                           verbose_name=_('Заказы в работе'))
+    # order_in_work = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True,
+    #                                   related_name='administrative_staff')
