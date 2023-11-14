@@ -109,12 +109,21 @@ def show_manager_menu(message: Message) -> None:
     return bot.send_message(message.chat.id, 'Выберите действие:', reply_markup=markup)
 
 
+def get_menu_address_store(message):
+    markup = InlineKeyboardMarkup()
+    button_1 = InlineKeyboardButton('Посмотреть адреса магазинов', callback_data='Посмотреть адреса магазинов')
+    button_2 = InlineKeyboardButton('Изменить адреса магазинов', callback_data='Изменить адреса магазинов')
+    markup.add(button_1)
+    markup.add(button_2)
+    bot.send_message(message.chat.id, text='Выберите действие', reply_markup=markup)
+
+
 def get_menu(message):
     """Кнопка Меню для вывода основного меню"""
     markup = ReplyKeyboardMarkup(resize_keyboard=True)
     but1 = KeyboardButton('Меню')
     markup.add(but1)
-    bot.send_message(message.chat.id, 'Меню',  reply_markup=markup)
+    bot.send_message(message.chat.id, 'Меню', reply_markup=markup)
 
 
 def show_registration_menu(message: Message) -> None:
@@ -227,9 +236,9 @@ def check_order(message: Message):
     show_main_menu(message)
 
 
-def get_order_from_text(text):
-    """Получение номера заказа из сообщения"""
-    match = re.search(r'номер: (\d+)', text)
+def get_order_from_text(text, tag):
+    """Получение номера и id адреса заказа из сообщения"""
+    match = re.search(fr'{tag} (\d+)', text)  # Не менять!!
     if match:
         order_number = match.group(1)
         return order_number
@@ -263,3 +272,64 @@ def change_status_order(order, chat_id, tag):
         manager.save()
         order.save()
         return {'manager_name': manager_model_bot.user.username}
+
+
+def get_address_store(address_store, chat_id, tag):
+    for item in address_store:
+        address = {
+            'id': item.id,
+            'city': item.city.name,
+            'district': item.district.name,
+            'street': item.street,
+            'house_number': item.house_number if item.house_number else '-',
+            'office_number': item.office_number if item.office_number else '-'
+        }
+        address_text = f"Город: {address.get('city')}\n" \
+                       f"Район: {address.get('district')}\n" \
+                       f"Улица: {address.get('street')}\n" \
+                       f"Номер дома: {address.get('house_number')}\n" \
+                       f"Номер офиса: {address.get('office_number')}"
+        if tag == 'look':
+            bot.send_message(chat_id, text=address_text)
+        if tag == 'change':
+            id_store = address.get('id')
+            markup = InlineKeyboardMarkup()
+            button = InlineKeyboardButton('Изменить адрес', callback_data='Изменить адрес')
+            markup.add(button)
+            TEXT = f'id: {id_store}\n{address_text}'  # Не изменять!!
+            bot.send_message(chat_id, text=TEXT, reply_markup=markup)
+
+
+
+
+def change_street(message, store_id: int):
+    """Изменение улицы в адресе магазина"""
+    if message.text:
+        store = AddressArtFood.objects.get(id=store_id)
+        store.street = message.text
+        store.save()
+    bot.send_message(message.chat.id, 'Введите номер дома')
+    bot.register_next_step_handler(message, change_home, store_id=store_id)
+
+
+def change_home(message, store_id: int):
+    """Изменение номера дома в адресе магазина"""
+    if message.text:
+        store = AddressArtFood.objects.get(id=store_id)
+        store.house_number = message.text
+        store.save()
+    bot.send_message(message.chat.id, 'Введите номер офиса')
+    bot.register_next_step_handler(message, change_office_number, store_id=store_id)
+
+
+def change_office_number(message, store_id: int):
+    """Изменение номера офиса в адресе магазина"""
+    store = AddressArtFood.objects.get(id=store_id)
+    if not message.text.isdigit():
+        bot.send_message(message.chat.id, f'Номер офиса должен быть числом, введите снова номер офиса')
+        return bot.register_next_step_handler(message, change_office_number, store_id=store_id)
+    elif message.text:
+        store.office_number = message.text
+        store.save()
+    get_address_store(address_store=[store], chat_id=message.chat.id, tag='look')
+    bot.send_message(message.chat.id, f'Вы изменили адрес магазина')

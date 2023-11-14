@@ -7,8 +7,15 @@ from apps.order.models import Order
 from apps.tg_bot import bot
 from apps.tg_bot.models import BotModel
 from apps.tg_bot.services import get_store_not_city_user, get_bot_message_cache, show_manager_menu, get_menu, \
-    show_main_menu, show_registration_menu, check_order, get_order_from_text, check_status_order, change_status_order
+    show_main_menu, show_registration_menu, check_order, get_order_from_text, check_status_order, change_status_order, \
+    get_menu_address_store, get_address_store, change_street
 from config.settings import TIME_CACHE_TG_BOT_MESSAGE, LOGGER
+
+
+"""
+Переменная TEXT является обязательной и ее нельзя менять.
+tag это часть строки, перед числом которое надо достать из строки в TEXT
+"""
 
 
 @bot.message_handler(commands=['start'])
@@ -121,7 +128,10 @@ def ordering_no(call):
 def take_order(call):
     """Если менеджер взял заказ в работу, статус заказа меняется на in_progress"""
     text = call.message.text
-    order_id = get_order_from_text(text)
+    tag = 'номер:'
+    order_id = get_order_from_text(text=text, tag=tag)
+    if order_id is None or not str(order_id).isdigit():
+        return bot.send_message(call.message.chat.id, text='id магазина должно быть числом и не None')
     order = check_status_order(order_id=order_id, chat_id=call.message.chat.id, message_id=call.message.message_id)
     if not order:
         return None
@@ -158,14 +168,19 @@ def get_orders_users(call):
         but1 = InlineKeyboardButton('Взять в работу', callback_data='Взять в работу без запроса')
         but2 = InlineKeyboardButton('Отказаться', callback_data='Отказаться')
         markup_managers.row(but1, but2)
-        bot.send_message(call.message.chat.id, f'Заказ номер: {order_number}',
+        TEXT = f'Заказ номер: {order_number}'  # Не менять!!
+        bot.send_message(call.message.chat.id, text=TEXT,
                          reply_markup=markup_managers)
 
 
 @bot.callback_query_handler(func=lambda call: call.data == 'Взять в работу без запроса')
 def take_order_manager(call):
     """Если менеджер взял заказ в работу, статус заказа меняется на in_progress"""
-    order_id = get_order_from_text(call.message.text)
+    text = call.message.text
+    tag = 'номер:'
+    order_id = get_order_from_text(text=text, tag=tag)
+    if order_id is None or not str(order_id).isdigit():
+        return bot.send_message(call.message.chat.id, text='id магазина должно быть числом и не None')
     order = check_status_order(order_id=order_id, chat_id=call.message.chat.id, message_id=call.message.message_id)
     if not order:
         return None
@@ -187,22 +202,59 @@ def get_orders_assigned_me(call):
     manager = AdministrativeStaffModel.objects.prefetch_related('order_in_work').get(
         baseusermodel_ptr_id=manager_model_bot.user.id)
     all_assigned_me_orders = manager.order_in_work.all()
-
+    if not all_assigned_me_orders:
+        return bot.send_message(call.message.chat.id, 'У вас нет активных заказов')
     for item in all_assigned_me_orders:
         order_number = item.id
         markup_managers = InlineKeyboardMarkup()
         but1 = InlineKeyboardButton('Отметить как выполненный', callback_data='Отметить как выполненный')
         markup_managers.row(but1)
-        bot.send_message(call.message.chat.id, f'Заказ номер: {order_number}',
-                         reply_markup=markup_managers)
+        TEXT = f'Заказ номер: {order_number}'  # Не менять!!
+        bot.send_message(call.message.chat.id, text=TEXT, reply_markup=markup_managers)
 
 
 @bot.callback_query_handler(func=lambda call: call.data == 'Отметить как выполненный')
 def change_order_status(call):
-    order_id = get_order_from_text(call.message.text)
-    # order = check_status_order(order_id=order_id, chat_id=call.message.chat.id, message_id=call.message.message_id)
+    """Изменение статуса заказа на выполнено"""
+    text = call.message.text
+    tag = 'номер:'
+    order_id = get_order_from_text(text=text, tag=tag)
+    if order_id is None or not str(order_id).isdigit():
+        return bot.send_message(call.message.chat.id, text='id магазина должно быть числом и не None')
     if not order_id:
         return None
     order = Order.objects.get(id=order_id)
     change_status_order(order=order, chat_id=call.message.chat.id, tag='completed')
     bot.send_message(chat_id=call.message.chat.id, text=f'Вы завершили заказ {order_id}')
+
+
+@bot.callback_query_handler(func=lambda call: call.data == 'адреса компании')
+def get_post_address_store(call):
+    """Получить или изменить адреса магазинов"""
+    get_menu_address_store(call.message)
+
+
+@bot.callback_query_handler(func=lambda call: call.data == 'Посмотреть адреса магазинов')
+def show_address_store(call):
+    """Получение адресов магазинов"""
+    address_store = AddressArtFood.objects.prefetch_related('city', 'district').all()
+    get_address_store(address_store=address_store, chat_id=call.message.chat.id, tag='look')
+
+
+@bot.callback_query_handler(func=lambda call: call.data == 'Изменить адреса магазинов')
+def change_store_address(call):
+    """Изменить адрес магазина"""
+    address_store = AddressArtFood.objects.prefetch_related('city', 'district').all()
+    get_address_store(address_store=address_store, chat_id=call.message.chat.id, tag='change')
+
+
+@bot.callback_query_handler(func=lambda call: call.data == 'Изменить адрес')
+def change_one_address(call):
+    text = call.message.text
+    tag = 'id:'
+    id_store = get_order_from_text(text=text, tag=tag)
+    if id_store is None or not str(id_store).isdigit():
+        return bot.send_message(call.message.chat.id, text='id магазина должно быть числом и не None')
+    store = AddressArtFood.objects.get(id=id_store)
+    bot.send_message(call.message.chat.id, 'Введите название улицы')
+    bot.register_next_step_handler(call.message, change_street, store_id=store.id)
