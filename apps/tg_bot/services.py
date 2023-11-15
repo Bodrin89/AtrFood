@@ -300,8 +300,6 @@ def get_address_store(address_store, chat_id, tag):
             bot.send_message(chat_id, text=TEXT, reply_markup=markup)
 
 
-
-
 def change_street(message, store_id: int):
     """Изменение улицы в адресе магазина"""
     if message.text:
@@ -333,3 +331,11 @@ def change_office_number(message, store_id: int):
         store.save()
     get_address_store(address_store=[store], chat_id=message.chat.id, tag='look')
     bot.send_message(message.chat.id, f'Вы изменили адрес магазина')
+
+
+def button_change_message(callback_data):
+    """Создание кнопки для редактирования сообщений в боте"""
+    markup = InlineKeyboardMarkup()
+    button = InlineKeyboardButton('редактировать', callback_data=callback_data)
+    markup.add(button)
+    return markup

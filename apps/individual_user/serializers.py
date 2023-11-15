@@ -47,7 +47,8 @@ class GetUpdateIndividualSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = IndividualUserModel
-        fields = ('id', 'username', 'email', 'phone_number', 'second_phone_number', 'addresses', 'user_type')
+        fields = ('id', 'username', 'last_name', 'second_name', 'email', 'phone_number', 'second_phone_number',
+                  'addresses', 'user_type')
         read_only_fields = ('id',)
 
     def validate_addresses(self, value):

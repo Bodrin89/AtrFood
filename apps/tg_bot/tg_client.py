@@ -1,3 +1,5 @@
+import json
+
 from django.core.cache import cache
 from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 
@@ -5,10 +7,10 @@ from apps.administrative_staff.models import AdministrativeStaffModel
 from apps.library.models import AddressArtFood
 from apps.order.models import Order
 from apps.tg_bot import bot
-from apps.tg_bot.models import BotModel
+from apps.tg_bot.models import BotModel, BotMessage
 from apps.tg_bot.services import get_store_not_city_user, get_bot_message_cache, show_manager_menu, get_menu, \
     show_main_menu, show_registration_menu, check_order, get_order_from_text, check_status_order, change_status_order, \
-    get_menu_address_store, get_address_store, change_street
+    get_menu_address_store, get_address_store, change_street, button_change_message
 from config.settings import TIME_CACHE_TG_BOT_MESSAGE, LOGGER
 
 
@@ -258,3 +260,55 @@ def change_one_address(call):
     store = AddressArtFood.objects.get(id=id_store)
     bot.send_message(call.message.chat.id, 'Введите название улицы')
     bot.register_next_step_handler(call.message, change_street, store_id=store.id)
+
+
+@bot.callback_query_handler(func=lambda call: call.data == 'редактор сообщений бота')
+def get_message_bot(call):
+    """Получение сообщений бота"""
+
+    all_messages = BotMessage.objects.all()
+    if not all_messages:
+        return bot.send_message(call.message.chat.id, 'Нет сообщений для редактирования')
+
+    for item in all_messages:
+
+        if item.introductory_message:
+            markup = button_change_message(callback_data='редактировать_1')
+            type_message = 'вступительное сообщение'
+            bot.send_message(call.message.chat.id, f'тип: {type_message}\n\n{item.introductory_message}',
+                             reply_markup=markup)
+
+        if item.message_order_not_site:
+            markup = button_change_message(callback_data='редактировать_2')
+            type_message = 'сообщение заказ не через сайт'
+            bot.send_message(call.message.chat.id, f'тип: {type_message}\n\n{item.message_order_not_site}',
+                             reply_markup=markup)
+
+        if item.message_after_hours:
+            markup = button_change_message(callback_data='редактировать_3')
+            type_message = 'сообщение в нерабочее время'
+            bot.send_message(call.message.chat.id, f'тип: {type_message}\n\n{item.message_after_hours}',
+                             reply_markup=markup)
+
+        if item.introductory_message_anonymous:
+            markup = button_change_message(callback_data='редактировать_4')
+            type_message = 'вступительное сообщение для не зарегистрированного пользователя'
+            bot.send_message(call.message.chat.id, f'тип: {type_message}\n\n{item.introductory_message_anonymous}',
+                             reply_markup=markup)
+
+
+@bot.callback_query_handler(func=lambda call: call.data.startswith('редактировать_'))
+def change_message_bot(call):
+    """Изменение сообщений бота"""
+    button_data = call.data.split('_')
+    if not len(button_data) == 2:
+        return
+    type_message = button_data[1]
+    if type_message == '1':
+        introductory_message = BotMessage.objects.get().introductory_message
+
+        LOGGER.debug(introductory_message)
+
+
+
+

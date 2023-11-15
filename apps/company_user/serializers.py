@@ -81,8 +81,9 @@ class GetUpdateCompanySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CompanyUserModel
-        fields = ('id', 'username', 'email', 'phone_number', 'company_name', 'company_address', 'bin_iin', 'iik',
-                  'bank', 'bik', 'payment_method', 'contact_person', 'addresses', 'user_type')
+        fields = ('id', 'username', 'last_name', 'second_name', 'email', 'phone_number', 'company_name',
+                  'company_address', 'bin_iin', 'iik', 'bank', 'bik', 'payment_method', 'contact_person',
+                  'addresses', 'user_type')
 
         read_only_fields = ('id',)
 
