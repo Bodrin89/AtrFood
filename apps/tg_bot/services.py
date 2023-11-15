@@ -162,7 +162,8 @@ def check_email(message: Message) -> None:
 
     email = message.text
     try:
-        user = BaseUserModel.objects.get(email=email, is_active=True)
+        LOGGER.debug(email)
+        user = BaseUserModel.objects.get(email__iexact=email, is_active=True)
         is_manager = AdministrativeStaffModel.objects.filter(baseusermodel_ptr_id=user.id).first()
         if is_manager:
             BotModel.objects.get_or_create(chat_id=message.chat.id, user=user)
