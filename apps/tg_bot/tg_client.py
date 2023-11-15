@@ -1,18 +1,16 @@
-import json
-
 from django.core.cache import cache
 from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 
 from apps.administrative_staff.models import AdministrativeStaffModel
-from apps.library.models import AddressArtFood
+from apps.library.models import AddressArtFood, OpenStore
 from apps.order.models import Order
 from apps.tg_bot import bot
 from apps.tg_bot.models import BotModel, BotMessage
 from apps.tg_bot.services import get_store_not_city_user, get_bot_message_cache, show_manager_menu, get_menu, \
     show_main_menu, show_registration_menu, check_order, get_order_from_text, check_status_order, change_status_order, \
-    get_menu_address_store, get_address_store, change_street, button_change_message
+    get_menu_address_store, get_address_store, change_street, button_change_message, change_message, get_new_open_hours, \
+    change_open_hours_store
 from config.settings import TIME_CACHE_TG_BOT_MESSAGE, LOGGER
-
 
 """
 Переменная TEXT является обязательной и ее нельзя менять.
@@ -49,7 +47,7 @@ def get_button_menu(message: Message):
     if user_bot:
         # TODO добавить доп фильтры
         is_manager = AdministrativeStaffModel.objects.filter(baseusermodel_ptr_id=user_bot.user.id).first()
-        if message.text == 'Меню' and is_manager:
+        if message.text == 'Меню' or is_manager:
             return show_manager_menu(message)
         return show_main_menu(message)
     return
@@ -62,6 +60,11 @@ def choice_cancel(call):
     markup.row(but_start)
     bot.send_message(call.message.chat.id, 'До свидания', reply_markup=markup)
     return None
+
+
+@bot.callback_query_handler(func=lambda call: call.data == 'exit_manager_screen')
+def exit_manager_screen(call):
+    get_menu(call.message)
 
 
 @bot.callback_query_handler(func=lambda call: call.data == 'markup1')
@@ -278,16 +281,16 @@ def get_message_bot(call):
             bot.send_message(call.message.chat.id, f'тип: {type_message}\n\n{item.introductory_message}',
                              reply_markup=markup)
 
-        if item.message_order_not_site:
-            markup = button_change_message(callback_data='редактировать_2')
-            type_message = 'сообщение заказ не через сайт'
-            bot.send_message(call.message.chat.id, f'тип: {type_message}\n\n{item.message_order_not_site}',
-                             reply_markup=markup)
-
         if item.message_after_hours:
-            markup = button_change_message(callback_data='редактировать_3')
+            markup = button_change_message(callback_data='редактировать_2')
             type_message = 'сообщение в нерабочее время'
             bot.send_message(call.message.chat.id, f'тип: {type_message}\n\n{item.message_after_hours}',
+                             reply_markup=markup)
+
+        if item.message_order_not_site:
+            markup = button_change_message(callback_data='редактировать_3')
+            type_message = 'сообщение заказ не через сайт'
+            bot.send_message(call.message.chat.id, f'тип: {type_message}\n\n{item.message_order_not_site}',
                              reply_markup=markup)
 
         if item.introductory_message_anonymous:
@@ -305,10 +308,90 @@ def change_message_bot(call):
         return
     type_message = button_data[1]
     if type_message == '1':
-        introductory_message = BotMessage.objects.get().introductory_message
+        bot.send_message(call.message.chat.id, 'Введите новое вступительное сообщение для зарегистрированного '
+                                               'пользователя.\nВнимание! В начало сообщения автоматически подставляется'
+                                               'имя пользователя')
+        bot.register_next_step_handler(call.message, change_message, mess='introductory_message')
 
-        LOGGER.debug(introductory_message)
+    if type_message == '2':
+        bot.send_message(call.message.chat.id, 'Введите новое сообщение для обращения пользователя в не рабочее время')
+        bot.register_next_step_handler(call.message, change_message, mess='message_after_hours')
+
+    if type_message == '3':
+        bot.send_message(call.message.chat.id, 'Введите новое сообщение если пользователь выбрал, что не заказывал '
+                                               'товар через сайт')
+        bot.register_next_step_handler(call.message, change_message, mess='message_order_not_site')
+
+    if type_message == '4':
+        bot.send_message(call.message.chat.id, 'Введите новое вступительное сообщение для не зарегистрированного '
+                                               'пользователя\nВнимание! В месте с сообщением будет присылаться кнопка '
+                                               'CANCEL для отмены подтверждения регистрации.')
+        bot.register_next_step_handler(call.message, change_message, mess='introductory_message_anonymous')
 
 
+@bot.callback_query_handler(func=lambda call: call.data == 'изменить время работы')
+def get_opening_hours(call):
+    """Получение всех магазинов и добавление кнопки изменить время работы"""
+    all_store = AddressArtFood.objects.select_related('city').all()
+    if not all_store:
+        return bot.send_message(call.message.chat.id, 'Не зарегистрировано ни одного магазина')
+    for item in all_store:
+        store_id = str(item.id)
+        markup = InlineKeyboardMarkup()
+        button = InlineKeyboardButton('изменить время работы', callback_data='get_opening_hours&' + store_id)
+        markup.add(button)
+        bot.send_message(call.message.chat.id, f'{item.city.name}, {item.street}, {item.house_number}',
+                         reply_markup=markup)
 
 
+@bot.callback_query_handler(func=lambda call: call.data.startswith('get_opening_hours&'))
+def change_opening_hours(call):
+    """Выбор магазина и дня недели для изменения"""
+    button_data = call.data.split('&')
+    if not len(button_data) == 2:
+        return
+    store_id = button_data[1]
+
+    bot.send_message(call.message.chat.id, 'Выберете день недели')
+    days_of_week = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
+    for i in days_of_week:
+        markup = InlineKeyboardMarkup()
+        callback_data = f'change_open_day&{i}&{store_id}'
+        button = InlineKeyboardButton('выбрать', callback_data=callback_data)
+        markup.add(button)
+        bot.send_message(call.message.chat.id, text=i, reply_markup=markup)
+
+
+@bot.callback_query_handler(func=lambda call: call.data.startswith('change_open_day&'))
+def change_opening_hours_day(call):
+    """Создание нового режима работы магазина и выбор изменять: время открытия или время закрытия"""
+    button_data = call.data.split('&')
+    if not len(button_data) == 3:
+        return
+    week_day = button_data[1]
+    store_id = button_data[2]
+    store = AddressArtFood.objects.prefetch_related('open_store').get(id=store_id)
+    open_store_day: OpenStore = store.open_store.filter(day=week_day).first()
+    if not open_store_day:
+        bot.send_message(call.message.chat.id, 'введите время открытия магазина в формате %H:%M:%S')
+        bot.register_next_step_handler(call.message, get_new_open_hours, day=week_day, address=store)
+    elif open_store_day:
+        markup = InlineKeyboardMarkup()
+        callback_data_open = f'change_hours_open&{week_day}&{store_id}'
+        button_open = InlineKeyboardButton('время открытия', callback_data=callback_data_open + '&1')
+        button_close = InlineKeyboardButton('время закрытия', callback_data=callback_data_open + '&2')
+        markup.row(button_open, button_close)
+        bot.send_message(call.message.chat.id, 'Выберите что требуется изменить', reply_markup=markup)
+
+
+@bot.callback_query_handler(func=lambda call: call.data.startswith('change_hours_open&'))
+def change_hours_day(call):
+    button_data = call.data.split('&')
+    if not len(button_data) == 4:
+        return
+    store_id = button_data[2]
+    week_day = button_data[1]
+    tag = button_data[3]
+    bot.send_message(call.message.chat.id, 'введите время открытия магазина в формате %H:%M:%S')
+    bot.register_next_step_handler(call.message, change_open_hours_store, week_day=week_day, store_id=store_id,
+                                   tag=tag)

@@ -8,10 +8,11 @@ from telebot.apihelper import ApiTelegramException
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, ReplyKeyboardMarkup, KeyboardButton
 
 from apps.administrative_staff.models import AdministrativeStaffModel
-from apps.library.models import AddressArtFood
+from apps.library.models import AddressArtFood, OpenStore
 from apps.order.models import Order
 from apps.tg_bot import bot
 from apps.tg_bot.models import BotMessage, BotModel
+from apps.tg_bot.validators import validate_time_format, validate_content_type
 from apps.user.models import BaseUserModel
 from config.settings import LOGGER, DEFAULT_MASSAGE_BOT, TIME_CACHE_TG_BOT_MESSAGE
 
@@ -160,7 +161,6 @@ def check_email(message: Message) -> None:
         return show_registration_menu(message)
 
     email = message.text
-
     try:
         user = BaseUserModel.objects.get(email=email, is_active=True)
         is_manager = AdministrativeStaffModel.objects.filter(baseusermodel_ptr_id=user.id).first()
@@ -339,3 +339,81 @@ def button_change_message(callback_data):
     button = InlineKeyboardButton('редактировать', callback_data=callback_data)
     markup.add(button)
     return markup
+
+
+def change_message(message, mess):
+    """Изменение сообщений"""
+    message_bot = BotMessage.objects.get()
+    setattr(message_bot, mess, message.text)
+    message_bot.save()
+    bot.send_message(message.chat.id, 'Сообщение было успешно изменено')
+
+
+def get_new_open_hours(message, day, address):
+    """Получение от менеджера времени открытия магазина"""
+    markup = repeat_change_new_hours_store(day, address)
+    if not validate_content_type(message.content_type):
+        return bot.send_message(message.chat.id, 'Сообщение не является текстом, попробовать снова',
+                                reply_markup=markup)
+    if not validate_time_format(message.text):
+        return bot.send_message(message.chat.id, 'Формат времени не соответствует %H:%M:%S, попробовать снова',
+                                reply_markup=markup)
+    time_open = message.text
+    bot.send_message(message.chat.id, 'введите время закрытия магазина в формате %H:%M:%S')
+    bot.register_next_step_handler(message, create_open_store_new_day, time_open=time_open, day=day, obj=OpenStore,
+                                   address=address)
+
+
+def create_open_store_new_day(message, time_open, day, obj, address):
+    """Создание нового режима работы магазина"""
+    markup = repeat_change_new_hours_store(day, address)
+    if not validate_content_type(message.content_type):
+        return bot.send_message(message.chat.id, 'Сообщение не является текстом, попробовать снова', reply_markup=markup)
+    if not validate_time_format(message.text):
+        return bot.send_message(message.chat.id, 'Формат времени не соответствует %H:%M:%S, попробовать снова',
+                                reply_markup=markup)
+    time_close = message.text
+    new_open_stor_day = obj.objects.create(day=day, time_open=time_open, time_close=time_close, address=address)
+    new_open_stor_day.save()
+    bot.send_message(message.chat.id, 'время работы магазина успешно изменено')
+
+
+def change_open_hours_store(message, week_day, store_id, tag):
+    """Изменение времени открытия магазина"""
+    markup = repeat_change_open_hours_store(week_day, store_id, tag)
+    if not validate_content_type(message.content_type):
+        return bot.send_message(message.chat.id, 'Сообщение не является текстом, попробовать снова', reply_markup=markup)
+    if not validate_time_format(message.text):
+        return bot.send_message(message.chat.id, 'Формат времени не соответствует %H:%M:%S, попробовать снова',
+                                reply_markup=markup)
+    store = AddressArtFood.objects.prefetch_related('open_store').get(id=store_id)
+    open_store_day: OpenStore = store.open_store.filter(day=week_day).first()
+
+    if tag == '1':
+        open_store_day.time_open = message.text
+        open_store_day.save()
+        bot.send_message(message.chat.id, 'Время открытия успешно изменено')
+    if tag == '2':
+        open_store_day.time_close = message.text
+        open_store_day.save()
+        bot.send_message(message.chat.id, 'Время закрытия успешно изменено')
+
+
+def repeat_change_open_hours_store(week_day, store_id, tag):
+    """Кнопки для повторной попытки изменить время работы магазина"""
+    markup = InlineKeyboardMarkup()
+    callback_data_open = f'change_hours_open&{week_day}&{store_id}'
+    button_yes = InlineKeyboardButton('да', callback_data=callback_data_open + '&' + tag)
+    button_no = InlineKeyboardButton('нет', callback_data='exit_manager_screen')
+
+    return markup.row(button_yes, button_no)
+
+
+def repeat_change_new_hours_store(week_day, address: AddressArtFood):
+    """Кнопки для повторной попытки создать время работы магазина"""
+    markup = InlineKeyboardMarkup()
+    store_id = address.id
+    callback_data = f'change_open_day&{week_day}&{store_id}'
+    button_yes = InlineKeyboardButton('да', callback_data=callback_data)
+    button_no = InlineKeyboardButton('нет', callback_data='exit_manager_screen')
+    return markup.row(button_yes, button_no)

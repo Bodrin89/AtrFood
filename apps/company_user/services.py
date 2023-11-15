@@ -16,7 +16,6 @@ class CompanyUserServices:
         with transaction.atomic():
             del validated_data['password_repeat']
             validated_data['password'] = make_password(validated_data['password'])
-            LOGGER.debug(validated_data)
             bank = validated_data.pop('bank', None)
             bank_ = bank.replace(' ', '')
             contact_person_data = validated_data.pop('contact_person', None)
