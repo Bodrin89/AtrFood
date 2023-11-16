@@ -76,12 +76,12 @@ def get_open_store(call):
         cities_store = AddressArtFood.objects.filter(
             city__name__in=cities_user).prefetch_related('open_store').all()
         work_time_store = get_store_not_city_user(cities_store, title='Магазины в вашем городе')
-        bot.send_message(call.message.chat.id, f'Режим работы магазина\n{work_time_store}', parse_mode='HTML')
+        bot.send_message(call.message.chat.id, f'\n{work_time_store}',
+                         parse_mode='HTML')
     else:
-
         cities_store = AddressArtFood.objects.prefetch_related('open_store').all()
         work_time_store = get_store_not_city_user(cities_store, title='Магазины во всех городах')
-        bot.send_message(call.message.chat.id, f'Режим работы магазина\n{work_time_store}', parse_mode='HTML')
+        bot.send_message(call.message.chat.id, f'\n{work_time_store}', parse_mode='HTML')
 
 
 @bot.callback_query_handler(func=lambda call: call.data == 'markup2')

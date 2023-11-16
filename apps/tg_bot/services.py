@@ -1,4 +1,3 @@
-import json
 import re
 from datetime import datetime
 
@@ -48,6 +47,37 @@ def check_open_store(user, formatted_day_of_week):
         work_time = res.get(formatted_day_of_week, {})
         return {'work_time': work_time, 'timezone': timezone}
 
+#
+# def get_store_not_city_user(cities_store, title):
+#     """Функция получает все адреса и режимы работы магазинов не в городе пользователя"""
+#     store_open_store = {}
+#
+#     for item in cities_store:
+#         open_store = item.open_store.all()
+#         res = {i.day: {'открывается': i.time_open.strftime("%H:%M:%S"),
+#                        'закрывается': i.time_close.strftime("%H:%M:%S")} for i in open_store}
+#         store_info = {
+#             'район': item.district.name,
+#             'улица': item.street,
+#             'дом': item.house_number,
+#             'офис': item.office_number if item.office_number else '-',
+#             'режим работы магазина': res
+#         }
+#
+#         city_key = item.city.name
+#         if city_key in store_open_store:
+#             store_open_store[city_key].append(store_info)
+#         else:
+#             store_open_store[city_key] = [store_info]
+#
+#     response_text = f"<u>{title}</u>\n"
+#
+#     for city, stores in store_open_store.items():
+#         response_text += f"\n<b>{city}</b>\n"
+#         for store_info in stores:
+#             response_text += "\n".join([f"{store_detail}: {value}" for store_detail, value in store_info.items()])
+#             response_text += "\n\n"
+#     return response_text
 
 def get_store_not_city_user(cities_store, title):
     """Функция получает все адреса и режимы работы магазинов не в городе пользователя"""
@@ -55,14 +85,19 @@ def get_store_not_city_user(cities_store, title):
 
     for item in cities_store:
         open_store = item.open_store.all()
-        res = {i.day: {'открывается': i.time_open.strftime("%H:%M:%S"),
-                       'закрывается': i.time_close.strftime("%H:%M:%S")} for i in open_store}
+        open_hours = ''
+        for i in open_store:
+            o = f"      открывается: {i.time_open.strftime('%H:%M:%S')}\n"
+            c = f"      закрывается: {i.time_close.strftime('%H:%M:%S')}\n"
+            res = f'<b>{i.day}</b>\n' + o + c
+            open_hours += res
+
         store_info = {
-            'район': item.district.name,
-            'улица': item.street,
-            'дом': item.house_number,
-            'офис': item.office_number if item.office_number else '-',
-            'режим работы магазина': res
+            '<b>район:</b>': item.district.name,
+            '<b>улица:</b>': item.street,
+            '<b>дом:</b>': item.house_number,
+            '<b>офис:</b>': item.office_number if item.office_number else '-',
+            '<b>режим работы магазина:</b>\n': open_hours
         }
 
         city_key = item.city.name
@@ -74,11 +109,19 @@ def get_store_not_city_user(cities_store, title):
     response_text = f"<u>{title}</u>\n"
 
     for city, stores in store_open_store.items():
-        response_text += f"\n<b>{city}</b>\n"
+        response_text += f'\n<b>            <code>{city}</code></b>\n\n'
+
+
         for store_info in stores:
-            response_text += "\n".join([f"{store_detail}: {value}" for store_detail, value in store_info.items()])
+            response_text += "\n".join([f"{store_detail} {value}" for store_detail, value in store_info.items()])
             response_text += "\n\n"
+
+    response_text = response_text.replace('{', '').replace('}', '')
+
     return response_text
+
+
+
 
 
 def get_bot_message_cache(cached_key):
@@ -141,7 +184,7 @@ def show_registration_menu(message: Message) -> None:
 def show_main_menu(message: Message) -> None:
     """Меню для пользователя прошедшего верификацию"""
     markup = InlineKeyboardMarkup()
-    but1 = InlineKeyboardButton('Режим работы магазина', callback_data='markup1')
+    but1 = InlineKeyboardButton('Магазины в вашем городе', callback_data='markup1')
     but2 = InlineKeyboardButton('Магазины в других городах', callback_data='markup2')
     but3 = InlineKeyboardButton('Доставка заказанного товара', callback_data='markup3')
     markup.row(but3)
