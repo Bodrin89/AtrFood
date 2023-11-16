@@ -47,7 +47,7 @@ def get_button_menu(message: Message):
     if user_bot:
         # TODO добавить доп фильтры
         is_manager = AdministrativeStaffModel.objects.filter(baseusermodel_ptr_id=user_bot.user.id).first()
-        if message.text == 'Меню' or is_manager:
+        if message.text == 'Меню' and is_manager:
             return show_manager_menu(message)
         return show_main_menu(message)
     return
@@ -371,7 +371,7 @@ def change_opening_hours_day(call):
     week_day = button_data[1]
     store_id = button_data[2]
     store = AddressArtFood.objects.prefetch_related('open_store').get(id=store_id)
-    open_store_day: OpenStore = store.open_store.filter(day=week_day).first()
+    open_store_day: OpenStore = store.open_store.filter(day__iexact=week_day).first()
     if not open_store_day:
         bot.send_message(call.message.chat.id, 'введите время открытия магазина в формате %H:%M:%S')
         bot.register_next_step_handler(call.message, get_new_open_hours, day=week_day, address=store)

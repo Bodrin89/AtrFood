@@ -162,13 +162,14 @@ def check_email(message: Message) -> None:
 
     email = message.text
     try:
-        LOGGER.debug(email)
         user = BaseUserModel.objects.get(email__iexact=email, is_active=True)
         is_manager = AdministrativeStaffModel.objects.filter(baseusermodel_ptr_id=user.id).first()
         if is_manager:
             BotModel.objects.get_or_create(chat_id=message.chat.id, user=user)
             bot.send_message(message.chat.id,
                              f'Спасибо {user.username}, аккаунт подтвержден, вы вошли в чат менеджеров')
+            show_manager_menu(message)
+            get_menu(message)
         else:
             BotModel.objects.get_or_create(chat_id=message.chat.id, user=user)
             bot.send_message(message.chat.id, f'Спасибо {user.username}  , аккаунт подтвержден')
