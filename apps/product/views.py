@@ -174,6 +174,9 @@ class ListFavoriteProductView(ListAPIView):
         return ProductModel.objects.filter(id__in=favorite_product_ids)
 
 
+
+
+
 class ListCompareProductView(ListAPIView):
     """Список товаров для сравнения пользователя"""
     serializer_class = ListProductSerializer

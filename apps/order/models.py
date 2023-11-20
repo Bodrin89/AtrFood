@@ -43,7 +43,7 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name=_('Покупатель'), null=True)
     payment_method = models.CharField(max_length=10, choices=PAYMENT_METHOD_CHOICES, verbose_name=_('Метод оплаты'))
     date_created = models.DateTimeField(auto_now_add=True, verbose_name=_('Дата создания'))
-    delivery_method = models.BooleanField(verbose_name=_('Доставка'))
+    delivery_method = models.BooleanField(default=True, verbose_name=_('Доставка'))
     contact_phone = models.CharField(max_length=20, verbose_name=_('Номер телефона'),
                                      validators=[validate_phone_number])
     status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, blank=True, null=True,

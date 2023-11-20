@@ -9,6 +9,6 @@ class Command(BaseCommand):
         """Запуск telegram-бота"""
         bot.remove_webhook()
         bot.polling(non_stop=True)
-    #
+
     # bot.remove_webhook()
     # bot.set_webhook(url=f'https://58eb-94-43-3-29.ngrok-free.app/4c3fd19b/')

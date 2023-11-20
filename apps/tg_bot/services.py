@@ -1,5 +1,6 @@
 import re
 from datetime import datetime
+from time import sleep
 
 import pytz
 from django.core.cache import cache
@@ -111,7 +112,6 @@ def get_store_not_city_user(cities_store, title):
     for city, stores in store_open_store.items():
         response_text += f'\n<b>            <code>{city}</code></b>\n\n'
 
-
         for store_info in stores:
             response_text += "\n".join([f"{store_detail} {value}" for store_detail, value in store_info.items()])
             response_text += "\n\n"
@@ -121,13 +121,12 @@ def get_store_not_city_user(cities_store, title):
     return response_text
 
 
-
-
-
 def get_bot_message_cache(cached_key):
     """Получение сообщения из кэша, БД или дефолтное"""
     if not (cached_value := cache.get(cached_key)):
         if bot_mes_obj := BotMessage.objects.first():
+            # TODO Не забыть удалить после сеста подключения к redis
+            # sleep(7)
             value = getattr(bot_mes_obj, cached_key, None)
             cached_value = value or DEFAULT_MASSAGE_BOT[cached_key]
             cache.set(cached_key, cached_value, TIME_CACHE_TG_BOT_MESSAGE)
