@@ -13,24 +13,28 @@ from rest_framework.generics import (
     CreateAPIView,
     ListAPIView,
     RetrieveAPIView,
+    DestroyAPIView,
     get_object_or_404,
 )
 from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 
 from apps.order.models import OrderItem
 from apps.product.filters import ProductFilter
-from apps.product.models import CatalogModel, CategoryProductModel, ProductModel, SubCategoryProductModel
+from apps.product.models import CatalogModel, CategoryProductModel, ProductModel, SubCategoryProductModel, \
+    FavoriteProductModel
 from apps.product.serializers import (AddProductCompareSerializer,
                                       AddProductFavoriteSerializer,
                                       CategorySerializer,
                                       ListCatalogSerializer,
                                       ListProductSerializer,
                                       RetrieveProductSerializer,
-                                      SubCategoryProductSerializer)
+                                      SubCategoryProductSerializer, ListFavoriteProductSerializer)
 from apps.product.services import ServiceProduct
 from config.settings import LOGGER
+
 
 # class CreateProductView(CreateAPIView):
 #     """Создание товара"""
@@ -145,16 +149,6 @@ class SubcategoryDownloadView(APIView):
             return Response(_('Файл не существует'))
 
 
-class AddProductFavoriteView(CreateAPIView):
-    """Добавление/удаление товара в избранное"""
-    serializer_class = AddProductFavoriteSerializer
-
-    def perform_create(self, serializer):
-        product_id = self.kwargs.get('product_id')
-        product = get_object_or_404(ProductModel, id=product_id)
-        serializer.save(session=self.request.session, product_id=product_id, product=product)
-
-
 class AddProductCompareView(CreateAPIView):
     """Добавление/удаление товара для сравнения"""
     serializer_class = AddProductCompareSerializer
@@ -165,16 +159,33 @@ class AddProductCompareView(CreateAPIView):
         serializer.save(session=self.request.session, product_id=product_id, product=product)
 
 
+class AddProductFavoriteView(CreateAPIView):
+    """Добавление товара в избранное"""
+    serializer_class = AddProductFavoriteSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        ids = self.request.data.get('id')
+        serializer.save(user=user, ids=ids)
+
+
 class ListFavoriteProductView(ListAPIView):
     """Список избранных товаров пользователя"""
-    serializer_class = ListProductSerializer
+    serializer_class = ListFavoriteProductSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        favorite_product_ids = self.request.session.get('favorite', [])
-        return ProductModel.objects.filter(id__in=favorite_product_ids)
+        user = self.request.user
+        return FavoriteProductModel.objects.filter(user=user.id)
 
 
-
+class DestroyFavoriteProduct(DestroyAPIView):
+    """Удаление товара из избранных"""
+    def delete(self, request, *args, **kwargs):
+        favorite_product = get_object_or_404(FavoriteProductModel, id=self.kwargs['pk'], user=self.request.user)
+        favorite_product.delete()
+        return Response({"message": "Товар успешно удален из избранных."})
 
 
 class ListCompareProductView(ListAPIView):

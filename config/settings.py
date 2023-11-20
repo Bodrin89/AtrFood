@@ -1,6 +1,7 @@
 import logging
 import os
 from pathlib import Path
+from datetime import timedelta
 
 from django.core.cache import cache
 from django.utils.translation import gettext_lazy as _
@@ -269,3 +270,8 @@ DEFAULT_MASSAGE_BOT = {
                                       'регистрацию на сайте Если вы зарегистрированы, введите ваш email Для отмены '
                                       'нажмите "cancel"',
 }
+
+if DEBUG:
+    SIMPLE_JWT = {
+        "ACCESS_TOKEN_LIFETIME": timedelta(minutes=100),
+    }

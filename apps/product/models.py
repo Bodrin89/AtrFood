@@ -126,7 +126,9 @@ class FavoriteProductModel(models.Model):
         verbose_name = _('Избранный товар')
         verbose_name_plural = _('Избранные товары')
 
-    product = models.ForeignKey(ProductModel, on_delete=models.CASCADE)
+    product = models.ForeignKey(ProductModel, on_delete=models.CASCADE, related_name='favorite_product')
+    # user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE, related_name='favorite_product')
+    user = models.ManyToManyField(BaseUserModel, related_name='favorite_product')
 
     def __str__(self):
         return self.product

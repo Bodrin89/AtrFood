@@ -1,9 +1,15 @@
+from django.shortcuts import get_object_or_404
+from rest_framework import status
+from rest_framework.exceptions import ValidationError
+
 from apps.product.models import (CategoryProductModel,
                                  CompareProductModel,
                                  DescriptionProductModel,
                                  FavoriteProductModel,
                                  ProductModel,
                                  SubCategoryProductModel,)
+from rest_framework import serializers
+from django.utils.translation import gettext_lazy as _
 from config.settings import LOGGER
 
 
@@ -69,18 +75,38 @@ class ServiceProduct:
     #                                                   subcategory=subcategory, **validated_data)
     #     return product
 
-    @staticmethod
-    def add_delete_product_favorite(validated_data: dict) -> FavoriteProductModel:
-        """Добавление/удаление товара в избранное"""
+    # @staticmethod
+    # def add_delete_product_favorite(validated_data: dict) -> FavoriteProductModel:
+    #     """Добавление/удаление товара в избранное"""
+    #
+    #     favorite = validated_data['session'].get('favorite', [])
+    #     if validated_data['product_id'] not in favorite:
+    #         favorite.append(validated_data['product_id'])
+    #     else:
+    #         favorite.remove(validated_data['product_id'])
+    #     validated_data['session']['favorite'] = favorite
+    #     validated_data['session'].modified = True
+    #     return favorite
 
-        favorite = validated_data['session'].get('favorite', [])
-        if validated_data['product_id'] not in favorite:
-            favorite.append(validated_data['product_id'])
-        else:
-            favorite.remove(validated_data['product_id'])
-        validated_data['session']['favorite'] = favorite
-        validated_data['session'].modified = True
-        return favorite
+    @staticmethod
+    def add_delete_product_favorite(validated_data: dict):
+        """Добавление товара в избранное"""
+        user = validated_data['user']
+        ids = validated_data['ids']
+        if not ids:
+            raise serializers.ValidationError({'error': _('Список товаров пуст')})
+
+        favorite_products = []
+
+        for product_id in ids:
+            try:
+                product = ProductModel.objects.get(id=product_id)
+                favorite_product, created = FavoriteProductModel.objects.get_or_create(product=product)
+                favorite_product.user.add(user)
+                favorite_products.append(favorite_product)
+            except ProductModel.DoesNotExist:
+                favorite_products.append({'product_id': product_id, 'error': _('Товар не найден')})
+        return favorite_products
 
     @staticmethod
     def add_delete_product_compare(validated_data):

@@ -14,7 +14,7 @@ from apps.product.views import (AddProductCompareView,
                                 SimilarProductsView,
                                 ViewedProductsView,
                                 NewProductView,
-                                ListSubcategoryView, SubcategoryDownloadView,
+                                ListSubcategoryView, SubcategoryDownloadView, DestroyFavoriteProduct,
                                 )
 
 urlpatterns = [
@@ -25,7 +25,8 @@ urlpatterns = [
     path('category/<int:category_id>', ListProductCategoryView.as_view(), name='category-products'),
     path('catalog/<int:catalog_id>', ListProductCatalogView.as_view(), name='catalog-products'),
     path('<int:pk>/retrieve', GetProductView.as_view(), name='retrieve-product'),
-    path('<int:product_id>/favorite', AddProductFavoriteView.as_view(), name='add-favorite-product'),
+    path('favorite/add', AddProductFavoriteView.as_view(), name='add-favorite-product'),
+    path('favorite/destroy/<int:pk>', DestroyFavoriteProduct.as_view(), name='add-favorite-product'),
     path('favorite', ListFavoriteProductView.as_view(), name='list-favorite-product'),
     path('<int:product_id>/compare', AddProductCompareView.as_view(), name='add-compare-product'),
     path('compare', ListCompareProductView.as_view(), name='add-compare-product'),

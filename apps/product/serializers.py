@@ -66,21 +66,6 @@ class ListProductSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-# class CreateProductSerializer(serializers.ModelSerializer):
-#     """Создание товара"""
-#     # catalog = CatalogSerializer()
-#     # category = CategorySerializer()
-#     subcategory = SubCategoryProductSerializer()
-#     product_data = DescriptionProductSerializer()
-#
-#     class Meta:
-#         model = ProductModel
-#         fields = ('id', 'name', 'foto', 'price', 'discount_price', 'product_data', 'quantity_stock', 'subcategory')
-#         read_only_fields = ('id', 'discount_price',)
-#
-#     def create(self, validated_data):
-#         return ServiceProduct.create_product(validated_data)
-
 class ListCatalogSerializer(serializers.ModelSerializer):
     """Получение всех каталогов с вложенными категориями/подкатегориями"""
 
@@ -104,13 +89,15 @@ class RetrieveProductSerializer(serializers.ModelSerializer):
 
 
 class AddProductFavoriteSerializer(serializers.ModelSerializer):
-    """Добавление/удаление товара в избранное"""
+    """Добавление товара в избранное"""
     class Meta:
         model = FavoriteProductModel
         fields = ('id',)
 
     def create(self, validated_data):
-        return ServiceProduct.add_delete_product_favorite(validated_data)
+        favorite_products = ServiceProduct.add_delete_product_favorite(validated_data)
+
+        return favorite_products
 
 
 class AddProductCompareSerializer(serializers.ModelSerializer):
@@ -128,12 +115,25 @@ class ProductInfoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProductModel
-        fields = [
-            'name',
-            'price',
-            'article',
-            'discount_price',
-        ]
+        fields = ['name', 'price', 'article', 'discount_price']
+
+
+class FavoriteProductInfoSerializer(serializers.ModelSerializer):
+    """Получение всех товаров в заказ"""
+    images = ProductImageSerializer(source='images.all', many=True)
+
+    class Meta:
+        model = ProductModel
+        fields = ['name', 'price', 'article', 'discount_price', 'opt_price', 'existence', 'images']
+
+
+class ListFavoriteProductSerializer(serializers.ModelSerializer):
+    """Получение избранных товаров"""
+    product = FavoriteProductInfoSerializer()
+
+    class Meta:
+        model = ProductModel
+        fields = ('product',)
 
 
 class GiftInfoSerializer(serializers.ModelSerializer):
