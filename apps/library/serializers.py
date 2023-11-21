@@ -27,24 +27,26 @@ class ManufacturingCompanySerializer(serializers.ModelSerializer):
         fields = ['name', 'logo']
 
 
+class DistrictSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = District
+        fields = ['name', 'id']
+
+
 class CitySerializer(serializers.ModelSerializer):
+
+    district = DistrictSerializer(many=True)
 
     class Meta:
         model = City
-        fields = ['name', ]
+        fields = ['name', 'id', 'district']
 
 
 class CountrySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CountryManufacturer
-        fields = ['name', ]
-
-
-class DistrictSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = District
         fields = ['name', ]
 
 

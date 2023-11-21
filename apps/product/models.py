@@ -29,6 +29,7 @@ class CategoryProductModel(models.Model):
     name = models.CharField(max_length=255)
     image = models.ImageField(upload_to='category/', null=True, blank=True, verbose_name=_('Изображение'))
     catalog = models.ForeignKey(CatalogModel, on_delete=models.CASCADE, related_name='categories')
+    popularity = models.PositiveIntegerField(default=0, verbose_name=_('Популярность'))
 
     def __str__(self):
         return self.name

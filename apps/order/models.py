@@ -131,6 +131,9 @@ def update_stock_on_orderitem_create(sender, instance, created, **kwargs):
 
         instance.product.quantity_stock = F('quantity_stock') - instance.quantity
         instance.product.save(update_fields=['quantity_stock', ])
+        category = instance.product.subcategory.category
+        category.popularity += 1
+        category.save()
 
 
 @receiver(pre_save, sender=OrderItem)
