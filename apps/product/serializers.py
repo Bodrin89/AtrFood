@@ -65,6 +65,28 @@ class ListProductSerializer(serializers.ModelSerializer):
         model = ProductModel
         fields = '__all__'
 
+class PopularCategoriesSerializer(serializers.ModelSerializer):
+    """Получение популярных категорий"""
+
+    class Meta:
+        model = CategoryProductModel
+        fields = ['id', 'name', 'image',]
+
+# class CreateProductSerializer(serializers.ModelSerializer):
+#     """Создание товара"""
+#     # catalog = CatalogSerializer()
+#     # category = CategorySerializer()
+#     subcategory = SubCategoryProductSerializer()
+#     product_data = DescriptionProductSerializer()
+#
+#     class Meta:
+#         model = ProductModel
+#         fields = ('id', 'name', 'foto', 'price', 'discount_price', 'product_data', 'quantity_stock', 'subcategory')
+#         read_only_fields = ('id', 'discount_price',)
+#
+#     def create(self, validated_data):
+#         return ServiceProduct.create_product(validated_data)
+
 
 class ListCatalogSerializer(serializers.ModelSerializer):
     """Получение всех каталогов с вложенными категориями/подкатегориями"""
@@ -143,3 +165,8 @@ class GiftInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductModel
         fields = ['name', 'images', 'article', ]
+
+
+class GetProductListSerializer(serializers.Serializer):
+    """Получение списка ключей продуктов"""
+    product_keys = serializers.ListField(child=serializers.IntegerField())

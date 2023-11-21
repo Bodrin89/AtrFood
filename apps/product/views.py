@@ -31,7 +31,10 @@ from apps.product.serializers import (AddProductCompareSerializer,
                                       ListCatalogSerializer,
                                       ListProductSerializer,
                                       RetrieveProductSerializer,
-                                      SubCategoryProductSerializer, ListFavoriteProductSerializer)
+
+                                      SubCategoryProductSerializer,
+                                      PopularCategoriesSerializer,
+                                      GetProductListSerializer, ListFavoriteProductSerializer)
 from apps.product.services import ServiceProduct
 from config.settings import LOGGER
 
@@ -218,30 +221,63 @@ class PopularProductsView(ListAPIView):
         return ProductModel.objects.filter(id__in=popular_product_ids)
 
 
-class ViewedProductsView(ListAPIView):
+class PopularCategoriesView(ListAPIView):
+    """Список первых 4 популярных категорий"""
+
+    serializer_class = PopularCategoriesSerializer
+
+    def get_queryset(self):
+        return CategoryProductModel.objects.order_by('-popularity')[:4]
+
+
+class ViewedProductsView(APIView):
     """Список первых 20 просмотренных товаров"""
 
-    serializer_class = ListProductSerializer
+    serializer_class = GetProductListSerializer
 
-    def get_queryset(self):
-        viewed_products = self.request.session.get('viewed_products', [])
-        if viewed_products:
-            return ProductModel.objects.filter(id__in=viewed_products)
-        return ProductModel.objects.none()
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        viewed_products = serializer.validated_data['product_keys']
+        products = ProductModel.objects.filter(id__in=viewed_products)[:20]
+        serialized_products = ListProductSerializer(products, many=True).data
+        return Response({'products': serialized_products})
+
+    # def post(self, request, *args, **kwargs):
+    #     viewed_products = request.data.get('products', [])
+    #     products = ProductModel.objects.filter(id__in=viewed_products)[:20]
+    #     serializer = ListProductSerializer(products, many=True)
+    #     return Response(serializer.data)
+        # if viewed_products:
+        #     return ProductModel.objects.filter(id__in=viewed_products)[:20]
+        # return ProductModel.objects.none()
 
 
-class SimilarProductsView(ListAPIView):
+class SimilarProductsView(APIView):
     """Список похожих товаров"""
 
-    serializer_class = ListProductSerializer
+    serializer_class = GetProductListSerializer
 
-    def get_queryset(self):
-        viewed_products = self.request.session.get('viewed_products', [])
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        viewed_products = serializer.validated_data['product_keys']
         if viewed_products:
             first_product = ProductModel.objects.get(id=viewed_products[0])
-            return ProductModel.objects.filter(subcategory=first_product.subcategory, is_active=True).exclude(
+            similar = ProductModel.objects.filter(subcategory=first_product.subcategory, is_active=True).exclude(
                 id=first_product.id)[:20]
-        return ProductModel.objects.none()
+            serialized_products = ListProductSerializer(similar, many=True).data
+            return Response({'products': serialized_products})
+        return Response({'products': []})
+
+    # def get_queryset(self):
+    #     viewed_products = self.request.session.get('viewed_products', [])
+    #     if viewed_products:
+    #         first_product = ProductModel.objects.get(id=viewed_products[0])
+    #         return ProductModel.objects.filter(subcategory=first_product.subcategory, is_active=True).exclude(
+    #             id=first_product.id)[:20]
+    #     return ProductModel.objects.none()
 
 
 class NewProductView(ListAPIView):
