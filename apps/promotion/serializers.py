@@ -11,3 +11,5 @@ class ListDiscountSerializer(serializers.ModelSerializer):
         model = DiscountModel
         fields = '__all__'
         # fields = ('name', 'product')
+
+

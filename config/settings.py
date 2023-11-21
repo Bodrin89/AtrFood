@@ -204,7 +204,7 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'main_format': {
-            'format': '{asctime} - {levelname} - {module} - {filename} - {message}',
+            'format': '{asctime} - {levelname} - {module} - {filename} - {lineno} - {message}',
             'style': '{'
         }
     },
