@@ -25,16 +25,6 @@ class CreateCartSerializer(serializers.ModelSerializer):
         return ServiceCart.add_cart(validated_data)
 
 
-# class ListCartSerializer(serializers.Serializer):
-#     """Получение всех товаров из корзины и их количества в заказе"""
-
-    # product_id = serializers.IntegerField()
-    # quantity_product = serializers.IntegerField(min_value=0)
-    # sum_products = serializers.FloatField(min_value=0.0)
-    #
-    # def to_representation(self, instance):
-    #     return ServiceCart.get_list_product_cart(instance)
-
 class CartProductInfoSerializer(serializers.ModelSerializer):
     """Сериализатор информации о товаре в корзине"""
 

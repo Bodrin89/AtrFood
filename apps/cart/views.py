@@ -1,12 +1,8 @@
-from django.shortcuts import get_object_or_404
-from rest_framework.generics import CreateAPIView, DestroyAPIView, ListAPIView, RetrieveAPIView
+from rest_framework.generics import CreateAPIView, DestroyAPIView, RetrieveAPIView
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from apps.cart.models import CartModel, CartItem
 from apps.cart.serializers import CreateCartSerializer, ListCartSerializer
 from apps.cart.services import ServiceCart
-from apps.product.models import ProductModel
-from config.settings import LOGGER
 
 
 class CreateCartView(CreateAPIView):
@@ -39,9 +35,3 @@ class DeleteProductCartView(DestroyAPIView):
         del_obj.delete()
         ServiceCart.get_total_sum(cart_id)
         return Response('Объект удален')
-
-#
-# class TotalSumProduct(APIView):
-#     """Получение общей суммы в корзине и проверка товара на наличие"""
-#     def get(self, request, *args, **kwargs):
-#         return ServiceCart.get_total_sum(request)

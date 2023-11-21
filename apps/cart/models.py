@@ -14,6 +14,7 @@ class CartModel(models.Model):
     user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE, related_name='cart_user', null=True, blank=True)
     total_price = models.FloatField(null=True, blank=True, verbose_name=_('Итоговая сумма всех товаров'))
 
+
 class CartItem(models.Model):
     """Единица товара в корзине"""
     class Meta:

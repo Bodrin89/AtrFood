@@ -17,4 +17,4 @@ class CreateOrderViewSet(ModelViewSet):
         return Order.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(session=self.request.session, request=self.request)
+        serializer.save(request=self.request)
