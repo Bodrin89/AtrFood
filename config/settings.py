@@ -273,5 +273,5 @@ DEFAULT_MASSAGE_BOT = {
 
 if DEBUG:
     SIMPLE_JWT = {
-        "ACCESS_TOKEN_LIFETIME": timedelta(minutes=100),
+        "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1000),
     }

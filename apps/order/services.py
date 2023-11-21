@@ -57,6 +57,7 @@ class ServiceOrder:
                 )
 
         order.save()
+
         session['product_cart'] = []
         session.modified = True
         return order

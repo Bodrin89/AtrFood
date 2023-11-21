@@ -100,6 +100,7 @@ class ServiceCart:
         """Сохранение товаров в корзину"""
         cart_id = validated_data.get('cart_id')
         user_id = validated_data['user'].id
+        list_product_id = []
         if not cart_id:
             cart = CartModel.objects.create()
             cart_id = cart.id
@@ -109,6 +110,7 @@ class ServiceCart:
             raise serializers.ValidationError({"error": "Корзина не найдена"})
         for item_data in validated_data['product_item']:
             product_id = int(item_data['id'])
+            list_product_id.append(product_id)
             quantity_product = int(item_data['quantity_product'])
             product = ProductModel.objects.get(id=product_id)
             price = ProductModel.objects.get(id=product_id).price
@@ -117,6 +119,7 @@ class ServiceCart:
                     price = product.opt_price
             except TypeError:
                 pass
+
 
             limit_sum_product = price * quantity_product
 
@@ -161,69 +164,7 @@ class ServiceCart:
 
                         cart_item.save()
 
-            # def add_cart(validated_data: dict) -> dict:
-            #     """Сохранение товаров в корзину в сессии"""
-            #     product_id = validated_data['product_id']
-            #     session = validated_data['session']
-            #     product_cart = session.get('product_cart', [])
-            #     quantity_product = validated_data['quantity_product']
-            #     product: ProductModel = validated_data['product']
-            #     price = ProductModel.objects.get(id=product_id).price
-            #     try:
-            #         if quantity_product >= product.opt_quantity:
-            #             price = product.opt_price
-            #     except TypeError:
-            #         pass
-            #
-            #     limit_sum_product = price * quantity_product
-            #
-            #     ServiceCart._check_existence(product_id, quantity_product)
-            #
-            #     ServicePromotion.check_date_promotions()
-            #
-            #     # discounts = ServiceCart._get_discount(product, quantity_product, limit_sum_product)
-            #     # discount_amounts = [discount.discount_amount for discount in discounts]
-            #     #
-            #     # gifts = ServiceCart._get_gifts_product(discounts)
-            #     #
-            #     # if validated_data['user'].id and product.products.filter(use_limit_loyalty=True).exists():
-            #     #     user_id = validated_data['user'].id
-            #     #     ServiceCart.get_level_loyalty(user_id, discount_amounts)
-            #
-            #     discounts = ServiceCart._get_discount(product, quantity_product, limit_sum_product)
-            #     discount_amounts = [discount.discount_amount for discount in discounts]
-            #
-            #     gifts = ServiceCart._get_gifts_product(discounts)
-            #
-            #     user_id = validated_data['user'].id
-            #     if user_id:
-            #         if product.products.filter(use_limit_loyalty=True).exists() or not product.products.exists():
-            #             ServiceCart.get_level_loyalty(user_id, discount_amounts)
-            #
-            #     found = False
-            #     for item in product_cart:
-            #         if item.get('product_id') == product_id:
-            #             item['quantity_product'] = quantity_product
-            #             item['sum_products'] = ServiceCart._get_sum_price_product(price, quantity_product,
-            #                                                                       discount_amounts)
-            #             item['gifts'] = gifts
-            #             found = True
-            #             break
-            #
-            #     if not found:
-            #         product_cart.append({
-            #             'product_id': product_id,
-            #             'quantity_product': quantity_product,
-            #             'sum_products': ServiceCart._get_sum_price_product(price, quantity_product, discount_amounts),
-            #             'gifts': gifts
-            #         })
-            #     session['product_cart'] = product_cart
-            #     session.modified = True
-            #     for item in discounts:
-            #         item.count_person += 1
-            #         item.count_product += quantity_product
-            #         item.save()
-            #     return validated_data
+        product_cart.cart_item.exclude(product_id__in=list_product_id).delete()
 
         total_sum = CartItem.objects.filter(cart_id=cart_id).aggregate(total_sum=Sum('sum_products'))
         sum_products_sum = total_sum.get('total_sum', 0)
@@ -283,16 +224,28 @@ class ServiceCart:
         request.session.modified = True
         return Response({'message': _('Товар удален из корзины')}, status=status.HTTP_204_NO_CONTENT)
 
+    # @staticmethod
+    # def get_total_sum(request):
+    #     """Получение общей суммы в корзине и проверка товара на наличие"""
+    #     product_cart = request.session.get('product_cart', [])
+    #     total_sum = []
+    #     not_existence = []
+    #     for item in product_cart:
+    #         product = ProductModel.objects.get(id=item.get('product_id'))
+    #         if product.existence is True:
+    #             total_sum.append(item.get('sum_products'))
+    #         else:
+    #             not_existence.append(product.id)
+    #     return Response({'total_sum': sum(total_sum), 'Товары не в наличии': not_existence})
+
+
     @staticmethod
-    def get_total_sum(request):
+    def get_total_sum(card_id):
         """Получение общей суммы в корзине и проверка товара на наличие"""
-        product_cart = request.session.get('product_cart', [])
-        total_sum = []
-        not_existence = []
-        for item in product_cart:
-            product = ProductModel.objects.get(id=item.get('product_id'))
-            if product.existence is True:
-                total_sum.append(item.get('sum_products'))
-            else:
-                not_existence.append(product.id)
-        return Response({'total_sum': sum(total_sum), 'Товары не в наличии': not_existence})
+        product_cart = CartModel.objects.get(id=card_id)
+        total_sum = product_cart.cart_item.all().aggregate(total_sum=Sum('sum_products'))
+        sum_products_sum = total_sum.get('total_sum', 0)
+        product_cart.total_price = sum_products_sum
+        product_cart.save()
+        return True
+
