@@ -22,3 +22,9 @@ compilemessages:
 
 start:
 	 gunicorn config.wsgi:application -w 4 -b 0.0.0.0:8083
+
+celery_task_clear_old_cart:
+	celery -A config worker --detach
+
+celery_beat_clear_old_cart:
+	celery -A config beat --detach

@@ -57,6 +57,7 @@ urlpatterns = [
     path('api/blog/', include(('apps.blog.urls', 'apps.blog'))),
     path('api/library/', include(('apps.library.urls', 'apps.library'))),
     path('api/documents/', include(('apps.document.urls', 'apps.document'))),
+    path('api/payment/', include(('apps.payment.urls', 'apps.payment'))),
 
     prefix_default_language=True,
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

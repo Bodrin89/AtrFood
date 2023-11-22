@@ -29,5 +29,5 @@ class CartItem(models.Model):
                               verbose_name=_('Подарок'))
 
     def __str__(self):
-        return f'CartItem c товаром {self.product.name} в корзине {self.cart.id}'
+        return 'CartItem'
 

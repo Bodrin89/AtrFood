@@ -54,7 +54,8 @@ LOCAL_APPS = [
     'apps.document',
     'apps.notes',
     'apps.tg_bot',
-    'apps.administrative_staff'
+    'apps.administrative_staff',
+    'apps.payment',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -273,5 +274,5 @@ DEFAULT_MASSAGE_BOT = {
 
 if DEBUG:
     SIMPLE_JWT = {
-        "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1000),
+        "ACCESS_TOKEN_LIFETIME": timedelta(minutes=4000),
     }

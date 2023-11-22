@@ -7,7 +7,7 @@ from apps.document.models import DocumentModel, AvrFileModel
 class FileAVRSerializer(serializers.ModelSerializer):
     class Meta:
         model = AvrFileModel
-        fields = ('file_avr', 'name')
+        fields = ('id', 'file_avr', 'name')
 
 
 class DocumentSerializer(serializers.ModelSerializer):
@@ -16,7 +16,7 @@ class DocumentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DocumentModel
-        fields = ('file_avr', 'file_payment_invoice', 'company_user', 'name')
+        fields = ('id', 'file_avr', 'file_payment_invoice', 'company_user', 'name')
 
 
 
