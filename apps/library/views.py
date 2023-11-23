@@ -30,7 +30,6 @@ class CountryManufacturerView(ListAPIView):
 
 class ManufacturingCompanyView(ListAPIView):
     serializer_class = ManufacturingCompanySerializer
-    # queryset = ManufacturingCompany.objects.all()
 
     def get_queryset(self):
         query_params = self.request.query_params
