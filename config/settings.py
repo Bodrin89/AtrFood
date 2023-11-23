@@ -7,8 +7,6 @@ from django.core.cache import cache
 from django.utils.translation import gettext_lazy as _
 from dotenv import load_dotenv
 
-# from django.conf.locale import LANG_INFO
-
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -157,21 +155,6 @@ LANGUAGE_CODE = 'ru'
 
 MODELTRANSLATION_DEFAULT_LANGUAGE = 'ru'
 # MODELTRANSLATION_PREPOPULATE_LANGUAGE = 'en'
-
-# LANG_INFO = {
-#     'kz': {
-#         'bidi': False,
-#         'code': 'kz',
-#         'name': 'Kazakh',
-#         'name_local': 'Қазақ',
-#     },
-#     'ru': {
-#         'bidi': False,
-#         'code': 'ru',
-#         'name': 'Russian',
-#         'name_local': 'Русский',
-#     },
-# }
 
 LANGUAGES = [
     ('ru', _('Russian')),

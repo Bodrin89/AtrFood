@@ -30,11 +30,15 @@ class CountryManufacturerView(ListAPIView):
 
 class ManufacturingCompanyView(ListAPIView):
     serializer_class = ManufacturingCompanySerializer
+    pagination_class = None
 
     def get_queryset(self):
         query_params = self.request.query_params
         if subcategory := query_params.get('subcategory'):
-            return ManufacturingCompany.objects.filter(product_data_manufacture__product__subcategory=subcategory)
+            manufacture = ManufacturingCompany.objects.filter(
+                product_data_manufacture__product__subcategory=subcategory
+            ).prefetch_related('product_data_manufacture__product__subcategory')
+            return set(manufacture)
         return ManufacturingCompany.objects.all()
 
 
