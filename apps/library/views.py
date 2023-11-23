@@ -5,6 +5,7 @@ from apps.library.models import PrivacyPolicy, ReturnPolicy, AboutCompany, City,
 from apps.library.serializers import ReturnPolicySerializer, PrivacyPolicySerializer, AboutCompanySerializer, \
     AddressArtFoodSerializer, SocialNetworkSerializer, CitySerializer, DistrictSerializer, CountrySerializer, \
     ManufacturingCompanySerializer
+from config.settings import LOGGER
 
 
 class PrivacyPolicyView(ListAPIView):
@@ -29,7 +30,13 @@ class CountryManufacturerView(ListAPIView):
 
 class ManufacturingCompanyView(ListAPIView):
     serializer_class = ManufacturingCompanySerializer
-    queryset = ManufacturingCompany.objects.all()
+    # queryset = ManufacturingCompany.objects.all()
+
+    def get_queryset(self):
+        query_params = self.request.query_params
+        if subcategory := query_params.get('subcategory'):
+            return ManufacturingCompany.objects.filter(product_data_manufacture__product__subcategory=subcategory)
+        return ManufacturingCompany.objects.all()
 
 
 class CityView(ListAPIView):

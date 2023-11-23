@@ -4,7 +4,7 @@ from datetime import timedelta
 from django.utils.encoding import escape_uri_path
 from django.utils.translation import gettext_lazy as _
 
-from django.db.models import Sum
+from django.db.models import Sum, Min, Max
 from django.http import HttpResponse, HttpResponseNotFound
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
@@ -36,13 +36,6 @@ from apps.product.serializers import (AddProductCompareSerializer,
                                       PopularCategoriesSerializer,
                                       GetProductListSerializer, ListFavoriteProductSerializer)
 from apps.product.services import ServiceProduct
-from config.settings import LOGGER
-
-
-# class CreateProductView(CreateAPIView):
-#     """Создание товара"""
-#     # permission_classes = [IsAdminUser]
-#     serializer_class = CreateProductSerializer
 
 
 class GetProductView(RetrieveAPIView):
@@ -67,23 +60,31 @@ class ListProductView(ListAPIView):
     filter_backends = [SearchFilter, DjangoFilterBackend, OrderingFilter]
     filterset_class = ProductFilter
     search_fields = ['name', 'product_data__manufacturer__name']
-    ordering_fields = [
-        'id',
-        'name',
-        'article',
-        'price',
-        'discount_price',
-        'rating',
-        'date_create',
-        'product_data',
-        'subcategory'
-    ]
+    ordering_fields = ['id', 'name', 'article', 'price', 'discount_price', 'rating', 'date_create', 'product_data',
+                       'subcategory']
 
     def get(self, request, *args, **kwargs):
         """Получение параметров пагинации из query_params)"""
         if page_size := self.request.query_params.get('page_size', None):
             self.pagination_class.page_size = int(page_size)
         return super().get(request, *args, **kwargs)
+
+
+class MinMaxPriceProduct(APIView):
+
+    def get(self, request, *args, **kwargs):
+        """Получение максимальной и минимально цены товаров в зависимости от query_params"""
+        query_params = self.request.query_params
+        query_clear = {k: v for k, v in query_params.items() if v}
+        queryset = ProductModel.objects.select_related('product_data').filter(**query_clear)
+        if not queryset:
+            min_max_prices = ProductModel.objects.select_related('product_data').all().aggregate(min_price=Min(
+                'price'), max_price=Max('price'))
+        else:
+            min_max_prices = queryset.aggregate(min_price=Min('price'), max_price=Max('price'))
+        min_price = min_max_prices['min_price']
+        max_price = min_max_prices['max_price']
+        return Response({"min_price": min_price, "max_price": max_price})
 
 
 class ListProductSubcategoryView(ListAPIView):

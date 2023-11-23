@@ -92,6 +92,7 @@ class DescriptionProductModel(models.Model):
     manufacturer = models.ForeignKey(
         ManufacturingCompany,
         on_delete=models.PROTECT,
+        related_name='product_data_manufacture',
         verbose_name=_('Компания производитель')
     )
     made_in = models.ForeignKey(CountryManufacturer, on_delete=models.PROTECT, verbose_name=_('Страна изготовитель'))
