@@ -24,7 +24,7 @@ class ManufacturingCompanySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ManufacturingCompany
-        fields = ['name', 'logo']
+        fields = ['id', 'name', 'logo']
 
 
 class DistrictSerializer(serializers.ModelSerializer):
@@ -47,7 +47,7 @@ class CountrySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CountryManufacturer
-        fields = ['name', ]
+        fields = ['id', 'name', ]
 
 
 class ReturnPolicySerializer(serializers.ModelSerializer):
@@ -76,10 +76,12 @@ class OpenStoreSerializer(serializers.ModelSerializer):
         model = OpenStore
         fields = ('day', 'time_open', 'time_close')
 
+
 class ContactArtFoodSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactArtFood
         fields = ('phone_numbers',)
+
 
 class AddressArtFoodSerializer(serializers.ModelSerializer):
     city = CitySerializer()

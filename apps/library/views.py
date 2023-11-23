@@ -1,8 +1,10 @@
 from dal import autocomplete
 from rest_framework.generics import ListAPIView
-from apps.library.models import PrivacyPolicy, ReturnPolicy, AboutCompany, City, District, AddressArtFood, SocialNetwork
+from apps.library.models import PrivacyPolicy, ReturnPolicy, AboutCompany, City, District, AddressArtFood, \
+    SocialNetwork, CountryManufacturer, ManufacturingCompany
 from apps.library.serializers import ReturnPolicySerializer, PrivacyPolicySerializer, AboutCompanySerializer, \
-    AddressArtFoodSerializer, SocialNetworkSerializer, CitySerializer, DistrictSerializer
+    AddressArtFoodSerializer, SocialNetworkSerializer, CitySerializer, DistrictSerializer, CountrySerializer, \
+    ManufacturingCompanySerializer
 
 
 class PrivacyPolicyView(ListAPIView):
@@ -18,6 +20,16 @@ class ReturnPolicyView(ListAPIView):
 class AboutCompanyView(ListAPIView):
     serializer_class = AboutCompanySerializer
     queryset = AboutCompany.objects.all()
+
+
+class CountryManufacturerView(ListAPIView):
+    serializer_class = CountrySerializer
+    queryset = CountryManufacturer.objects.all()
+
+
+class ManufacturingCompanyView(ListAPIView):
+    serializer_class = ManufacturingCompanySerializer
+    queryset = ManufacturingCompany.objects.all()
 
 
 class CityView(ListAPIView):
