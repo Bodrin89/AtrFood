@@ -8,11 +8,9 @@ from django.db import transaction
 
 from apps.order.models import Order
 from apps.payment.models import PaymentOrder
-
+from config.settings import URL_PAYMENT_ORDER, CURRENCY
 
 API_KEY = os.getenv('PAYMENT_API_KEY')
-url_get_order = "https://stage-api.ioka.kz/v2/orders"
-url_webhook = "https://stage-api.ioka.kz/v2/webhooks"
 
 
 class PaymentService:
@@ -31,17 +29,17 @@ class PaymentService:
         if total_price:
             total_price = str(total_price) + '00'
 
-        payload = json.dumps({'amount': total_price, "currency": "KZT"})
+        body = json.dumps({'amount': total_price, "currency": CURRENCY})
         headers = {'API-KEY': API_KEY, 'Content-Type': 'application/json'}
 
         if get_payment_order := PaymentOrder.objects.select_related('order').filter(order_id=order_id).first():
             payment_order_id = get_payment_order.payment_order_id
-            response = requests.get(url_get_order + f'/{payment_order_id}', headers=headers, data=payload)
+            response = requests.get(URL_PAYMENT_ORDER + f'/{payment_order_id}', headers=headers, data=body)
             pay_url = response.json()['checkout_url']
             response_data = {"order_id": order_id, "pay_url": pay_url}
             return response_data
         else:
-            response = requests.post(url_get_order, headers=headers, data=payload)
+            response = requests.post(URL_PAYMENT_ORDER, headers=headers, data=body)
 
             with transaction.atomic():
                 payment_order = response.json()['order']

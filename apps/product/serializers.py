@@ -29,6 +29,15 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ('name', 'image', 'subcategories', 'id')
 
 
+class CategoryListSerializer(serializers.ModelSerializer):
+    """Список всех категорий"""
+
+    class Meta:
+        model = CategoryProductModel
+        fields = ('name', 'image', 'id')
+
+
+
 class CatalogSerializer(serializers.ModelSerializer):
     """Каталог"""
 

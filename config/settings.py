@@ -255,6 +255,9 @@ DEFAULT_MASSAGE_BOT = {
                                       'нажмите "cancel"',
 }
 
+URL_PAYMENT_ORDER = "https://stage-api.ioka.kz/v2/orders"
+URL_PAYMENT_WEBHOOK = "https://stage-api.ioka.kz/v2/webhooks"
+CURRENCY = "KZT"
 
 if DEBUG:
     SIMPLE_JWT = {

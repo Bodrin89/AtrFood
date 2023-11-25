@@ -34,7 +34,7 @@ from apps.product.serializers import (AddProductCompareSerializer,
 
                                       SubCategoryProductSerializer,
                                       PopularCategoriesSerializer,
-                                      GetProductListSerializer, ListFavoriteProductSerializer)
+                                      GetProductListSerializer, ListFavoriteProductSerializer, CategoryListSerializer)
 from apps.product.services import ServiceProduct
 
 
@@ -136,6 +136,22 @@ class ListCategorySubcategoryView(ListAPIView):
     def get_queryset(self):
         catalog_id = self.kwargs.get('catalog_id')
         return CategoryProductModel.objects.filter(catalog_id=catalog_id).all()
+
+
+class ListCategoryView(ListAPIView):
+    """Получение всех категорий"""
+    serializer_class = CategoryListSerializer
+
+    def get_queryset(self):
+        return CategoryProductModel.objects.all()
+
+
+class RetrieveCategoryView(RetrieveAPIView):
+    """Получение категории по id и ее подкатегории"""
+    serializer_class = CategorySerializer
+
+    def get_queryset(self):
+        return CategoryProductModel.objects.all()
 
 
 class SubcategoryDownloadView(APIView):

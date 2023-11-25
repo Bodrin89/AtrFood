@@ -35,7 +35,8 @@ def create_webhook(*args):
     url_create_webhook = URL_CREATE_WEBHOOK
 
     data = {
-        "url": "https://43b2-94-43-3-29.ngrok-free.app/ru/api/payment/webhook/payment/3jhghj7fg6d3",
+        # "url": "https://43b2-94-43-3-29.ngrok-free.app/ru/api/payment/webhook/payment/3jhghj7fg6d3",
+        "url": "https://artfood.dev.thefactory.kz/ru/api/payment/webhook/payment/3jhghj7fg6d3",
         "events": args
     }
 
@@ -65,8 +66,8 @@ def delete_webhook(webhook_id):
 
     print(response.status_code)
 
+
 # delete_webhook("whk_4qLJU4B1aO")
 # create_webhook("ORDER_EXPIRED", "PAYMENT_DECLINED", "PAYMENT_CAPTURED", "CARD_DECLINED")
-
 # get_all_webhooks()
 
