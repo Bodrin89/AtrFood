@@ -255,6 +255,7 @@ DEFAULT_MASSAGE_BOT = {
                                       'нажмите "cancel"',
 }
 
+
 if DEBUG:
     SIMPLE_JWT = {
         "ACCESS_TOKEN_LIFETIME": timedelta(minutes=4000),
