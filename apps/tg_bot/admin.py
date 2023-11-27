@@ -7,6 +7,7 @@ from apps.tg_bot.models import BotMessage
 @admin.register(BotMessage)
 class BotMassageAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
+        """Убирает возможность создавать больше одного объекта через админ панель"""
         return not BotMessage.objects.exists()
 
     def changelist_view(self, request, extra_context=None):

@@ -4,7 +4,7 @@ from datetime import timedelta
 from django.utils.encoding import escape_uri_path
 from django.utils.translation import gettext_lazy as _
 
-from django.db.models import Sum, Min, Max
+from django.db.models import Sum, Min, Max, Q
 from django.http import HttpResponse, HttpResponseNotFound
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
@@ -21,7 +21,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
-from apps.order.models import OrderItem
+from apps.order.models import OrderItem, Order
 from apps.product.filters import ProductFilter
 from apps.product.models import CatalogModel, CategoryProductModel, ProductModel, SubCategoryProductModel, \
     FavoriteProductModel
@@ -36,6 +36,8 @@ from apps.product.serializers import (AddProductCompareSerializer,
                                       PopularCategoriesSerializer,
                                       GetProductListSerializer, ListFavoriteProductSerializer, CategoryListSerializer)
 from apps.product.services import ServiceProduct
+from apps.review.models import ReviewProductModel
+from config.settings import LOGGER
 
 
 class GetProductView(RetrieveAPIView):
@@ -50,6 +52,30 @@ class GetProductView(RetrieveAPIView):
         pk = self.kwargs.get('pk')
         ServiceProduct.add_viewed_products(pk, request)
         return super().get(request, *args, **kwargs)
+
+
+class ListProductUserNotReviewView(ListAPIView):
+    """Получение товаров пользователя на которые он не сделал отзыв"""
+    serializer_class = ListProductSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        product_not_review = ProductModel.objects.filter(order_item_product__order__user=user).exclude(
+            review_product__user=user).distinct()
+        return product_not_review
+
+
+class ListProductUserReviewView(ListAPIView):
+    """Получение товаров пользователя на которые он не сделал отзыв"""
+    serializer_class = ListProductSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        product_review_user = ProductModel.objects.filter(review_product__user=user,
+                                                          order_item_product__order__user=user).distinct()
+        return product_review_user
 
 
 class ListProductView(ListAPIView):
@@ -202,6 +228,7 @@ class ListFavoriteProductView(ListAPIView):
 
 class DestroyFavoriteProduct(DestroyAPIView):
     """Удаление товара из избранных"""
+
     def delete(self, request, *args, **kwargs):
         favorite_product = get_object_or_404(FavoriteProductModel, id=self.kwargs['pk'], user=self.request.user)
         favorite_product.delete()
@@ -265,16 +292,15 @@ class ViewedProductsView(APIView):
     #     products = ProductModel.objects.filter(id__in=viewed_products)[:20]
     #     serializer = ListProductSerializer(products, many=True)
     #     return Response(serializer.data)
-        # if viewed_products:
-        #     return ProductModel.objects.filter(id__in=viewed_products)[:20]
-        # return ProductModel.objects.none()
+    # if viewed_products:
+    #     return ProductModel.objects.filter(id__in=viewed_products)[:20]
+    # return ProductModel.objects.none()
 
 
 class SimilarProductsView(APIView):
     """Список похожих товаров"""
 
     serializer_class = GetProductListSerializer
-
 
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)

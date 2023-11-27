@@ -18,10 +18,10 @@ class ReviewProductModel(models.Model):
         FOUR_STAR = 4, _('Четыре звезды')
         FIVE_STAR = 5, _('Пять звезд')
 
-    # count_stars = models.I(max_length=1, choices=Stars.choices, default=None, verbose_name='количество звезд')
     count_stars = models.PositiveIntegerField(choices=Stars.choices, default=0, verbose_name=_('Количество звезд'))
     review_text = models.TextField(blank=True, null=True, verbose_name=_('Отзыв'))
-    product = models.ForeignKey(ProductModel, on_delete=models.CASCADE, verbose_name=_('Продукт'))
+    product = models.ForeignKey(ProductModel, on_delete=models.CASCADE, related_name='review_product',
+                                verbose_name=_('Продукт'))
     user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE, verbose_name=_('Пользователь'))
     date_created = models.DateField(auto_now=True, verbose_name='Дата создания')
 

@@ -102,8 +102,9 @@ class OrderItem(models.Model):
         verbose_name = _('Товар в заказе')
         verbose_name_plural = _('Товары в заказе')
 
-    order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE, verbose_name=_('Заказ'))
-    product = models.ForeignKey(ProductModel, on_delete=models.SET_NULL, verbose_name=_('Товар'), null=True)
+    order = models.ForeignKey(Order, related_name='order_items', on_delete=models.CASCADE, verbose_name=_('Заказ'))
+    product = models.ForeignKey(ProductModel, on_delete=models.SET_NULL, related_name='order_item_product',
+                                verbose_name=_('Товар'), null=True)
     quantity = models.PositiveIntegerField(verbose_name=_('Количество товара'))
     price = models.PositiveIntegerField(verbose_name=_('Стоимость товара с учетом количества'))
     gift = models.ForeignKey(ProductModel, on_delete=models.SET_NULL, related_name='order_items_gift', null=True,

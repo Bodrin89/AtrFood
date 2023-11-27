@@ -17,11 +17,16 @@ from apps.product.views import (AddProductCompareView,
                                 ListSubcategoryView,
                                 SubcategoryDownloadView,
                                 PopularCategoriesView, DestroyFavoriteProduct, MinMaxPriceProduct, ListCategoryView,
-                                RetrieveCategoryView, )
+                                RetrieveCategoryView, ListProductUserNotReviewView, ListProductUserReviewView, )
+
+
+
 
 urlpatterns = [
     # path('products/create', CreateProductView.as_view(), name='create-product'),
     path('', ListProductView.as_view(), name='list-product'),
+    path('not_review', ListProductUserNotReviewView.as_view(), name='list-product-not-review'),
+    path('is_review', ListProductUserReviewView.as_view(), name='list-product-not-review'),
     path('subcategories/<int:subcategory_id>', ListProductSubcategoryView.as_view(),
          name='subcategory-products'),
     path('category/<int:category_id>', ListProductCategoryView.as_view(), name='category-products'),

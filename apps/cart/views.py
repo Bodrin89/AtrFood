@@ -22,6 +22,7 @@ class ListCartView(RetrieveAPIView):
 
     def get_queryset(self):
         cart_id = self.kwargs.get('pk')
+        ServiceCart.get_total_sum(cart_id)
         product_cart = CartModel.objects.filter(id=cart_id)
         return product_cart
 

@@ -10,6 +10,7 @@ from apps.product.models import ProductModel
 from apps.promotion.models import DiscountModel, LoyaltyModel
 from apps.promotion.services import ServicePromotion
 from apps.user.models import BaseUserModel
+from config.settings import LOGGER
 
 
 class ServiceCart:
@@ -163,27 +164,38 @@ class ServiceCart:
         product_cart.save()
         return product_cart
 
-    @staticmethod
-    def delete_product_cart(request, *args, **kwargs):
-        """Удаление товара из корзины перезапись сессии"""
-        product_cart = request.session.get('product_cart', [])
-        product_id = kwargs.get('product_id')
+    # @staticmethod
+    # def delete_product_cart(request, *args, **kwargs):
+    #     """Удаление товара из корзины перезапись сессии"""
+    #     product_cart = request.session.get('product_cart', [])
+    #     product_id = kwargs.get('product_id')
+    #
+    #     if not any(item.get('product_id') == product_id for item in product_cart):
+    #         return Response({'message': _('Товар не найден в корзине')}, status=status.HTTP_404_NOT_FOUND)
+    #
+    #     updated_cart = [item for item in product_cart if item.get('product_id') != product_id]
+    #
+    #     request.session['product_cart'] = updated_cart
+    #     request.session.modified = True
+    #     return Response({'message': _('Товар удален из корзины')}, status=status.HTTP_204_NO_CONTENT)
 
-        if not any(item.get('product_id') == product_id for item in product_cart):
-            return Response({'message': _('Товар не найден в корзине')}, status=status.HTTP_404_NOT_FOUND)
-
-        updated_cart = [item for item in product_cart if item.get('product_id') != product_id]
-
-        request.session['product_cart'] = updated_cart
-        request.session.modified = True
-        return Response({'message': _('Товар удален из корзины')}, status=status.HTTP_204_NO_CONTENT)
+    # @staticmethod
+    # def get_total_sum(card_id):
+    #     """Перерасчет суммы товаров в корзине"""
+    #     product_cart = CartModel.objects.get(id=card_id)
+    #     total_sum = product_cart.cart_item.all().aggregate(total_sum=Sum('sum_products'))
+    #     sum_products_sum = total_sum.get('total_sum', 0)
+    #     product_cart.total_price = sum_products_sum
+    #     product_cart.save()
+    #     return True
 
     @staticmethod
     def get_total_sum(card_id):
         """Перерасчет суммы товаров в корзине"""
         product_cart = CartModel.objects.get(id=card_id)
-        total_sum = product_cart.cart_item.all().aggregate(total_sum=Sum('sum_products'))
-        sum_products_sum = total_sum.get('total_sum', 0)
-        product_cart.total_price = sum_products_sum
+        total_sum = product_cart.cart_item.filter(product__existence=True,
+                                                  quantity_product__lte=F('product__quantity_stock')).aggregate(
+            total_sum=Sum('sum_products')).get('total_sum', 0)
+        product_cart.total_price = total_sum
         product_cart.save()
         return True

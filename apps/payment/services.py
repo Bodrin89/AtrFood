@@ -32,7 +32,7 @@ class PaymentService:
         body = json.dumps({'amount': total_price, "currency": CURRENCY})
         headers = {'API-KEY': API_KEY, 'Content-Type': 'application/json'}
 
-        if get_payment_order := PaymentOrder.objects.select_related('order').filter(order_id=order_id).first():
+        if get_payment_order := PaymentOrder.objects.filter(order_id=order_id).first():
             payment_order_id = get_payment_order.payment_order_id
             response = requests.get(URL_PAYMENT_ORDER + f'/{payment_order_id}', headers=headers, data=body)
             pay_url = response.json()['checkout_url']
@@ -45,7 +45,6 @@ class PaymentService:
                 payment_order = response.json()['order']
                 pay_url = payment_order['checkout_url']
                 response_data = {"order_id": order_id, "pay_url": pay_url}
-
                 created, _ = PaymentOrder.objects.get_or_create(user=user,
                                                                 order=order,
                                                                 payment_order_id=payment_order['id'],
