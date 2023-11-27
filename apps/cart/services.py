@@ -26,10 +26,12 @@ class ServiceCart:
         try:
             ProductModel.objects.get(id=product_id, existence=True)
         except ProductModel.DoesNotExist:
+            pass
             raise serializers.ValidationError({'error': _('Товара нет в наличии')})
         try:
             ProductModel.objects.get(id=product_id, quantity_stock__gte=quantity_product)
         except ProductModel.DoesNotExist:
+            pass
             raise serializers.ValidationError({'error': _('Нужного количества нет на складе')})
 
     @staticmethod
@@ -155,13 +157,11 @@ class ServiceCart:
                         cart_item.save()
 
         product_cart.cart_item.exclude(product_id__in=list_product_id).delete()
-
-        total_sum = CartItem.objects.filter(cart_id=cart_id).aggregate(total_sum=Sum('sum_products'))
-        sum_products_sum = total_sum.get('total_sum', 0)
-        product_cart.total_price = sum_products_sum
+        product_cart = ServiceCart.get_total_sum(product_cart.id)
         if user_id:
             product_cart.user = BaseUserModel.objects.get(id=user_id)
         product_cart.save()
+
         return product_cart
 
     # @staticmethod
@@ -198,4 +198,4 @@ class ServiceCart:
             total_sum=Sum('sum_products')).get('total_sum', 0)
         product_cart.total_price = total_sum
         product_cart.save()
-        return True
+        return product_cart

@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from apps.cart.models import CartModel, CartItem
 from apps.cart.serializers import CreateCartSerializer, ListCartSerializer
 from apps.cart.services import ServiceCart
+from config.settings import LOGGER
 
 
 class CreateCartView(CreateAPIView):
@@ -31,8 +32,9 @@ class DeleteProductCartView(DestroyAPIView):
     """Удаление товара из корзины"""
     def delete(self, request, *args, **kwargs):
         cart_id = self.request.data.get('cart_id')
-        cart_item_id = self.request.data.get('cart_item_id')
-        del_obj = CartItem.objects.filter(id=cart_item_id, cart_id=cart_id)
+        product_id = self.request.data.get('product_id')
+        LOGGER.debug(product_id)
+        del_obj = CartItem.objects.filter(product_id=product_id, cart_id=cart_id)
         del_obj.delete()
         ServiceCart.get_total_sum(cart_id)
         return Response('Объект удален')
