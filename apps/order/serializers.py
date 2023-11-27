@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+from apps.cart.serializers import CartProductInfoSerializer
 from apps.order.models import Order, OrderItem, DeliveryAddress
 from apps.order.services import ServiceOrder
 from apps.product.serializers import ProductInfoSerializer, GiftInfoSerializer
@@ -52,7 +54,7 @@ class CreateOrderSerializer(serializers.ModelSerializer):
 class GetOrderSerializer(serializers.ModelSerializer):
     """Сериализатор заказов пользователя"""
 
-    items = OrderItemSerializer(many=True, read_only=True)
+    order_items = OrderItemSerializer(many=True, read_only=True)
     delivery_address = DeliveryAddressSerializer(read_only=True)
     total_quantity = serializers.CharField(read_only=True)
     total_price = serializers.CharField(read_only=True)
@@ -70,6 +72,6 @@ class GetOrderSerializer(serializers.ModelSerializer):
             'status',
             'total_quantity',
             'total_price',
-            'items',
+            'order_items',
             ]
 

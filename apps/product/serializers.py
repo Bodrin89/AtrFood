@@ -143,10 +143,11 @@ class AddProductCompareSerializer(serializers.ModelSerializer):
 
 class ProductInfoSerializer(serializers.ModelSerializer):
     """Получение всех товаров в заказ"""
+    images = ProductImageSerializer(source='images.all', many=True)
 
     class Meta:
         model = ProductModel
-        fields = ['name', 'price', 'article', 'discount_price']
+        fields = ['name', 'price', 'article', 'discount_price', 'images', 'opt_price', 'existence', 'rating']
 
 
 class FavoriteProductInfoSerializer(serializers.ModelSerializer):

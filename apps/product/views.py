@@ -67,7 +67,7 @@ class ListProductUserNotReviewView(ListAPIView):
 
 
 class ListProductUserReviewView(ListAPIView):
-    """Получение товаров пользователя на которые он не сделал отзыв"""
+    """Получение товаров пользователя на которые он сделал отзыв"""
     serializer_class = ListProductSerializer
     permission_classes = [IsAuthenticated]
 
