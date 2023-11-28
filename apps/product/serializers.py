@@ -189,10 +189,16 @@ class ProductReviewInfoSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(source='images.all', many=True)
     review_text = serializers.SerializerMethodField()
     id_review = serializers.SerializerMethodField()
+    count_star = serializers.SerializerMethodField()
 
     class Meta:
         model = ProductModel
-        fields = ('id', 'images', 'name', 'rating', 'review_text', 'id_review')
+        fields = ('id', 'images', 'name',  'review_text', 'id_review', 'count_star')
+
+    def get_count_star(self, obj: ProductModel):
+        user = self.context['request'].user
+        review = obj.review_product.filter(user=user).first()
+        return review.count_stars if review else None
 
     def get_id_review(self, obj: ProductModel):
         user = self.context['request'].user
