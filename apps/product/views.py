@@ -34,7 +34,8 @@ from apps.product.serializers import (AddProductCompareSerializer,
 
                                       SubCategoryProductSerializer,
                                       PopularCategoriesSerializer,
-                                      GetProductListSerializer, ListFavoriteProductSerializer, CategoryListSerializer)
+                                      GetProductListSerializer, ListFavoriteProductSerializer, CategoryListSerializer,
+                                      ProductReviewInfoSerializer)
 from apps.product.services import ServiceProduct
 from apps.review.models import ReviewProductModel
 from config.settings import LOGGER
@@ -56,7 +57,7 @@ class GetProductView(RetrieveAPIView):
 
 class ListProductUserNotReviewView(ListAPIView):
     """Получение товаров пользователя на которые он не сделал отзыв"""
-    serializer_class = ListProductSerializer
+    serializer_class = ProductReviewInfoSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -68,7 +69,7 @@ class ListProductUserNotReviewView(ListAPIView):
 
 class ListProductUserReviewView(ListAPIView):
     """Получение товаров пользователя на которые он сделал отзыв"""
-    serializer_class = ListProductSerializer
+    serializer_class = ProductReviewInfoSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):

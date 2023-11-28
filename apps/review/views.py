@@ -16,6 +16,7 @@ from apps.review.serializers import ReviewCreateSerializer
 #         product_id = self.kwargs.get('product_id')
 #         product = get_object_or_404(ProductModel, id=product_id)
 #         serializer.save(product=product)
+from config.settings import LOGGER
 
 
 class ReviewProductViewSet(ModelViewSet):

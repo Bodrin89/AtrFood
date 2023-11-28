@@ -22,7 +22,8 @@ class ReviewProductModel(models.Model):
     review_text = models.TextField(blank=True, null=True, verbose_name=_('Отзыв'))
     product = models.ForeignKey(ProductModel, on_delete=models.CASCADE, related_name='review_product',
                                 verbose_name=_('Продукт'))
-    user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE, verbose_name=_('Пользователь'))
+    user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE, related_name='review_user',
+                             verbose_name=_('Пользователь'))
     date_created = models.DateField(auto_now=True, verbose_name='Дата создания')
 
     def __str__(self):

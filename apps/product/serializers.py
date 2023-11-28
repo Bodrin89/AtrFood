@@ -10,6 +10,8 @@ from apps.product.models import (CatalogModel,
                                  )
 from apps.product.services import ServiceProduct
 from apps.library.serializers import ManufacturingCompanySerializer, CountrySerializer, PackageTypeSerializer
+from apps.review.models import ReviewProductModel
+from apps.review.serializers import ReviewImageSerializer
 from config.settings import LOGGER
 
 
@@ -35,7 +37,6 @@ class CategoryListSerializer(serializers.ModelSerializer):
     class Meta:
         model = CategoryProductModel
         fields = ('name', 'image', 'id')
-
 
 
 class CatalogSerializer(serializers.ModelSerializer):
@@ -73,6 +74,7 @@ class ListProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductModel
         fields = '__all__'
+
 
 class PopularCategoriesSerializer(serializers.ModelSerializer):
     """Получение популярных категорий"""
@@ -180,3 +182,24 @@ class GiftInfoSerializer(serializers.ModelSerializer):
 class GetProductListSerializer(serializers.Serializer):
     """Получение списка ключей продуктов"""
     product_keys = serializers.ListField(child=serializers.IntegerField())
+
+
+class ProductReviewInfoSerializer(serializers.ModelSerializer):
+    """Вывод товара с отзывом пользователя"""
+    images = ProductImageSerializer(source='images.all', many=True)
+    review_text = serializers.SerializerMethodField()
+    id_review = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ProductModel
+        fields = ('id', 'images', 'name', 'rating', 'review_text', 'id_review')
+
+    def get_id_review(self, obj: ProductModel):
+        user = self.context['request'].user
+        review = obj.review_product.filter(user=user).first()
+        return review.id if review else None
+
+    def get_review_text(self, obj: ProductModel):
+        user = self.context['request'].user
+        review = obj.review_product.filter(user=user).first()
+        return review.review_text if review else None
