@@ -1,3 +1,4 @@
+from rest_framework import serializers
 from rest_framework.generics import CreateAPIView, DestroyAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from apps.cart.models import CartModel, CartItem
@@ -22,10 +23,19 @@ class ListCartView(RetrieveAPIView):
     serializer_class = ListCartSerializer
 
     def get_queryset(self):
+        user = self.request.user
         cart_id = self.kwargs.get('pk')
-        ServiceCart.get_total_sum(cart_id)
-        product_cart = CartModel.objects.filter(id=cart_id)
-        return product_cart
+        try:
+            ServiceCart.get_total_sum(cart_id)
+            if user.id:
+                ServiceCart.check_owner_cart(cart_id, user_id=user.id)
+                product_cart = CartModel.objects.filter(id=cart_id, user_id=user.id)
+                return product_cart
+            else:
+                product_cart = CartModel.objects.filter(id=cart_id)
+                return product_cart
+        except CartModel.DoesNotExist:
+            raise serializers.ValidationError({"error": "Корзина не найдена"})
 
 
 class DeleteProductCartView(DestroyAPIView):
@@ -33,7 +43,6 @@ class DeleteProductCartView(DestroyAPIView):
     def delete(self, request, *args, **kwargs):
         cart_id = self.request.data.get('cart_id')
         product_id = self.request.data.get('product_id')
-        LOGGER.debug(product_id)
         del_obj = CartItem.objects.filter(product_id=product_id, cart_id=cart_id)
         del_obj.delete()
         ServiceCart.get_total_sum(cart_id)

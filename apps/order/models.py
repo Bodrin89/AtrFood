@@ -118,8 +118,8 @@ class OrderItem(models.Model):
 @receiver(post_delete, sender=OrderItem)
 def update_order_totals(sender, instance, **kwargs):
     order = instance.order
-    order.total_quantity = order.items.all().aggregate(Sum('quantity'))['quantity__sum'] or 0
-    order.total_price = order.items.all().aggregate(Sum('price'))['price__sum'] or 0
+    order.total_quantity = order.order_items.all().aggregate(Sum('quantity'))['quantity__sum'] or 0
+    order.total_price = order.order_items.all().aggregate(Sum('price'))['price__sum'] or 0
     order.save()
 
 

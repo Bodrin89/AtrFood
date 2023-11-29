@@ -25,6 +25,7 @@ pytelegrambotapi = "^4.14.0"
 pytz = "^2023.3.post1"
 django-redis = "^5.4.0"
 djangorestframework-simplejwt = "^5.3.0"
+django-import-export = "^3.3.3"
 
 
 [tool.poetry.group.dev.dependencies]

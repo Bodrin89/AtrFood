@@ -21,6 +21,7 @@ class ServiceOrder:
             user=user,
             payment_method=validated_data.get('payment_method'),
             contact_phone=validated_data.get('contact_phone'),
+            delivery_method=validated_data.get('delivery_method'),
         )
         selected_address = validated_data.get('delivery_address')
         delivery_data = AddressModel.objects.get(id=selected_address.id)

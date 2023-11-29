@@ -1,12 +1,16 @@
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
+
+from apps.individual_user.import_export_utils import IndividualUserResource
 from apps.individual_user.models import IndividualUserModel
 from apps.library.forms import AddressForm
 from apps.order.models import Order
 from apps.clients.models import AddressModel
 from django.utils.translation import gettext_lazy as _
 from django import forms
+
+from import_export.admin import ImportExportModelAdmin
 
 
 class OrderInline(admin.StackedInline):
@@ -63,7 +67,8 @@ class UserChangeForm(forms.ModelForm):
 
 
 @admin.register(IndividualUserModel)
-class IndividualUserAdmin(admin.ModelAdmin):
+class IndividualUserAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+    resource_classes = [IndividualUserResource]
     list_display = ['email', 'phone_number', 'username']
     inlines = [AddressInline, OrderInline]
     exclude = ('groups', 'user_permissions', 'is_staff', 'is_superuser', 'user_type', 'password')

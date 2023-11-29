@@ -35,6 +35,7 @@ THIRD_PARTY_APPS = [
     'django_filters',
     'corsheaders',
     'drf_yasg',
+    'import_export',
 ]
 
 LOCAL_APPS = [
@@ -263,3 +264,8 @@ if DEBUG:
     SIMPLE_JWT = {
         "ACCESS_TOKEN_LIFETIME": timedelta(minutes=4000),
     }
+
+
+# import-export settings
+IMPORT_EXPORT_TMP_STORAGE_CLASS = 'import_export.tmp_storages.TempFolderStorage' #переменное хранилище файлов,
+# в проде поменять на CacheStorage или MediaStorage

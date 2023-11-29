@@ -61,3 +61,4 @@ class ClientUserAdmin(admin.ModelAdmin):
         model_name = _(self.model._meta.verbose_name_plural)
         extra_context['model_name'] = model_name
         return super().changelist_view(request, extra_context=extra_context)
+

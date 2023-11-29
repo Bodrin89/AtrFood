@@ -6,6 +6,7 @@ from apps.order.services import ServiceOrder
 from apps.product.serializers import ProductInfoSerializer, GiftInfoSerializer
 from apps.clients.models import AddressModel
 from apps.library.serializers import CitySerializer, DistrictSerializer
+from config.settings import LOGGER
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
@@ -31,7 +32,7 @@ class DeliveryAddressSerializer(serializers.ModelSerializer):
 
 class CreateOrderSerializer(serializers.ModelSerializer):
     """Сериализатор создания заказа"""
-
+    delivery_method = serializers.BooleanField()
     delivery_address = serializers.PrimaryKeyRelatedField(
         queryset=AddressModel.objects.none(),
         required=True
@@ -39,7 +40,7 @@ class CreateOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ('payment_method', 'delivery_address', 'contact_phone')
+        fields = ('payment_method', 'delivery_address', 'contact_phone', 'delivery_method')
 
     def __init__(self, *args, **kwargs):
         user = kwargs['context']['request'].user

@@ -50,3 +50,4 @@ class ListCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartModel
         fields = ('id', 'total_price', 'user', 'cart_item')
+

@@ -89,6 +89,18 @@ class ServiceCart:
             pass
 
     @staticmethod
+    def check_owner_cart(cart_id, user_id):
+        """Если пользователь аутентифицирован, то ему присваевается корзина"""
+        try:
+            product_cart = CartModel.objects.get(id=cart_id)
+        except CartModel.DoesNotExist:
+            raise serializers.ValidationError({"error": "Корзина не найдена"})
+        product_cart.user = BaseUserModel.objects.get(id=user_id)
+        product_cart.save()
+        return True
+
+
+    @staticmethod
     def add_cart(validated_data: dict) -> dict:
         """Сохранение товаров в корзину"""
         cart_id = validated_data.get('cart_id')
@@ -158,10 +170,12 @@ class ServiceCart:
 
         product_cart.cart_item.exclude(product_id__in=list_product_id).delete()
         product_cart = ServiceCart.get_total_sum(product_cart.id)
+        # if user_id:
+        #     product_cart.user = BaseUserModel.objects.get(id=user_id)
         if user_id:
-            product_cart.user = BaseUserModel.objects.get(id=user_id)
+            ServiceCart.check_owner_cart(cart_id, user_id)
+            return product_cart
         product_cart.save()
-
         return product_cart
 
     # @staticmethod
@@ -199,3 +213,6 @@ class ServiceCart:
         product_cart.total_price = total_sum
         product_cart.save()
         return product_cart
+
+
+
