@@ -1,6 +1,45 @@
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
 from django.urls import include, path
+from django.conf import settings
+from django.conf.urls.static import static
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework import permissions
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
+from apps.notes.views import note_view
+from apps.tg_bot.views import TelegramWebhookView
+from stats import stats_view, create_pdf
+from apps.library.views import CityAutocomplete, DistrictAutocomplete
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Snippets API",
+        default_version='v1',
+        description="Test description",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="contact@snippets.local"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=[permissions.AllowAny, ],
+)
+
+
+def get_admin_urls(urls):
+    def get_urls():
+        my_urls = [
+            path('stats/', admin.site.admin_view(stats_view), name='stats'),
+            path('note/<str:model_name>/', admin.site.admin_view(note_view), name='note_view'),
+            path('download_pdf/', admin.site.admin_view(create_pdf), name='download_pdf')
+        ]
+        return my_urls + urls
+
+    return get_urls
+
+
+admin.site.get_urls = get_admin_urls(admin.site.get_urls())
 
 urlpatterns = [
 
@@ -15,6 +54,25 @@ urlpatterns = [
     path('api/cart/', include(('apps.cart.urls', 'apps.cart'))),
     path('api/order/', include(('apps.order.urls', 'apps.order'))),
     path('api/discounts/', include(('apps.promotion.urls', 'apps.promotion'))),
+    path('api/blog/', include(('apps.blog.urls', 'apps.blog'))),
+    path('api/library/', include(('apps.library.urls', 'apps.library'))),
+    path('api/documents/', include(('apps.document.urls', 'apps.document'))),
+    path('api/payment/', include(('apps.payment.urls', 'apps.payment'))),
 
     prefix_default_language=True,
-)
+) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns += [
+    path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+
+    path('city-autocomplete/', CityAutocomplete.as_view(), name='city-autocomplete'),
+    path('district-autocomplete/', DistrictAutocomplete.as_view(), name='district-autocomplete'),
+
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
+    path('4c3fd19b/', TelegramWebhookView.as_view(), name='telegram_webhook'),
+
+]

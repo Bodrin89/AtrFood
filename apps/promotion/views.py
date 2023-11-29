@@ -1,6 +1,4 @@
-from django.shortcuts import render
 from rest_framework.generics import ListAPIView
-
 from apps.promotion.models import DiscountModel
 from apps.promotion.serializers import ListDiscountSerializer
 

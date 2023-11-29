@@ -1,29 +1,25 @@
-
 from rest_framework import serializers
-
 from apps.product.models import (CatalogModel,
                                  CategoryProductModel,
                                  CompareProductModel,
                                  DescriptionProductModel,
                                  FavoriteProductModel,
                                  ProductModel,
-                                 SubCategoryProductModel,)
+                                 SubCategoryProductModel,
+                                 ProductImage,
+                                 )
 from apps.product.services import ServiceProduct
+from apps.library.serializers import ManufacturingCompanySerializer, CountrySerializer, PackageTypeSerializer
+from apps.review.models import ReviewProductModel
+from apps.review.serializers import ReviewImageSerializer
 from config.settings import LOGGER
-
-
-class CatalogSerializer(serializers.ModelSerializer):
-    """Каталог"""
-    class Meta:
-        model = CatalogModel
-        fields = ('name',)
 
 
 class SubCategoryProductSerializer(serializers.ModelSerializer):
     """Подкатегория"""
     class Meta:
         model = SubCategoryProductModel
-        fields = ('name',)
+        fields = ('name', 'image', 'id')
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -32,14 +28,40 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CategoryProductModel
-        fields = ('name', 'subcategories',)
+        fields = ('name', 'image', 'subcategories', 'id')
+
+
+class CategoryListSerializer(serializers.ModelSerializer):
+    """Список всех категорий"""
+
+    class Meta:
+        model = CategoryProductModel
+        fields = ('name', 'image', 'id')
+
+
+class CatalogSerializer(serializers.ModelSerializer):
+    """Каталог"""
+
+    class Meta:
+        model = CatalogModel
+        fields = ('name', 'id')
 
 
 class DescriptionProductSerializer(serializers.ModelSerializer):
     """Описание товара"""
+    manufacturer = ManufacturingCompanySerializer()
+    made_in = CountrySerializer()
+    package = PackageTypeSerializer()
+
     class Meta:
         model = DescriptionProductModel
         fields = ('manufacturer', 'made_in', 'description', 'package')
+
+
+class ProductImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductImage
+        fields = ('image',)
 
 
 class ListProductSerializer(serializers.ModelSerializer):
@@ -47,11 +69,19 @@ class ListProductSerializer(serializers.ModelSerializer):
 
     product_data = DescriptionProductSerializer()
     subcategory = SubCategoryProductSerializer()
+    images = ProductImageSerializer(source='images.all', many=True)
 
     class Meta:
         model = ProductModel
         fields = '__all__'
 
+
+class PopularCategoriesSerializer(serializers.ModelSerializer):
+    """Получение популярных категорий"""
+
+    class Meta:
+        model = CategoryProductModel
+        fields = ['id', 'name', 'image',]
 
 # class CreateProductSerializer(serializers.ModelSerializer):
 #     """Создание товара"""
@@ -68,28 +98,39 @@ class ListProductSerializer(serializers.ModelSerializer):
 #     def create(self, validated_data):
 #         return ServiceProduct.create_product(validated_data)
 
+
 class ListCatalogSerializer(serializers.ModelSerializer):
-    """Получение всех каталогов"""
+    """Получение всех каталогов с вложенными категориями/подкатегориями"""
+
+    categories = CategorySerializer(many=True)
+
     class Meta:
         model = CatalogModel
-        fields = ('name',)
+        fields = ('name', 'categories', 'id')
 
 
 class RetrieveProductSerializer(serializers.ModelSerializer):
     """Получение товара по id"""
+
+    product_data = DescriptionProductSerializer()
+    subcategory = SubCategoryProductSerializer()
+    images = ProductImageSerializer(source='images.all', many=True)
+
     class Meta:
         model = ProductModel
         fields = '__all__'
 
 
 class AddProductFavoriteSerializer(serializers.ModelSerializer):
-    """Добавление/удаление товара в избранное"""
+    """Добавление товара в избранное"""
     class Meta:
         model = FavoriteProductModel
         fields = ('id',)
 
     def create(self, validated_data):
-        return ServiceProduct.add_delete_product_favorite(validated_data)
+        favorite_products = ServiceProduct.add_delete_product_favorite(validated_data)
+
+        return favorite_products
 
 
 class AddProductCompareSerializer(serializers.ModelSerializer):
@@ -103,25 +144,68 @@ class AddProductCompareSerializer(serializers.ModelSerializer):
 
 
 class ProductInfoSerializer(serializers.ModelSerializer):
-    """Получение всех товаров"""
+    """Получение всех товаров в заказ"""
+    images = ProductImageSerializer(source='images.all', many=True)
 
     class Meta:
         model = ProductModel
-        fields = [
-            'name',
-            'foto',
-            'price',
-            'article',
-            'discount_price',
-        ]
+        fields = ['name', 'price', 'article', 'discount_price', 'images', 'opt_price', 'existence', 'rating']
 
-# class AddProductCompareSerializer(serializers.ModelSerializer):
-#     """Добавление/удаление товара для сравнения"""
-#     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-#
-#     class Meta:
-#         model = CompareProductModel
-#         fields = ('id', 'user')
-#
-#     def create(self, validated_data):
-#         return ServiceProduct.add_delete_product_compare(validated_data)
+
+class FavoriteProductInfoSerializer(serializers.ModelSerializer):
+    """Получение всех товаров в заказ"""
+    images = ProductImageSerializer(source='images.all', many=True)
+
+    class Meta:
+        model = ProductModel
+        fields = ['name', 'price', 'article', 'discount_price', 'opt_price', 'existence', 'images']
+
+
+class ListFavoriteProductSerializer(serializers.ModelSerializer):
+    """Получение избранных товаров"""
+    product = FavoriteProductInfoSerializer()
+
+    class Meta:
+        model = ProductModel
+        fields = ('product',)
+
+
+class GiftInfoSerializer(serializers.ModelSerializer):
+    """Информация по подарку из акции"""
+    images = ProductImageSerializer(source='images.all', many=True)
+
+    class Meta:
+        model = ProductModel
+        fields = ['name', 'images', 'article', ]
+
+
+class GetProductListSerializer(serializers.Serializer):
+    """Получение списка ключей продуктов"""
+    product_keys = serializers.ListField(child=serializers.IntegerField())
+
+
+class ProductReviewInfoSerializer(serializers.ModelSerializer):
+    """Вывод товара с отзывом пользователя"""
+    images = ProductImageSerializer(source='images.all', many=True)
+    review_text = serializers.SerializerMethodField()
+    id_review = serializers.SerializerMethodField()
+    count_star = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ProductModel
+        fields = ('id', 'images', 'name',  'review_text', 'id_review', 'count_star')
+
+    def get_count_star(self, obj: ProductModel):
+        user = self.context['request'].user
+        review = obj.review_product.filter(user=user).first()
+        return review.count_stars if review else None
+
+    def get_id_review(self, obj: ProductModel):
+        user = self.context['request'].user
+        review = obj.review_product.filter(user=user).first()
+        return review.id if review else None
+
+    def get_review_text(self, obj: ProductModel):
+        user = self.context['request'].user
+        review = obj.review_product.filter(user=user).first()
+        return review.review_text if review else None

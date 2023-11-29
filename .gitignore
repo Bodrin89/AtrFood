@@ -216,6 +216,7 @@ ENV/
 env.bak/
 venv.bak/
 
+
 # Spyder project settings
 .spyderproject
 .spyproject
@@ -245,3 +246,10 @@ cython_debug/
 .pytest_cache
 /media/
 /identifier.sqlite
+/static/
+
+#migrations
+**/migrations/**
+!**/migrations/__init__.py!/celerybeat-schedule.db
+
+celerybeat-schedule.db

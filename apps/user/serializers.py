@@ -1,8 +1,10 @@
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.password_validation import validate_password
+from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
-
-from apps.user.models import AddressModel, BaseUserModel, RegionModel
+from apps.user.models import BaseUserModel
+from apps.clients.models import AddressModel
+from apps.library.serializers import CitySerializer, DistrictSerializer
 
 User = get_user_model()
 
@@ -23,17 +25,8 @@ class LoginSerializer(serializers.ModelSerializer):
         email = data.get('email')
         user = User.objects.filter(email=email).first()
         if user is not None and not user.is_active:
-            raise serializers.ValidationError('Аккаунт необходимо подтвердить по электронной почте.')
+            raise serializers.ValidationError(_('Аккаунт необходимо подтвердить по электронной почте.'))
         return data
-
-
-class RegionSerializer(serializers.ModelSerializer):
-    """Сериализатор региона"""
-
-    class Meta:
-        model = RegionModel
-        fields = ('region', 'city')
-        # read_only_fields = ('id',)
 
 
 class AddressSerializer(serializers.ModelSerializer):
@@ -41,21 +34,32 @@ class AddressSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AddressModel
-        fields = ('id', 'district', 'street', 'house_number', 'apartment_number', 'floor')
-        read_only_fields = ('id',)
+        fields = ('id', 'city', 'district', 'street', 'house_number', 'apartment_number', 'floor')
+        read_only_fields = ['id', ]
 
     def validate(self, attrs):
         request = self.context.get('request')
         user = request.user
         if user.is_authenticated and not self.instance:
             if AddressModel.objects.filter(user=user).count() >= 3 and request.method != 'PUT':
-                raise serializers.ValidationError('Вы не можете добавить более трех адресов.')
+                raise serializers.ValidationError(_('Вы не можете добавить более трех адресов.'))
         return attrs
 
     def create(self, validated_data):
         request = self.context.get('request')
         validated_data['user'] = request.user
         return super().create(validated_data)
+
+
+class GetAddressSerializer(serializers.ModelSerializer):
+
+    city = CitySerializer()
+    district = DistrictSerializer()
+
+    class Meta:
+        model = AddressModel
+        fields = ('id', 'city', 'district', 'street', 'house_number', 'apartment_number', 'floor')
+        read_only_fields = ['id', ]
 
 
 class EmailSerializer(serializers.Serializer):
@@ -65,6 +69,7 @@ class EmailSerializer(serializers.Serializer):
 
 
 class ChangePasswordSerializer(serializers.ModelSerializer):
+    """Сериализатор для смены пароля"""
 
     new_password = serializers.CharField(
         validators=[validate_password],
@@ -85,7 +90,7 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         new_password = attrs.get('new_password')
         repeat_password = attrs.get('repeat_password')
         if new_password != repeat_password:
-            raise serializers.ValidationError({'repeat_password': 'Пароли не совпадают'})
+            raise serializers.ValidationError({'repeat_password': _('Пароли не совпадают')})
         return attrs
 
     def update(self, instance, validated_data):

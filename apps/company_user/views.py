@@ -1,9 +1,10 @@
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
-
-from apps.company_user.serializers import CreateCompanySerializer
-from apps.user.models import AddressModel
+from django.utils.translation import gettext_lazy as _
+from apps.company_user.serializers import CreateCompanySerializer, CompanyAddressSerializer, GetCompanyAddressSerializer
+from rest_framework.viewsets import ModelViewSet
+from apps.company_user.models import CompanyAddress
 
 
 class SingUpCompanyView(CreateAPIView):
@@ -16,8 +17,23 @@ class SingUpCompanyView(CreateAPIView):
             return Response(
                 {
                     'status': 'Success',
-                    'message': 'Подтверждение отправлено на ваш электронный адрес.'
+                    'message': _('Подтверждение отправлено на ваш электронный адрес.')
                 },
                 status=status.HTTP_201_CREATED
             )
         return response
+
+
+class CompanyAddressViewSet(ModelViewSet):
+    """Просмотр и создание нового юр. адреса пользователя отдельно"""
+
+    serializer_class = CompanyAddressSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return CompanyAddress.objects.filter(user=self.request.user)
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return GetCompanyAddressSerializer
+        return self.serializer_class

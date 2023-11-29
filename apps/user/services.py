@@ -1,17 +1,8 @@
 from typing import Callable
-
-from django.conf import settings
-from django.conf.global_settings import EMAIL_HOST_USER
 from django.contrib.auth import authenticate
-from django.contrib.auth.hashers import make_password
-from django.core.mail import send_mail
 from rest_framework.exceptions import AuthenticationFailed, ValidationError
 from rest_framework.request import Request
-
-from apps.company_user.models import CompanyUserModel, ContactPersonModel
-from apps.individual_user.models import IndividualUserModel
 from apps.user.models import BaseUserModel
-from config.settings import LOGGER
 
 
 class UserServices:

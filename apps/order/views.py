@@ -1,9 +1,5 @@
-from django.shortcuts import render
 from rest_framework import permissions, status
-from rest_framework.exceptions import ValidationError
-from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-
 from apps.order.models import Order
 from apps.order.serializers import CreateOrderSerializer, GetOrderSerializer
 
@@ -21,4 +17,4 @@ class CreateOrderViewSet(ModelViewSet):
         return Order.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(session=self.request.session, request=self.request)
+        serializer.save(request=self.request)

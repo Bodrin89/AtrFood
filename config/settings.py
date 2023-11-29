@@ -1,11 +1,11 @@
 import logging
 import os
 from pathlib import Path
+from datetime import timedelta
 
+from django.core.cache import cache
 from django.utils.translation import gettext_lazy as _
 from dotenv import load_dotenv
-
-# from django.conf.locale import LANG_INFO
 
 load_dotenv()
 
@@ -18,6 +18,8 @@ DEBUG = os.getenv('DEBUG') == 'True'
 ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS'), '*']
 
 DJANGO_APPS = [
+    'dal',
+    'dal_select2',
     'modeltranslation',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -29,8 +31,11 @@ DJANGO_APPS = [
 
 THIRD_PARTY_APPS = [
     'rest_framework',
+    'rest_framework_simplejwt',
     'django_filters',
     'corsheaders',
+    'drf_yasg',
+    'import_export',
 ]
 
 LOCAL_APPS = [
@@ -43,6 +48,13 @@ LOCAL_APPS = [
     'apps.promotion',
     'apps.order',
     'apps.clients',
+    'apps.library',
+    'apps.blog',
+    'apps.document',
+    'apps.notes',
+    'apps.tg_bot',
+    'apps.administrative_staff',
+    'apps.payment',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -62,18 +74,37 @@ MIDDLEWARE = [
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.AllowAny'],
+    'DEFAULT_AUTHENTICATION_CLASSES': ('rest_framework_simplejwt.authentication.JWTAuthentication',),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 20
 }
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_ALL_ORIGINS = True
+
+
+CORS_ALLOW_METHODS = (
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+)
+
+
+CORS_ALLOW_CREDENTIALS = True
+
+SESSION_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -126,30 +157,14 @@ LANGUAGE_CODE = 'ru'
 MODELTRANSLATION_DEFAULT_LANGUAGE = 'ru'
 # MODELTRANSLATION_PREPOPULATE_LANGUAGE = 'en'
 
-# LANG_INFO = {
-#     'kz': {
-#         'bidi': False,
-#         'code': 'kz',
-#         'name': 'Kazakh',
-#         'name_local': 'Қазақ',
-#     },
-#     'ru': {
-#         'bidi': False,
-#         'code': 'ru',
-#         'name': 'Russian',
-#         'name_local': 'Русский',
-#     },
-# }
-
 LANGUAGES = [
-    ('kk', _('Kazakh')),
     ('ru', _('Russian')),
+    ('kk', _('Kazakh')),
 ]
 
-# LOCALE_PATHS = [
-#     os.path.join(BASE_DIR, 'apps/locale'),
-# ]
-
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'apps/locale'),
+]
 
 TIME_ZONE = 'UTC'
 
@@ -158,6 +173,12 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -168,7 +189,7 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'main_format': {
-            'format': '{asctime} - {levelname} - {module} - {filename} - {message}',
+            'format': '{asctime} - {levelname} - {module} - {filename} - {lineno} - {message}',
             'style': '{'
         }
     },
@@ -197,6 +218,16 @@ LOGGING = {
 
 LOGGER = logging.getLogger('main')
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': os.getenv('REDIS_URL'),
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.getenv('SMTP_HOST')
 EMAIL_PORT = int(os.getenv('SMTP_PORT'))
@@ -205,9 +236,36 @@ EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL')
 EMAIL_HOST_USER = os.getenv('SMTP_USER')
 EMAIL_HOST_PASSWORD = os.getenv('SMTP_PASSWORD')
 
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
-CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+CELERY_BROKER_URL = os.getenv('REDIS_URL')
+CELERY_RESULT_BACKEND = os.getenv('REDIS_URL')
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
+
+BOT_TOKEN = os.getenv('BOT_TOKEN')
+
+TIME_CACHE_TG_BOT_MESSAGE = 60 * 60  # Время хранения кэша сообщений телеграм бота
+
+DEFAULT_MASSAGE_BOT = {
+    'introductory_message': 'добро пожаловать в магазин ArtFood',
+    'message_after_hours': 'Магазин закрыт, обратитесь в рабочее время',
+    'message_order_not_site': 'для того чтобы воспользоваться доставкой вам требуется приобрести товар на нашем сайте',
+    'introductory_message_anonymous': 'Добро пожаловать в магазин ArtFood Если вы не зарегистрированы, пройдите '
+                                      'регистрацию на сайте Если вы зарегистрированы, введите ваш email Для отмены '
+                                      'нажмите "cancel"',
+}
+
+URL_PAYMENT_ORDER = "https://stage-api.ioka.kz/v2/orders"
+URL_PAYMENT_WEBHOOK = "https://stage-api.ioka.kz/v2/webhooks"
+BACK_URL = 'https://artfood-frontend.vercel.app/user/order-history'
+CURRENCY = "KZT"
+
+if DEBUG:
+    SIMPLE_JWT = {
+        "ACCESS_TOKEN_LIFETIME": timedelta(minutes=4000),
+    }
+
+# import-export settings
+IMPORT_EXPORT_TMP_STORAGE_CLASS = 'import_export.tmp_storages.TempFolderStorage' #переменное хранилище файлов,
+# в проде поменять на CacheStorage или MediaStorage
