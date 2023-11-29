@@ -266,7 +266,6 @@ if DEBUG:
         "ACCESS_TOKEN_LIFETIME": timedelta(minutes=4000),
     }
 
-
 # import-export settings
 IMPORT_EXPORT_TMP_STORAGE_CLASS = 'import_export.tmp_storages.TempFolderStorage' #переменное хранилище файлов,
 # в проде поменять на CacheStorage или MediaStorage
