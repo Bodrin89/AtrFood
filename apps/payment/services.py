@@ -8,7 +8,7 @@ from django.db import transaction
 
 from apps.order.models import Order
 from apps.payment.models import PaymentOrder
-from config.settings import URL_PAYMENT_ORDER, CURRENCY
+from config.settings import URL_PAYMENT_ORDER, CURRENCY, BACK_URL, LOGGER
 
 API_KEY = os.getenv('PAYMENT_API_KEY')
 
@@ -29,7 +29,7 @@ class PaymentService:
         if total_price:
             total_price = str(total_price) + '00'
 
-        body = json.dumps({'amount': total_price, "currency": CURRENCY})
+        body = json.dumps({'amount': total_price, "currency": CURRENCY, "back_url": BACK_URL})
         headers = {'API-KEY': API_KEY, 'Content-Type': 'application/json'}
 
         if get_payment_order := PaymentOrder.objects.filter(order_id=order_id).first():

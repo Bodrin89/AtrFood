@@ -40,7 +40,7 @@ class CreateOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ('payment_method', 'delivery_address', 'contact_phone', 'delivery_method')
+        fields = ('id', 'payment_method', 'delivery_address', 'contact_phone', 'delivery_method')
 
     def __init__(self, *args, **kwargs):
         user = kwargs['context']['request'].user

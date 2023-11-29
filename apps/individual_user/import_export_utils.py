@@ -21,4 +21,3 @@ class IndividualUserResource(ModelResource):
         """Логика перед импортом строки"""
         if row.get('second_phone_numberr'):
             row['second_phone_number'] = row.get('second_phone_numberr')
-

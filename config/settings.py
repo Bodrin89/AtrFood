@@ -258,6 +258,7 @@ DEFAULT_MASSAGE_BOT = {
 
 URL_PAYMENT_ORDER = "https://stage-api.ioka.kz/v2/orders"
 URL_PAYMENT_WEBHOOK = "https://stage-api.ioka.kz/v2/webhooks"
+BACK_URL = 'https://artfood-frontend.vercel.app/user/order-history'
 CURRENCY = "KZT"
 
 if DEBUG:
