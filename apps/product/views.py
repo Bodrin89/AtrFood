@@ -36,7 +36,8 @@ from apps.product.serializers import (AddProductCompareSerializer,
                                       SubCategoryProductSerializer,
                                       PopularCategoriesSerializer,
                                       GetProductListSerializer, ListFavoriteProductSerializer, CategoryListSerializer,
-                                      ProductReviewInfoSerializer, CreateProductSerializer)
+                                      ProductReviewInfoSerializer, CreateProductSerializer, CreateCatalogSerializer,
+                                      CreateCategorySerializer, CreateSubCategorySerializer)
 from apps.product.services import ServiceProduct
 from apps.review.models import ReviewProductModel
 from config.settings import LOGGER
@@ -334,6 +335,17 @@ class NewProductView(ListAPIView):
 
 
 
+
+
+class CreateCatalogView(CreateAPIView):
+    serializer_class = CreateCatalogSerializer
+
+
+class CreateCategoryView(CreateAPIView):
+    serializer_class = CreateCategorySerializer
+
+class CreateSubCategoryView(CreateCategoryView):
+    serializer_class = CreateSubCategorySerializer
 
 class CreateProductView(CreateAPIView):
     serializer_class = CreateProductSerializer

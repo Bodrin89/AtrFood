@@ -221,6 +221,39 @@ class ProductReviewInfoSerializer(serializers.ModelSerializer):
 
 
 
+
+class CreateCatalogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CatalogModel
+        fields = '__all__'
+
+    def create(self, validated_data):
+        return CatalogModel.objects.create(**validated_data)
+
+
+class CreateCategorySerializer(serializers.ModelSerializer):
+    catalog = CatalogSerializer()
+
+    class Meta:
+        model = CategoryProductModel
+        fields = ('name', 'image', 'popularity', 'catalog')
+
+    def create(self, validated_data):
+        catalog_name = validated_data.pop('catalog').get('name')
+        catalog, _ = CatalogModel.objects.get_or_create(name=catalog_name)
+        return CategoryProductModel.objects.create(**validated_data, catalog=catalog)
+
+
+class CreateSubCategorySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = SubCategoryProductModel
+        fields = ('name', 'image', 'category')
+
+    def create(self, validated_data):
+        return SubCategoryProductModel.objects.create(**validated_data)
+
+
 class CreateProductSerializer(serializers.ModelSerializer):
     images = serializers.ImageField()
     product_data = DescriptionProductSerializer()

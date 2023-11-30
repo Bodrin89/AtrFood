@@ -18,7 +18,7 @@ from apps.product.views import (AddProductCompareView,
                                 SubcategoryDownloadView,
                                 PopularCategoriesView, DestroyFavoriteProduct, MinMaxPriceProduct, ListCategoryView,
                                 RetrieveCategoryView, ListProductUserNotReviewView, ListProductUserReviewView,
-                                CreateProductView, )
+                                CreateProductView, CreateCatalogView, CreateCategoryView, CreateSubCategoryView, )
 
 
 
@@ -52,5 +52,8 @@ urlpatterns = [
     path('min-max-price/', MinMaxPriceProduct.as_view(), name='min-max-price'),
 
 
-    path('create/', CreateProductView.as_view(), name='create-product'),
+    path('create_product/', CreateProductView.as_view(), name='create-product'),
+    path('create_catalog/', CreateCatalogView.as_view(), name='create-catalog'),
+    path('create_category/', CreateCategoryView.as_view(), name='create-category'),
+    path('create_subcategory/', CreateSubCategoryView.as_view(), name='create-subcategory'),
 ]
