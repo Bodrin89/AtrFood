@@ -1,4 +1,7 @@
+from django.db import transaction
 from rest_framework import serializers
+
+from apps.library.models import ManufacturingCompany, CountryManufacturer, PackageType
 from apps.product.models import (CatalogModel,
                                  CategoryProductModel,
                                  CompareProductModel,
@@ -17,6 +20,7 @@ from config.settings import LOGGER
 
 class SubCategoryProductSerializer(serializers.ModelSerializer):
     """Подкатегория"""
+
     class Meta:
         model = SubCategoryProductModel
         fields = ('name', 'image', 'id')
@@ -81,7 +85,8 @@ class PopularCategoriesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CategoryProductModel
-        fields = ['id', 'name', 'image',]
+        fields = ['id', 'name', 'image', ]
+
 
 # class CreateProductSerializer(serializers.ModelSerializer):
 #     """Создание товара"""
@@ -123,6 +128,7 @@ class RetrieveProductSerializer(serializers.ModelSerializer):
 
 class AddProductFavoriteSerializer(serializers.ModelSerializer):
     """Добавление товара в избранное"""
+
     class Meta:
         model = FavoriteProductModel
         fields = ('id',)
@@ -135,6 +141,7 @@ class AddProductFavoriteSerializer(serializers.ModelSerializer):
 
 class AddProductCompareSerializer(serializers.ModelSerializer):
     """Добавление/удаление товара для сравнения"""
+
     class Meta:
         model = CompareProductModel
         fields = ('id',)
@@ -193,7 +200,7 @@ class ProductReviewInfoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProductModel
-        fields = ('id', 'images', 'name',  'review_text', 'id_review', 'count_star')
+        fields = ('id', 'images', 'name', 'review_text', 'id_review', 'count_star')
 
     def get_count_star(self, obj: ProductModel):
         user = self.context['request'].user
@@ -209,3 +216,37 @@ class ProductReviewInfoSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         review = obj.review_product.filter(user=user).first()
         return review.review_text if review else None
+
+
+
+
+
+class CreateProductSerializer(serializers.ModelSerializer):
+    images = serializers.ImageField()
+    product_data = DescriptionProductSerializer()
+
+    class Meta:
+        model = ProductModel
+        fields = '__all__'
+
+    def create(self, validated_data):
+        images = validated_data.pop('images')
+        product_data = validated_data.pop('product_data')
+
+        manufacturingcompany, _ = ManufacturingCompany.objects.get_or_create(
+            name=product_data.get('manufacturer').get('name'), logo=product_data.get('manufacturer').get('logo'))
+        made_in, _ = CountryManufacturer.objects.get_or_create(name=product_data.get('made_in').get('name'))
+        package, _ = PackageType.objects.get_or_create(name=product_data.get('package').get('name'))
+
+        product, _ = ProductModel.objects.get_or_create(**validated_data)
+
+        ProductImage.objects.get_or_create(image=images, product=product)
+
+        DescriptionProductModel.objects.create(
+            manufacturer=manufacturingcompany,
+            made_in=made_in,
+            description=product_data.get('description'),
+            package=package,
+            product=product
+        )
+        return product

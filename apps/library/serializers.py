@@ -26,9 +26,6 @@ class ManufacturingCompanySerializer(serializers.ModelSerializer):
         model = ManufacturingCompany
         fields = ['id', 'name', 'logo']
 
-    def validated_data(self):
-        LOGGER.debug(self)
-
 
 class DistrictSerializer(serializers.ModelSerializer):
 

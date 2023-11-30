@@ -17,6 +17,7 @@ from rest_framework.generics import (
     get_object_or_404,
 )
 from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
@@ -35,7 +36,7 @@ from apps.product.serializers import (AddProductCompareSerializer,
                                       SubCategoryProductSerializer,
                                       PopularCategoriesSerializer,
                                       GetProductListSerializer, ListFavoriteProductSerializer, CategoryListSerializer,
-                                      ProductReviewInfoSerializer)
+                                      ProductReviewInfoSerializer, CreateProductSerializer)
 from apps.product.services import ServiceProduct
 from apps.review.models import ReviewProductModel
 from config.settings import LOGGER
@@ -330,3 +331,9 @@ class NewProductView(ListAPIView):
 
     def get_queryset(self):
         return ProductModel.objects.filter(is_active=True).order_by('-date_create')[:20]
+
+
+
+
+class CreateProductView(CreateAPIView):
+    serializer_class = CreateProductSerializer
