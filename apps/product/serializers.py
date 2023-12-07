@@ -236,7 +236,7 @@ class CreateCategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CategoryProductModel
-        fields = ('name', 'image', 'popularity', 'catalog')
+        fields = ('id', 'name', 'image', 'popularity', 'catalog')
 
     def create(self, validated_data):
         catalog_name = validated_data.pop('catalog').get('name')
@@ -248,7 +248,7 @@ class CreateSubCategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SubCategoryProductModel
-        fields = ('name', 'image', 'category')
+        fields = ('id', 'name', 'image', 'category')
 
     def create(self, validated_data):
         return SubCategoryProductModel.objects.create(**validated_data)
