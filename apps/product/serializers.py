@@ -255,31 +255,34 @@ class CreateSubCategorySerializer(serializers.ModelSerializer):
 
 
 class CreateProductSerializer(serializers.ModelSerializer):
-    images = serializers.ImageField()
-    product_data = DescriptionProductSerializer()
+    product_data = DescriptionProductSerializer(required=False)
 
     class Meta:
         model = ProductModel
         fields = '__all__'
 
     def create(self, validated_data):
-        images = validated_data.pop('images')
-        product_data = validated_data.pop('product_data')
+        product_data = None
+        try:
+            product_data = validated_data.pop('product_data')
+            validated_data.pop('is_active')
+        except KeyError:
+            pass
 
-        manufacturingcompany, _ = ManufacturingCompany.objects.get_or_create(
-            name=product_data.get('manufacturer').get('name'), logo=product_data.get('manufacturer').get('logo'))
-        made_in, _ = CountryManufacturer.objects.get_or_create(name=product_data.get('made_in').get('name'))
-        package, _ = PackageType.objects.get_or_create(name=product_data.get('package').get('name'))
+        is_active = False
+        product, _ = ProductModel.objects.get_or_create(is_active=is_active, **validated_data)
 
-        product, _ = ProductModel.objects.get_or_create(**validated_data)
+        if product_data:
+            manufacturingcompany, _ = ManufacturingCompany.objects.get_or_create(
+                name=product_data.get('manufacturer').get('name'), logo=product_data.get('manufacturer').get('logo'))
+            made_in, _ = CountryManufacturer.objects.get_or_create(name=product_data.get('made_in').get('name'))
+            package, _ = PackageType.objects.get_or_create(name=product_data.get('package').get('name'))
 
-        ProductImage.objects.get_or_create(image=images, product=product)
-
-        DescriptionProductModel.objects.create(
-            manufacturer=manufacturingcompany,
-            made_in=made_in,
-            description=product_data.get('description'),
-            package=package,
-            product=product
-        )
+            DescriptionProductModel.objects.create(
+                manufacturer=manufacturingcompany,
+                made_in=made_in,
+                description=product_data.get('description'),
+                package=package,
+                product=product
+            )
         return product
