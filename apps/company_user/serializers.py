@@ -1,12 +1,16 @@
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from django.utils.translation import gettext_lazy as _
+
+from apps.clients.models import AddressModel
 from apps.company_user.models import CompanyAddress, CompanyUserModel, ContactPersonModel
 from apps.company_user.services import CompanyUserServices
 from apps.company_user.validators import bik_validator, bin_iin_validator, iban_validator
+from apps.user.models import BaseUserModel
 from apps.user.serializers import AddressSerializer, GetAddressSerializer
 from apps.user.services import UserServices
 from apps.library.serializers import CitySerializer, CountrySerializer, DistrictSerializer
+from config.settings import LOGGER
 
 
 class ContactPersonSerializer(serializers.ModelSerializer):
@@ -142,3 +146,60 @@ class GetUpdateCompanySerializer(serializers.ModelSerializer):
     #
         instance.save()
         return instance
+
+
+
+
+
+
+
+
+class GetCompanyAddressSerializer2(serializers.ModelSerializer):
+
+    city = CitySerializer()
+    district = DistrictSerializer()
+
+    class Meta:
+        model = AddressModel
+        fields = '__all__'
+        read_only_fields = ['id', ]
+
+
+class GetContactPerson(serializers.ModelSerializer):
+    class Meta:
+        model = ContactPersonModel
+        fields = '__all__'
+
+
+class GetAllCompanyUserSerializer(serializers.ModelSerializer):
+    """Получение всех юридических лиц"""
+    contact_person = serializers.SerializerMethodField()
+    company_address = serializers.SerializerMethodField()
+    addresses = serializers.SerializerMethodField()
+
+    def get_contact_person(self, obj: BaseUserModel):
+        try:
+            return GetContactPerson(obj.contact_person).data
+        except ContactPersonModel.DoesNotExist:
+            return None
+
+    def get_company_address(self, obj: BaseUserModel):
+        try:
+            return CompanyAddressSerializer(obj.company_address).data
+        except CompanyAddress.DoesNotExist:
+            return None
+
+    def get_addresses(self, obj: BaseUserModel):
+        try:
+            return GetCompanyAddressSerializer2(obj.addresses, many=True).data
+        except AddressModel.DoesNotExist:
+            return None
+
+    class Meta:
+        model = CompanyUserModel
+        exclude = ('password', 'confirmation_token', 'user_permissions', 'groups')
+
+
+
+
+

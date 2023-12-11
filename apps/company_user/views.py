@@ -1,8 +1,14 @@
+import json
+
+from django.http import HttpResponse
 from rest_framework import status, permissions
 from rest_framework.generics import CreateAPIView, ListAPIView
 from rest_framework.response import Response
 from django.utils.translation import gettext_lazy as _
-from apps.company_user.serializers import CreateCompanySerializer, CompanyAddressSerializer, GetCompanyAddressSerializer
+from rest_framework.views import APIView
+
+from apps.company_user.serializers import CreateCompanySerializer, CompanyAddressSerializer, \
+    GetCompanyAddressSerializer, GetAllCompanyUserSerializer
 from rest_framework.viewsets import ModelViewSet
 from apps.company_user.models import CompanyAddress, CompanyUserModel
 
@@ -39,3 +45,11 @@ class CompanyAddressViewSet(ModelViewSet):
         return self.serializer_class
 
 
+
+
+
+
+class GetAllCompanyUserView(ListAPIView):
+    """Получение всех юридических лиц в файле"""
+    queryset = CompanyUserModel.objects.all()
+    serializer_class = GetAllCompanyUserSerializer
