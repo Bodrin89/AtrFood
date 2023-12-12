@@ -220,7 +220,7 @@ class ProductReviewInfoSerializer(serializers.ModelSerializer):
 
 
 
-
+#TODO Serializers for 1C
 
 class CreateCatalogSerializer(serializers.ModelSerializer):
     class Meta:
