@@ -6,6 +6,7 @@ from apps.clients.models import AddressModel
 from apps.company_user.models import CompanyAddress, CompanyUserModel, ContactPersonModel
 from apps.company_user.services import CompanyUserServices
 from apps.company_user.validators import bik_validator, bin_iin_validator, iban_validator
+from apps.library.models import City, District, Region
 from apps.user.models import BaseUserModel
 from apps.user.serializers import AddressSerializer, GetAddressSerializer
 from apps.user.services import UserServices
@@ -150,20 +151,48 @@ class GetUpdateCompanySerializer(serializers.ModelSerializer):
 
 
 
+#TODO serializers for 1C
+
+class RegionInfoSerialiser(serializers.ModelSerializer):
+    class Meta:
+        model = Region
+        fields = '__all__'
 
 
+class CityInfoSerializer(serializers.ModelSerializer):
+    region = RegionInfoSerialiser()
+
+    class Meta:
+        model = City
+        fields = '__all__'
 
 
-class GetCompanyAddressSerializer2(serializers.ModelSerializer):
+class DistrictInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = District
+        fields = '__all__'
 
-    city = CitySerializer()
-    district = DistrictSerializer()
+
+class GetAllAddressSerializer(serializers.ModelSerializer):
+    city = CityInfoSerializer()
+    district = DistrictInfoSerializer()
 
     class Meta:
         model = AddressModel
         fields = '__all__'
         read_only_fields = ['id', ]
 
+
+class CompanyAddressInfoSerializer(serializers.ModelSerializer):
+    city = CityInfoSerializer()
+    district = DistrictInfoSerializer()
+
+    street = serializers.CharField(required=True, max_length=250)
+
+    class Meta:
+        model = CompanyAddress
+        fields = ('id', 'city', 'district', 'street', 'house_number', 'office_number')
+        read_only_fields = ['id', ]
 
 class GetContactPerson(serializers.ModelSerializer):
     class Meta:
@@ -185,21 +214,16 @@ class GetAllCompanyUserSerializer(serializers.ModelSerializer):
 
     def get_company_address(self, obj: BaseUserModel):
         try:
-            return CompanyAddressSerializer(obj.company_address).data
+            return CompanyAddressInfoSerializer(obj.company_address).data
         except CompanyAddress.DoesNotExist:
             return None
 
     def get_addresses(self, obj: BaseUserModel):
         try:
-            return GetCompanyAddressSerializer2(obj.addresses, many=True).data
+            return GetAllAddressSerializer(obj.addresses, many=True).data
         except AddressModel.DoesNotExist:
             return None
 
     class Meta:
         model = CompanyUserModel
         exclude = ('password', 'confirmation_token', 'user_permissions', 'groups')
-
-
-
-
-

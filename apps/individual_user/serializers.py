@@ -1,10 +1,14 @@
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from django.utils.translation import gettext_lazy as _
+
+from apps.company_user.serializers import GetAllCompanyUserSerializer,  GetAllAddressSerializer
 from apps.individual_user.models import IndividualUserModel
 from apps.individual_user.services import IndividualUserService
 from apps.clients.models import AddressModel
 from apps.library.forms import AddressForm
+from apps.library.serializers import CitySerializer, DistrictSerializer
+from apps.user.models import BaseUserModel
 from apps.user.serializers import AddressSerializer, GetAddressSerializer
 from apps.user.services import UserServices
 from config.settings import LOGGER
@@ -94,3 +98,24 @@ class GetUpdateIndividualSerializer(serializers.ModelSerializer):
     #
     #     instance.save()
     #     return instance
+
+
+
+
+
+#TODO serializers for 1C
+
+
+class GetAllIndividualUserSerializer(serializers.ModelSerializer):
+
+    addresses = serializers.SerializerMethodField()
+
+    def get_addresses(self, obj: BaseUserModel):
+        try:
+            return GetAllAddressSerializer(obj.addresses, many=True).data
+        except AddressModel.DoesNotExist:
+            return None
+
+    class Meta:
+        model = IndividualUserModel
+        exclude = ('password', 'confirmation_token', 'groups', 'user_permissions')
