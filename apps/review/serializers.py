@@ -47,5 +47,21 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
             ReviewImage.objects.create(review=review, **image_data)
         return review
 
+    def update(self, instance, validated_data: dict):
+        request = self.context.get('request')
+        user = request.user if request and hasattr(request, 'user') else None
+        if user and user.is_authenticated:
+            validated_data['user'] = user
+        else:
+            raise ValidationError({'error': _('Только авторизованный пользователь может оставить отзыв')})
+        review = ReviewProductModel.objects.get(user_id=user.id, id=instance.id)
+        count_stars = validated_data.pop('count_stars', review.count_stars)
+        review_text = validated_data.pop('review_text', review.review_text)
+        review.count_stars = count_stars
+        review.review_text = review_text
+        review.save()
+        return review
+
+
     # def create(self, validated_data):
     #     return ServiceReview.create_review(validated_data)
