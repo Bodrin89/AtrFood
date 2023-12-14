@@ -16,8 +16,7 @@ from rest_framework.generics import (
     DestroyAPIView,
     get_object_or_404,
 )
-from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
@@ -91,7 +90,6 @@ class ListProductView(ListAPIView):
     search_fields = ['name', 'product_data__manufacturer__name']
     ordering_fields = ['id', 'name', 'article', 'price', 'discount_price', 'rating', 'date_create', 'product_data',
                        'subcategory']
-
     def get(self, request, *args, **kwargs):
         """Получение параметров пагинации из query_params)"""
         if page_size := self.request.query_params.get('page_size', None):
@@ -336,6 +334,7 @@ class NewProductView(ListAPIView):
 
 
 
+#TODO View for 1C
 
 class CreateCatalogView(CreateAPIView):
     serializer_class = CreateCatalogSerializer

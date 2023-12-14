@@ -1,5 +1,5 @@
+
 import django_filters
-from django.db.models import Min, Max
 
 from apps.product.models import ProductModel
 
