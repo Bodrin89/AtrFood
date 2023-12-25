@@ -1,4 +1,4 @@
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.generics import CreateAPIView, ListAPIView
 from rest_framework.response import Response
 from django.utils.translation import gettext_lazy as _
@@ -27,5 +27,6 @@ class SingUpIndividualView(CreateAPIView):
 
 #TODO for 1C
 class GetAllIndividualUserView(ListAPIView):
+    permission_classes = permissions.IsAdminUser
     serializer_class = GetAllIndividualUserSerializer
     queryset = IndividualUserModel.objects.all()

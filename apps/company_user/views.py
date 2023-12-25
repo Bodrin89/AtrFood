@@ -51,5 +51,6 @@ class CompanyAddressViewSet(ModelViewSet):
 #TODO for 1C
 class GetAllCompanyUserView(ListAPIView):
     """Получение всех юридических лиц в файле"""
+    permission_classes = permissions.IsAdminUser
     queryset = CompanyUserModel.objects.all()
     serializer_class = GetAllCompanyUserSerializer

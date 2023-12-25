@@ -26,6 +26,7 @@ class CreateOrderViewSet(ModelViewSet):
 #TODO View for 1C
 
 class GetAllOrderView(ListAPIView):
+    permission_classes = permissions.IsAdminUser
     serializer_class = GetAllOrderSerializer
     queryset = Order.objects.all()
 

@@ -8,6 +8,7 @@ from django.db.models import Sum, Min, Max, Q
 from django.http import HttpResponse, HttpResponseNotFound
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import permissions
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import (
     CreateAPIView,
@@ -337,14 +338,18 @@ class NewProductView(ListAPIView):
 #TODO View for 1C
 
 class CreateCatalogView(CreateAPIView):
+    permission_classes = permissions.IsAdminUser
     serializer_class = CreateCatalogSerializer
 
 
 class CreateCategoryView(CreateAPIView):
+    permission_classes = permissions.IsAdminUser
     serializer_class = CreateCategorySerializer
 
 class CreateSubCategoryView(CreateCategoryView):
+    permission_classes = permissions.IsAdminUser
     serializer_class = CreateSubCategorySerializer
 
 class CreateProductView(CreateAPIView):
+    permission_classes = permissions.IsAdminUser
     serializer_class = CreateProductSerializer
