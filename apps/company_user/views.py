@@ -48,7 +48,7 @@ class CompanyAddressViewSet(ModelViewSet):
 
 
 
-
+#TODO for 1C
 class GetAllCompanyUserView(ListAPIView):
     """Получение всех юридических лиц в файле"""
     queryset = CompanyUserModel.objects.all()

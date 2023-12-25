@@ -25,7 +25,7 @@ class SingUpIndividualView(CreateAPIView):
 
 
 
-
+#TODO for 1C
 class GetAllIndividualUserView(ListAPIView):
     serializer_class = GetAllIndividualUserSerializer
     queryset = IndividualUserModel.objects.all()
