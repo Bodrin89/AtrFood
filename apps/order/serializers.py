@@ -1,9 +1,10 @@
 from rest_framework import serializers
 
 from apps.cart.serializers import CartProductInfoSerializer
+from apps.company_user.serializers import CityInfoSerializer, DistrictInfoSerializer
 from apps.order.models import Order, OrderItem, DeliveryAddress
 from apps.order.services import ServiceOrder
-from apps.product.serializers import ProductInfoSerializer, GiftInfoSerializer
+from apps.product.serializers import ProductInfoSerializer, GiftInfoSerializer, CreateProductSerializer
 from apps.clients.models import AddressModel
 from apps.library.serializers import CitySerializer, DistrictSerializer
 from config.settings import LOGGER
@@ -76,3 +77,28 @@ class GetOrderSerializer(serializers.ModelSerializer):
             'order_items',
             ]
 
+
+
+#TODO Serializers for 1C
+
+class DeliveryAddressSerializer1C(serializers.ModelSerializer):
+    city = CityInfoSerializer()
+    district = DistrictInfoSerializer()
+
+    class Meta:
+        model = DeliveryAddress
+        fields = '__all__'
+
+class OrderItemSerializer1C(serializers.ModelSerializer):
+
+    class Meta:
+        model = OrderItem
+        fields = '__all__'
+
+class GetAllOrderSerializer(serializers.ModelSerializer):
+    delivery_address = DeliveryAddressSerializer1C()
+    order_items = OrderItemSerializer1C(many=True)
+
+    class Meta:
+        model = Order
+        fields = '__all__'

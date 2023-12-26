@@ -1,10 +1,16 @@
+import json
+
+from django.http import HttpResponse
 from rest_framework import status, permissions
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView
 from rest_framework.response import Response
 from django.utils.translation import gettext_lazy as _
-from apps.company_user.serializers import CreateCompanySerializer, CompanyAddressSerializer, GetCompanyAddressSerializer
+from rest_framework.views import APIView
+
+from apps.company_user.serializers import CreateCompanySerializer, CompanyAddressSerializer, \
+    GetCompanyAddressSerializer, GetAllCompanyUserSerializer
 from rest_framework.viewsets import ModelViewSet
-from apps.company_user.models import CompanyAddress
+from apps.company_user.models import CompanyAddress, CompanyUserModel
 
 
 class SingUpCompanyView(CreateAPIView):
@@ -37,3 +43,14 @@ class CompanyAddressViewSet(ModelViewSet):
         if self.action == 'list':
             return GetCompanyAddressSerializer
         return self.serializer_class
+
+
+
+
+
+#TODO for 1C
+class GetAllCompanyUserView(ListAPIView):
+    """Получение всех юридических лиц в файле"""
+    permission_classes = permissions.IsAdminUser
+    queryset = CompanyUserModel.objects.all()
+    serializer_class = GetAllCompanyUserSerializer

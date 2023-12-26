@@ -1,7 +1,8 @@
 from rest_framework import permissions, status
+from rest_framework.generics import ListAPIView
 from rest_framework.viewsets import ModelViewSet
 from apps.order.models import Order
-from apps.order.serializers import CreateOrderSerializer, GetOrderSerializer
+from apps.order.serializers import CreateOrderSerializer, GetOrderSerializer, GetAllOrderSerializer
 
 
 class CreateOrderViewSet(ModelViewSet):
@@ -18,3 +19,14 @@ class CreateOrderViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(request=self.request)
+
+
+
+
+#TODO View for 1C
+
+class GetAllOrderView(ListAPIView):
+    permission_classes = permissions.IsAdminUser
+    serializer_class = GetAllOrderSerializer
+    queryset = Order.objects.all()
+

@@ -13,7 +13,7 @@ services:
     ports:
       - ${POSTGRES_PORT}:5432
     volumes:
-      - ArtFoot_local_pg_data:/var/lib/postgresql/data
+      - ./ArtFoot_local_pg_data:/var/lib/postgresql/data
     healthcheck:
       test: pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}
       timeout: 3s

@@ -81,7 +81,6 @@ REST_FRAMEWORK = {
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-
 CORS_ALLOW_METHODS = (
     "DELETE",
     "GET",
@@ -90,7 +89,6 @@ CORS_ALLOW_METHODS = (
     "POST",
     "PUT",
 )
-
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -267,5 +265,5 @@ if DEBUG:
     }
 
 # import-export settings
-IMPORT_EXPORT_TMP_STORAGE_CLASS = 'import_export.tmp_storages.TempFolderStorage' #переменное хранилище файлов,
+IMPORT_EXPORT_TMP_STORAGE_CLASS = 'import_export.tmp_storages.TempFolderStorage'  # переменное хранилище файлов,
 # в проде поменять на CacheStorage или MediaStorage

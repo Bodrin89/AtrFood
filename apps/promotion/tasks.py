@@ -1,17 +1,9 @@
 import os
 from django.core.mail import send_mail
 from dotenv import load_dotenv
-from config.settings import LOGGER
 from config.celery import app
 
 load_dotenv()
-promotion = 'Новое сообщение'
-# emails = os.getenv('TEST_EMAIL')
-
-# @app.task
-# def send_email_promotion():
-#     send_email_new_promotion(promotion, emails)
-#     LOGGER.debug('Сообщение отправлено')
 
 
 @app.task

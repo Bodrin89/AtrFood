@@ -8,6 +8,7 @@ from django.db.models import Sum, Min, Max, Q
 from django.http import HttpResponse, HttpResponseNotFound
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import permissions
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import (
     CreateAPIView,
@@ -16,7 +17,7 @@ from rest_framework.generics import (
     DestroyAPIView,
     get_object_or_404,
 )
-from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
@@ -35,7 +36,8 @@ from apps.product.serializers import (AddProductCompareSerializer,
                                       SubCategoryProductSerializer,
                                       PopularCategoriesSerializer,
                                       GetProductListSerializer, ListFavoriteProductSerializer, CategoryListSerializer,
-                                      ProductReviewInfoSerializer)
+                                      ProductReviewInfoSerializer, CreateProductSerializer, CreateCatalogSerializer,
+                                      CreateCategorySerializer, CreateSubCategorySerializer)
 from apps.product.services import ServiceProduct
 from apps.review.models import ReviewProductModel
 from config.settings import LOGGER
@@ -89,7 +91,6 @@ class ListProductView(ListAPIView):
     search_fields = ['name', 'product_data__manufacturer__name']
     ordering_fields = ['id', 'name', 'article', 'price', 'discount_price', 'rating', 'date_create', 'product_data',
                        'subcategory']
-
     def get(self, request, *args, **kwargs):
         """Получение параметров пагинации из query_params)"""
         if page_size := self.request.query_params.get('page_size', None):
@@ -330,3 +331,25 @@ class NewProductView(ListAPIView):
 
     def get_queryset(self):
         return ProductModel.objects.filter(is_active=True).order_by('-date_create')[:20]
+
+
+
+
+#TODO View for 1C
+
+class CreateCatalogView(CreateAPIView):
+    permission_classes = permissions.IsAdminUser
+    serializer_class = CreateCatalogSerializer
+
+
+class CreateCategoryView(CreateAPIView):
+    permission_classes = permissions.IsAdminUser
+    serializer_class = CreateCategorySerializer
+
+class CreateSubCategoryView(CreateCategoryView):
+    permission_classes = permissions.IsAdminUser
+    serializer_class = CreateSubCategorySerializer
+
+class CreateProductView(CreateAPIView):
+    permission_classes = permissions.IsAdminUser
+    serializer_class = CreateProductSerializer

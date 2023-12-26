@@ -1,12 +1,17 @@
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from django.utils.translation import gettext_lazy as _
+
+from apps.clients.models import AddressModel
 from apps.company_user.models import CompanyAddress, CompanyUserModel, ContactPersonModel
 from apps.company_user.services import CompanyUserServices
 from apps.company_user.validators import bik_validator, bin_iin_validator, iban_validator
+from apps.library.models import City, District, Region
+from apps.user.models import BaseUserModel
 from apps.user.serializers import AddressSerializer, GetAddressSerializer
 from apps.user.services import UserServices
 from apps.library.serializers import CitySerializer, CountrySerializer, DistrictSerializer
+from config.settings import LOGGER
 
 
 class ContactPersonSerializer(serializers.ModelSerializer):
@@ -142,3 +147,83 @@ class GetUpdateCompanySerializer(serializers.ModelSerializer):
     #
         instance.save()
         return instance
+
+
+
+
+#TODO serializers for 1C
+
+class RegionInfoSerialiser(serializers.ModelSerializer):
+    class Meta:
+        model = Region
+        fields = '__all__'
+
+
+class CityInfoSerializer(serializers.ModelSerializer):
+    region = RegionInfoSerialiser()
+
+    class Meta:
+        model = City
+        fields = '__all__'
+
+
+class DistrictInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = District
+        fields = '__all__'
+
+
+class GetAllAddressSerializer(serializers.ModelSerializer):
+    city = CityInfoSerializer()
+    district = DistrictInfoSerializer()
+
+    class Meta:
+        model = AddressModel
+        fields = '__all__'
+        read_only_fields = ['id', ]
+
+
+class CompanyAddressInfoSerializer(serializers.ModelSerializer):
+    city = CityInfoSerializer()
+    district = DistrictInfoSerializer()
+
+    street = serializers.CharField(required=True, max_length=250)
+
+    class Meta:
+        model = CompanyAddress
+        fields = ('id', 'city', 'district', 'street', 'house_number', 'office_number')
+        read_only_fields = ['id', ]
+
+class GetContactPerson(serializers.ModelSerializer):
+    class Meta:
+        model = ContactPersonModel
+        fields = '__all__'
+
+
+class GetAllCompanyUserSerializer(serializers.ModelSerializer):
+    """Получение всех юридических лиц"""
+    contact_person = serializers.SerializerMethodField()
+    company_address = serializers.SerializerMethodField()
+    addresses = serializers.SerializerMethodField()
+
+    def get_contact_person(self, obj: BaseUserModel):
+        try:
+            return GetContactPerson(obj.contact_person).data
+        except ContactPersonModel.DoesNotExist:
+            return None
+
+    def get_company_address(self, obj: BaseUserModel):
+        try:
+            return CompanyAddressInfoSerializer(obj.company_address).data
+        except CompanyAddress.DoesNotExist:
+            return None
+
+    def get_addresses(self, obj: BaseUserModel):
+        try:
+            return GetAllAddressSerializer(obj.addresses, many=True).data
+        except AddressModel.DoesNotExist:
+            return None
+
+    class Meta:
+        model = CompanyUserModel
+        exclude = ('password', 'confirmation_token', 'user_permissions', 'groups')
