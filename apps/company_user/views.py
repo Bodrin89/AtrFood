@@ -11,6 +11,7 @@ from apps.company_user.serializers import CreateCompanySerializer, CompanyAddres
     GetCompanyAddressSerializer, GetAllCompanyUserSerializer
 from rest_framework.viewsets import ModelViewSet
 from apps.company_user.models import CompanyAddress, CompanyUserModel
+from config.general_permissions import Is1CUser
 
 
 class SingUpCompanyView(CreateAPIView):
@@ -51,6 +52,6 @@ class CompanyAddressViewSet(ModelViewSet):
 #TODO for 1C
 class GetAllCompanyUserView(ListAPIView):
     """Получение всех юридических лиц в файле"""
-    permission_classes = permissions.IsAdminUser
+    permission_classes = [Is1CUser]
     queryset = CompanyUserModel.objects.all()
     serializer_class = GetAllCompanyUserSerializer

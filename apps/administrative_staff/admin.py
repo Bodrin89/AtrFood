@@ -6,6 +6,8 @@ from django.utils.translation import gettext_lazy as _
 from apps.administrative_staff.models import AdministrativeStaffModel
 from apps.user.admin import UserCreationForm
 
+from django.contrib.auth.models import Group
+
 
 @admin.register(AdministrativeStaffModel)
 class AdministrativeStaffAdmin(admin.ModelAdmin):
@@ -24,3 +26,12 @@ class AdministrativeStaffAdmin(admin.ModelAdmin):
         extra_context['model_name'] = model_name
         return super().changelist_view(request, extra_context=extra_context)
 
+
+
+@admin.register(Group)
+class AdministrativeStaffAdmin(admin.ModelAdmin):
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        model_name = _(self.model._meta.verbose_name_plural)
+        extra_context['model_name'] = model_name
+        return super().changelist_view(request, extra_context=extra_context)

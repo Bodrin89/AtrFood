@@ -21,5 +21,3 @@ class AdministrativeStaffModel(BaseUserModel):
                             verbose_name=_('Роль'))
     order_in_work = models.ManyToManyField(Order, blank=True, related_name='administrative_staff',
                                            verbose_name=_('Заказы в работе'))
-    # order_in_work = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True,
-    #                                   related_name='administrative_staff')
