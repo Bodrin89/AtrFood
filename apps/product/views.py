@@ -40,6 +40,7 @@ from apps.product.serializers import (AddProductCompareSerializer,
                                       CreateCategorySerializer, CreateSubCategorySerializer)
 from apps.product.services import ServiceProduct
 from apps.review.models import ReviewProductModel
+from config.general_permissions import Is1CUser
 from config.settings import LOGGER
 
 
@@ -338,18 +339,19 @@ class NewProductView(ListAPIView):
 #TODO View for 1C
 
 class CreateCatalogView(CreateAPIView):
-    permission_classes = permissions.IsAdminUser
+    """For 1C"""
+    permission_classes = [Is1CUser]
     serializer_class = CreateCatalogSerializer
 
 
 class CreateCategoryView(CreateAPIView):
-    permission_classes = permissions.IsAdminUser
+    permission_classes = [Is1CUser]
     serializer_class = CreateCategorySerializer
 
 class CreateSubCategoryView(CreateCategoryView):
-    permission_classes = permissions.IsAdminUser
+    permission_classes = [Is1CUser]
     serializer_class = CreateSubCategorySerializer
 
 class CreateProductView(CreateAPIView):
-    permission_classes = permissions.IsAdminUser
+    permission_classes = [Is1CUser]
     serializer_class = CreateProductSerializer

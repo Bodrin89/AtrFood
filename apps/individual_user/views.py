@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.individual_user.models import IndividualUserModel
 from apps.individual_user.serializers import CreateIndividualSerializer, GetAllIndividualUserSerializer
+from config.general_permissions import Is1CUser
 
 
 class SingUpIndividualView(CreateAPIView):
@@ -27,6 +28,6 @@ class SingUpIndividualView(CreateAPIView):
 
 #TODO for 1C
 class GetAllIndividualUserView(ListAPIView):
-    permission_classes = permissions.IsAdminUser
+    permission_classes = [Is1CUser]
     serializer_class = GetAllIndividualUserSerializer
     queryset = IndividualUserModel.objects.all()
