@@ -7,19 +7,28 @@ from apps.product.serializers import ProductInfoSerializer, GiftInfoSerializer
 from config.settings import LOGGER
 
 
+class ProductItemSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    quantity_product = serializers.IntegerField()
+
+
 class CreateCartSerializer(serializers.ModelSerializer):
     """Добавление товара в корзину"""
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    cart_id = serializers.IntegerField(required=False, read_only=True)
+    product_item = ProductItemSerializer(many=True, write_only=True)
 
     class Meta:
         model = CartModel
-        fields = ('id', 'user')
+        fields = ('id', 'user', 'cart_id', 'product_item')
 
-    # def validate_quantity_product(self, value):
-    #     """Проверка, что quantity_product больше 0"""
-    #     if value <= 0:
-    #         raise serializers.ValidationError(_('Количество товара должно быть больше 0'))
-    #     return value
+    def validate(self, data):
+        product_items = data.get('product_item', [])
+        for item in product_items:
+            quantity_product = item.get('quantity_product', 0)
+            if quantity_product <= 0:
+                raise serializers.ValidationError({'product_item': _('Количество товара должно быть больше 0.')})
+        return data
 
     def create(self, validated_data):
         return ServiceCart.add_cart(validated_data)

@@ -7,6 +7,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 
 from apps.tg_bot.tg_client import bot
+from config.settings import LOGGER
 
 
 class TelegramWebhookView(APIView):
@@ -18,6 +19,7 @@ class TelegramWebhookView(APIView):
         return JsonResponse({'status': 'ok'})
 
 
-# #TODO запуск телеграм бота с webhook, не забыть поменять url!!!
+#TODO запуск телеграм бота с webhook, не забыть поменять url!!!
 # bot.remove_webhook()
-# bot.set_webhook(url=f'https://artfood.dev.thefactory.kz/4c3fd19b/')
+# bot.set_webhook(url=f'https://api.artfood-shop.kz/4c3fd19b/')
+# bot.set_webhook(url=f'https://9650-94-43-3-29.ngrok-free.app/4c3fd19b/')
