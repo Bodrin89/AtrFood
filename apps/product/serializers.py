@@ -139,17 +139,6 @@ class AddProductFavoriteSerializer(serializers.ModelSerializer):
         return favorite_products
 
 
-class AddProductCompareSerializer(serializers.ModelSerializer):
-    """Добавление/удаление товара для сравнения"""
-
-    class Meta:
-        model = CompareProductModel
-        fields = ('id',)
-
-    def create(self, validated_data):
-        return ServiceProduct.add_delete_product_compare(validated_data)
-
-
 class ProductInfoSerializer(serializers.ModelSerializer):
     """Получение всех товаров в заказ"""
     images = ProductImageSerializer(source='images.all', many=True)
