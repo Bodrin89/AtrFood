@@ -189,3 +189,13 @@ class SocialNetwork(models.Model):
     def __str__(self):
         return f'{self.name}'
 
+
+class PolicyPaymentDelivery(models.Model):
+    class Meta:
+        verbose_name = _('Условие оплаты и доставки')
+        verbose_name_plural = _('Условия оплаты и доставки')
+
+    text = models.TextField()
+
+    def __str__(self):
+        return f'{self.id}'

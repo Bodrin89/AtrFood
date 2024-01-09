@@ -3,7 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from apps.cart.models import CartModel, CartItem
 from apps.cart.services import ServiceCart
 from apps.product.models import ProductModel
-from apps.product.serializers import ProductInfoSerializer, GiftInfoSerializer
+from apps.product.serializers import ProductInfoSerializer, GiftInfoSerializer, ProductImageSerializer
 from config.settings import LOGGER
 
 
@@ -36,10 +36,11 @@ class CreateCartSerializer(serializers.ModelSerializer):
 
 class CartProductInfoSerializer(serializers.ModelSerializer):
     """Сериализатор информации о товаре в корзине"""
+    images = ProductImageSerializer(source='images.all', many=True)
 
     class Meta:
         model = ProductModel
-        fields = ('id', 'name', 'price', 'opt_price', 'article', 'discount_price', 'rating', 'existence', 'images')
+        fields = ('id', 'name', 'price', 'opt_quantity', 'opt_price', 'article', 'discount_price', 'rating', 'existence', 'images')
 
 
 class CartItemSerializer(serializers.ModelSerializer):
