@@ -194,6 +194,7 @@ class CompanyAddressInfoSerializer(serializers.ModelSerializer):
         fields = ('id', 'city', 'district', 'street', 'house_number', 'office_number')
         read_only_fields = ['id', ]
 
+
 class GetContactPerson(serializers.ModelSerializer):
     class Meta:
         model = ContactPersonModel
