@@ -6,7 +6,7 @@ from apps.library.models import (
     PackageType,
     ReturnPolicy,
     PrivacyPolicy,
-    AboutCompany, AddressArtFood, OpenStore, ContactArtFood, SocialNetwork,
+    AboutCompany, AddressArtFood, OpenStore, ContactArtFood, SocialNetwork, PolicyPaymentDelivery,
 )
 from rest_framework import serializers
 
@@ -111,3 +111,8 @@ class SocialNetworkSerializer(serializers.ModelSerializer):
         model = SocialNetwork
         fields = ('name', 'url_network')
 
+
+class PolicyPaymentDeliverySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PolicyPaymentDelivery
+        fields = ('text',)

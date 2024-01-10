@@ -18,7 +18,7 @@ from apps.library.models import (
     AddressArtFood,
     ContactArtFood,
     OpenStore,
-    SocialNetwork,
+    SocialNetwork, PolicyPaymentDelivery,
 
 )
 
@@ -139,6 +139,15 @@ class AddressArtFoodAdmin(admin.ModelAdmin):
 
 @admin.register(SocialNetwork)
 class SocialNetworkAdmin(admin.ModelAdmin):
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        model_name = _(self.model._meta.verbose_name_plural)
+        extra_context['model_name'] = model_name
+        return super().changelist_view(request, extra_context=extra_context)
+
+
+@admin.register(PolicyPaymentDelivery)
+class PolicyPaymentDeliveryAdmin(admin.ModelAdmin):
     def changelist_view(self, request, extra_context=None):
         extra_context = extra_context or {}
         model_name = _(self.model._meta.verbose_name_plural)

@@ -8,6 +8,8 @@ from django.db.models import Sum, Min, Max, Q
 from django.http import HttpResponse, HttpResponseNotFound
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import (
@@ -26,8 +28,7 @@ from apps.order.models import OrderItem, Order
 from apps.product.filters import ProductFilter
 from apps.product.models import CatalogModel, CategoryProductModel, ProductModel, SubCategoryProductModel, \
     FavoriteProductModel
-from apps.product.serializers import (AddProductCompareSerializer,
-                                      AddProductFavoriteSerializer,
+from apps.product.serializers import (AddProductFavoriteSerializer,
                                       CategorySerializer,
                                       ListCatalogSerializer,
                                       ListProductSerializer,
@@ -51,11 +52,6 @@ class GetProductView(RetrieveAPIView):
     def get_queryset(self):
         pk = self.kwargs.get('pk')
         return ProductModel.objects.filter(id=pk, is_active=True)
-
-    def get(self, request, *args, **kwargs):
-        pk = self.kwargs.get('pk')
-        ServiceProduct.add_viewed_products(pk, request)
-        return super().get(request, *args, **kwargs)
 
 
 class ListProductUserNotReviewView(ListAPIView):
@@ -198,16 +194,6 @@ class SubcategoryDownloadView(APIView):
             return Response(_('Файл не существует'))
 
 
-class AddProductCompareView(CreateAPIView):
-    """Добавление/удаление товара для сравнения"""
-    serializer_class = AddProductCompareSerializer
-
-    def perform_create(self, serializer):
-        product_id = self.kwargs.get('product_id')
-        product = get_object_or_404(ProductModel, id=product_id)
-        serializer.save(session=self.request.session, product_id=product_id, product=product)
-
-
 class AddProductFavoriteView(CreateAPIView):
     """Добавление товара в избранное"""
     serializer_class = AddProductFavoriteSerializer
@@ -242,11 +228,23 @@ class ListCompareProductView(ListAPIView):
     """Список товаров для сравнения пользователя"""
     serializer_class = ListProductSerializer
 
-    def get_queryset(self):
-        compare_product_ids = self.request.session.get('compare', [])
-        if len(compare_product_ids) <= 1:
+    @swagger_auto_schema(manual_parameters=[
+        openapi.Parameter('id', openapi.IN_QUERY, type=openapi.TYPE_ARRAY, items=openapi.Items(type='integer'),
+                          description='Список идентификаторов товаров для сравнения')
+    ])
+    def get(self, request, *args, **kwargs):
+        compare_product_ids = self.request.query_params.get('id', '')
+        try:
+            string_list = compare_product_ids.split(',')
+            number_list = [int(item.strip()) for item in string_list]
+        except ValueError:
+            raise ValueError(f"Ошибка преобразования в число")
+        if len(number_list) <= 1:
             raise ValueError(_('Необходимо два товара для сравнения'))
-        return ProductModel.objects.filter(id__in=compare_product_ids)
+
+        queryset = ProductModel.objects.filter(id__in=number_list)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class PopularProductsView(ListAPIView):
@@ -290,15 +288,6 @@ class ViewedProductsView(APIView):
         serialized_products = ListProductSerializer(products, many=True).data
         return Response({'products': serialized_products})
 
-    # def post(self, request, *args, **kwargs):
-    #     viewed_products = request.data.get('products', [])
-    #     products = ProductModel.objects.filter(id__in=viewed_products)[:20]
-    #     serializer = ListProductSerializer(products, many=True)
-    #     return Response(serializer.data)
-    # if viewed_products:
-    #     return ProductModel.objects.filter(id__in=viewed_products)[:20]
-    # return ProductModel.objects.none()
-
 
 class SimilarProductsView(APIView):
     """Список похожих товаров"""
@@ -317,14 +306,6 @@ class SimilarProductsView(APIView):
             return Response({'products': serialized_products})
         return Response({'products': []})
 
-    # def get_queryset(self):
-    #     viewed_products = self.request.session.get('viewed_products', [])
-    #     if viewed_products:
-    #         first_product = ProductModel.objects.get(id=viewed_products[0])
-    #         return ProductModel.objects.filter(subcategory=first_product.subcategory, is_active=True).exclude(
-    #             id=first_product.id)[:20]
-    #     return ProductModel.objects.none()
-
 
 class NewProductView(ListAPIView):
     """Список новых товаров"""
@@ -332,7 +313,6 @@ class NewProductView(ListAPIView):
 
     def get_queryset(self):
         return ProductModel.objects.filter(is_active=True).order_by('-date_create')[:20]
-
 
 
 
@@ -355,3 +335,4 @@ class CreateSubCategoryView(CreateCategoryView):
 class CreateProductView(CreateAPIView):
     permission_classes = [Is1CUser]
     serializer_class = CreateProductSerializer
+

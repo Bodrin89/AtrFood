@@ -1,10 +1,10 @@
 from dal import autocomplete
 from rest_framework.generics import ListAPIView
 from apps.library.models import PrivacyPolicy, ReturnPolicy, AboutCompany, City, District, AddressArtFood, \
-    SocialNetwork, CountryManufacturer, ManufacturingCompany
+    SocialNetwork, CountryManufacturer, ManufacturingCompany, PolicyPaymentDelivery
 from apps.library.serializers import ReturnPolicySerializer, PrivacyPolicySerializer, AboutCompanySerializer, \
     AddressArtFoodSerializer, SocialNetworkSerializer, CitySerializer, DistrictSerializer, CountrySerializer, \
-    ManufacturingCompanySerializer
+    ManufacturingCompanySerializer, PolicyPaymentDeliverySerializer
 from config.settings import LOGGER
 
 
@@ -93,6 +93,9 @@ class SocialNetworkView(ListAPIView):
     serializer_class = SocialNetworkSerializer
 
 
+class PolicyPaymentDeliveryView(ListAPIView):
+    queryset = PolicyPaymentDelivery.objects.all()
+    serializer_class = PolicyPaymentDeliverySerializer
 
 
 
