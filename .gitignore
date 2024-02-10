@@ -253,3 +253,5 @@ cython_debug/
 !**/migrations/__init__.py!/celerybeat-schedule.db
 
 celerybeat-schedule.db
+
+.env_test

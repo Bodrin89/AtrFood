@@ -33,6 +33,12 @@ class CreateIndividualSerializer(serializers.ModelSerializer):
     def validate(self, attrs: dict) -> dict:
         return UserServices.validate(attrs)
 
+    @staticmethod
+    def validate_email(value: str) -> str:
+        if BaseUserModel.objects.filter(email__iexact=value):
+            raise serializers.ValidationError('Пользователь с таким email уже существует')
+        return value.lower()
+
     def create(self, validated_data: dict) -> IndividualUserModel:
         request = self.context.get('request')
         return IndividualUserService.create_individual(request, validated_data)
