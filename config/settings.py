@@ -72,7 +72,11 @@ MIDDLEWARE = [
 
 ]
 
+
+AUTHENTICATION_BACKENDS = ['config.utils.CaseInsensitiveUsernameModelBackend']
+
 REST_FRAMEWORK = {
+
     'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.AllowAny'],
     'DEFAULT_AUTHENTICATION_CLASSES': ('rest_framework_simplejwt.authentication.JWTAuthentication',),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
@@ -274,3 +278,4 @@ if DEBUG:
 # import-export settings
 IMPORT_EXPORT_TMP_STORAGE_CLASS = 'import_export.tmp_storages.TempFolderStorage'  # переменное хранилище файлов,
 # в проде поменять на CacheStorage или MediaStorage
+
