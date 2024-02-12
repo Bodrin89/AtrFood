@@ -46,8 +46,8 @@ class Order(models.Model):
     delivery_method = models.BooleanField(default=True, verbose_name=_('Доставка'))
     contact_phone = models.CharField(max_length=20, verbose_name=_('Номер телефона'),
                                      validators=[validate_phone_number])
-    status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, blank=True, null=True,
-                              verbose_name=_('Статус заказа'))
+    status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default='new_unpaid',
+                              blank=True, null=True, verbose_name=_('Статус заказа'))
     total_quantity = models.PositiveIntegerField(verbose_name=_('Общее количество'), blank=True, null=True)
     total_price = models.PositiveIntegerField(verbose_name=_('Общая стоимость'), blank=True, null=True)
     payment_manager = models.ForeignKey(

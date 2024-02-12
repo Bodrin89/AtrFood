@@ -25,6 +25,7 @@ class ReviewProductModel(models.Model):
     user = models.ForeignKey(BaseUserModel, on_delete=models.CASCADE, related_name='review_user',
                              verbose_name=_('Пользователь'))
     date_created = models.DateField(auto_now=True, verbose_name='Дата создания')
+    moderation = models.BooleanField(default=False, verbose_name='Отзыв прошел модерацию')
 
     def __str__(self):
         return f'Отзыв к продукту: {self.product}'

@@ -8,16 +8,6 @@ from apps.order.models import OrderItem
 from apps.review.models import ReviewProductModel
 from apps.review.serializers import ReviewCreateSerializer
 
-# class ReviewCreateView(CreateAPIView):
-#     serializer_class = ReviewCreateSerializer
-#     # permission_classes = [IsAuthenticated]
-#
-#     def perform_create(self, serializer):
-#         product_id = self.kwargs.get('product_id')
-#         product = get_object_or_404(ProductModel, id=product_id)
-#         serializer.save(product=product)
-from config.settings import LOGGER
-
 
 class ReviewProductViewSet(ModelViewSet):
     """Просмотр всех отзывов и создание отзывов с проверкой на покупку товара"""
@@ -25,7 +15,7 @@ class ReviewProductViewSet(ModelViewSet):
     permission_classes = [AllowAny, ]
 
     def get_queryset(self):
-        return ReviewProductModel.objects.all()
+        return ReviewProductModel.objects.all().filter(moderation=True)
 
     def get_permissions(self):
         if self.action == 'create':

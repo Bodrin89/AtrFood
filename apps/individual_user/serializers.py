@@ -21,7 +21,7 @@ class CreateIndividualSerializer(serializers.ModelSerializer):
     password_repeat = serializers.CharField(write_only=True,
                                             style={'input_type': 'password'}, required=False)
     second_phone_number = serializers.CharField(max_length=50, required=False, allow_blank=True)
-    addresses = AddressSerializer(required=True, many=True)
+    addresses = AddressSerializer(required=False, many=True)
     user_type = serializers.CharField(read_only=True)
     last_name = serializers.CharField(max_length=150, required=True)
 
@@ -33,12 +33,16 @@ class CreateIndividualSerializer(serializers.ModelSerializer):
     def validate(self, attrs: dict) -> dict:
         return UserServices.validate(attrs)
 
+    @staticmethod
+    def validate_email(value: str) -> str:
+        if BaseUserModel.objects.filter(email__iexact=value):
+            raise serializers.ValidationError('Пользователь с таким email уже существует')
+        return value.lower()
+
     def create(self, validated_data: dict) -> IndividualUserModel:
         request = self.context.get('request')
         return IndividualUserService.create_individual(request, validated_data)
 
-    # def update(self, instance, validated_data):
-    #     LOGGER.debug(instance)
 
 
 class GetUpdateIndividualSerializer(serializers.ModelSerializer):

@@ -18,10 +18,17 @@ CARD_APPROVED: Создается после успешной верификац
 CARD_DECLINED: Создается после неуспешной верификации карты. Статус карты DECLINED.
 """
 
+"""Webhooks for test"""
 API_KEY = os.getenv('PAYMENT_API_KEY')
 URL_CREATE_WEBHOOK = "https://stage-api.ioka.kz/v2/webhooks"
 URL_DELETE_WEBHOOK = "https://stage-api.ioka.kz/v2/webhooks/"
 URL_GET_ALL_WEBHOOK = "https://stage-api.ioka.kz/v2/webhooks"
+
+"""Webhooks for prod"""
+# API_KEY = os.getenv('PAYMENT_API_KEY')
+# URL_CREATE_WEBHOOK = "https://api.ioka.kz/v2/webhooks"
+# URL_DELETE_WEBHOOK = "https://api.ioka.kz/v2/webhooks/"
+# URL_GET_ALL_WEBHOOK = "https://api.ioka.kz/v2/webhooks"
 
 
 
@@ -35,8 +42,8 @@ def create_webhook(*args):
     url_create_webhook = URL_CREATE_WEBHOOK
 
     data = {
-        # "url": "https://43b2-94-43-3-29.ngrok-free.app/ru/api/payment/webhook/payment/3jhghj7fg6d3",
-        "url": "https://artfood.dev.thefactory.kz/ru/api/payment/webhook/payment/3jhghj7fg6d3",
+        "url": "https://c0dd-94-43-3-29.ngrok-free.app/ru/api/payment/webhook/payment/3jhghj7fg6d3",
+        # "url": "https://api.artfood-shop.kz/ru/api/payment/webhook/payment/3jhghj7fg6d3",
         "events": args
     }
 
@@ -67,7 +74,7 @@ def delete_webhook(webhook_id):
     print(response.status_code)
 
 
-# delete_webhook("whk_4qLJU4B1aO")
+# delete_webhook("whk_C1fVlaGrbb")
 # create_webhook("ORDER_EXPIRED", "PAYMENT_DECLINED", "PAYMENT_CAPTURED", "CARD_DECLINED")
 # get_all_webhooks()
 

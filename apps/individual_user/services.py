@@ -18,7 +18,7 @@ class IndividualUserService:
             validated_data['password'] = make_password(validated_data['password'])
             addresses_data = validated_data.pop('addresses', [])
             user = IndividualUserModel.objects.create(
-                # is_active=False,
+                is_active=False,
                 **validated_data
             )
             for address_data in addresses_data:
@@ -26,12 +26,12 @@ class IndividualUserService:
             message = _('Для подтверждения email, пожалуйста, перейдите по ссылке:')
             subject = _('Подтверждение email')
             email_url = 'api/user/confirm-email'
-            # confirmation_email.apply_async(args=[
-            #     user.confirmation_token,
-            #     user.email,
-            #     email_url,
-            #     message,
-            #     subject
-            #     ]
-            # )
+            confirmation_email.apply_async(args=[
+                user.confirmation_token,
+                user.email,
+                email_url,
+                message,
+                subject
+                ]
+            )
         return user

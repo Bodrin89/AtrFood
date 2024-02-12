@@ -23,3 +23,4 @@ class TelegramWebhookView(APIView):
 # bot.remove_webhook()
 # bot.set_webhook(url=f'https://api.artfood-shop.kz/4c3fd19b/')
 # bot.set_webhook(url=f'https://9650-94-43-3-29.ngrok-free.app/4c3fd19b/')
+# bot.set_webhook(url=f'https://0f6f-94-43-3-29.ngrok-free.app/4c3fd19b/')

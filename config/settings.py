@@ -72,7 +72,11 @@ MIDDLEWARE = [
 
 ]
 
+
+AUTHENTICATION_BACKENDS = ['config.utils.CaseInsensitiveUsernameModelBackend']
+
 REST_FRAMEWORK = {
+
     'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.AllowAny'],
     'DEFAULT_AUTHENTICATION_CLASSES': ('rest_framework_simplejwt.authentication.JWTAuthentication',),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
@@ -234,6 +238,10 @@ EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL')
 EMAIL_HOST_USER = os.getenv('SMTP_USER')
 EMAIL_HOST_PASSWORD = os.getenv('SMTP_PASSWORD')
 
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+SERVER_EMAIL = EMAIL_HOST_USER
+EMAIL_ADMIN = EMAIL_HOST_USER
+
 CELERY_BROKER_URL = os.getenv('REDIS_URL')
 CELERY_RESULT_BACKEND = os.getenv('REDIS_URL')
 CELERY_ACCEPT_CONTENT = ['application/json']
@@ -256,6 +264,9 @@ DEFAULT_MASSAGE_BOT = {
 
 URL_PAYMENT_ORDER = "https://stage-api.ioka.kz/v2/orders"
 URL_PAYMENT_WEBHOOK = "https://stage-api.ioka.kz/v2/webhooks"
+#TODO webhooks for prod
+# URL_PAYMENT_ORDER = "https://api.ioka.kz/v2/orders"
+# URL_PAYMENT_WEBHOOK = "https://api.ioka.kz/v2/webhooks"
 BACK_URL = 'https://artfood-frontend.vercel.app/user/order-history'
 CURRENCY = "KZT"
 
@@ -267,3 +278,4 @@ if DEBUG:
 # import-export settings
 IMPORT_EXPORT_TMP_STORAGE_CLASS = 'import_export.tmp_storages.TempFolderStorage'  # переменное хранилище файлов,
 # в проде поменять на CacheStorage или MediaStorage
+
